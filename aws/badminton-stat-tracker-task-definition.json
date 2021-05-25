@@ -61,7 +61,7 @@
       "EXTERNAL",
       "EC2"
     ],
-    "taskDefinitionArn": "arn:aws:ecs:us-east-2:213148110566:task-definition/badminton-stat-tracker:1",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-2:213148110566:task-definition/badminton-stat-tracker:3",
     "family": "badminton-stat-tracker",
     "requiresAttributes": [
       {
