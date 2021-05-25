@@ -23,7 +23,7 @@ var path = require('path');
 
 const api = Express();
 
-api.use('/', Express.static(path.join(__dirname, '../frontend')))
+// api.use('/', Express.static(path.join(__dirname, '../frontend')))
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(bodyParser.json());
 
@@ -31,6 +31,14 @@ api.use(CookieSession({
     name: 'session',
     keys: ['key1', 'key2']
 }));
+
+
+api.get('/', (req,res,next) => {
+    console.log('landing on home');
+    res.status(200).json({
+        landingPage: "This is the landing page for badmintonDb2.0"
+    })
+})
 
 
 //ENDPOINTS BEGIN HERE
