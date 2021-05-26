@@ -15,6 +15,9 @@ RUN ng update --all --force
 RUN ng build --prod
 
 
+# go back to backend root dir
+WORKDIR /usr/src/app
+
 # Install app dependencies
 RUN npm install
 
