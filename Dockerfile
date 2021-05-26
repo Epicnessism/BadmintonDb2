@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY ./ /usr/src/app/
 
 # Move to frontend and run ng build --prod
-RUN cd badminton-stat-tracker-frontend
+WORKDIR /usr/src/app/badminton-stat-tracker-frontend
 RUN npm install @angular/cli -g
 RUN npm install
 RUN ng update --all --force
