@@ -10,6 +10,7 @@ COPY ./ /usr/src/app/
 # Move to frontend and run ng build --prod
 RUN cd badminton-stat-tracker-frontend
 RUN npm install @angular/cli -g
+RUN ng update @angular/cli
 # RUN npm install
 RUN ng build --prod
 
