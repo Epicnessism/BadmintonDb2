@@ -7,6 +7,11 @@ WORKDIR /usr/src/app
 # Bundle app source
 COPY ./ /usr/src/app/
 
+# Move to frontend and run ng build --prod
+RUN cd badminton-stat-tracker-frontend
+RUN ng build --prod
+
+
 # Install app dependencies
 RUN npm install
 

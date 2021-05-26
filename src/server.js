@@ -23,7 +23,7 @@ var path = require('path');
 
 const api = Express();
 
-// api.use('/', Express.static(path.join(__dirname, '../frontend')))
+api.use('/', Express.static(path.join(__dirname, '../badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend')))
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(bodyParser.json());
 

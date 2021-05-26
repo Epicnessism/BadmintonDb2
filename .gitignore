@@ -39,6 +39,8 @@ build/Release
 
 # Dependency directories
 node_modules/
+# badminton-stat-tracker-frontend/node_modules/
+# badminton-stat-tracker-frontend/dist/
 jspm_packages/
 
 # TypeScript v1 declaration files
