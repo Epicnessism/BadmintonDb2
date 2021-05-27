@@ -27,7 +27,15 @@ var path = require('path');
 
 const api = Express();
 
-api.use('/', Express.static(path.join(__dirname, '../badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend')))
+
+
+// api.use('/', Express.static(path.join(__dirname, '../badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend')))
+api.use('/', Express.static(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/"))
+// ---- SERVE STATIC FILES ---- //
+// api.server.get('*.*', express.static('../badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend', {maxAge: '1y'}));
+
+
+
 api.use(bodyParser.urlencoded({ extended: true }));
 api.use(bodyParser.json());
 
@@ -37,12 +45,10 @@ api.use(CookieSession({
 }));
 
 
-// api.get('/', (req,res,next) => {
-//     console.log('landing on home');
-//     res.status(200).json({
-//         landingPage: "This is the landing page for badmintonDb2.0"
-//     })
-// })
+api.get('/', (req,res,next) => {
+    console.log('landing on home');
+    res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
+})
 
 
 //ENDPOINTS BEGIN HERE
