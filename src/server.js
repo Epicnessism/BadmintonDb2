@@ -142,3 +142,11 @@ api.listen(process.env.PORT)
 console.log(process.env);
 console.log(process.env.PORT);
 console.log('Listening for WS and HTTP traffic on port ' + process.env.PORT);
+
+console.log("before knex test:");
+knex('players')
+.select('id', 'given_name')
+.then(result => {
+    console.log(result);
+});
+console.log("after knex test:");
