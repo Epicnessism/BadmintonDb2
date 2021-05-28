@@ -45,11 +45,16 @@ api.use(CookieSession({
 }));
 
 
+// api.get('/', (req,res,next) => {
+//     console.log('landing on home');
+//     res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
+// })
+
 api.get('/', (req,res,next) => {
     console.log('landing on home');
-    res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
+    res.send(200).json({message: "landing page!!!"})
+    // res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
 })
-
 
 //ENDPOINTS BEGIN HERE
 api.get('/currentUser', (req, res) => {
