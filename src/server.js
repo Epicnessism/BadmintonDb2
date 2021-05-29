@@ -52,8 +52,8 @@ api.use(CookieSession({
 
 api.get('/', (req,res,next) => {
     console.log('landing on home');
-    res.send(200).json({message: "landing page!!!"})
-    // res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
+    // res.send(200).json({message: "landing page!!!"})
+    res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
 })
 
 //ENDPOINTS BEGIN HERE
@@ -63,6 +63,17 @@ api.get('/currentUser', (req, res) => {
         currentUser: req.session.username
     });
 });
+
+
+api.get('/test', (req, res, next) => {
+    console.log("testing knex link");
+    knex('players')
+    .select('id', 'given_name', 'family_name')
+    .then( result => {
+        console.log(result);
+        res.status(200).json(result);
+    })
+})
 
 // api.post('/signIn', async (req, res, next) => {
 //     console.log("User signin attempt: " + req.body.username)
