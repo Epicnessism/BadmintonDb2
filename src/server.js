@@ -56,6 +56,11 @@ api.get('/', (req,res,next) => {
     res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
 })
 
+api.get('/healthcheck', (req,res) => {
+    console.log("health-check");
+    res.status(200).json({message:"200"});
+})
+
 //ENDPOINTS BEGIN HERE
 api.get('/currentUser', (req, res) => {
     console.log("current user check: " + req.session.username)
