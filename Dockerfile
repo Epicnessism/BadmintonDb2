@@ -21,8 +21,5 @@ WORKDIR /usr/src/app
 # Install app dependencies
 RUN npm install
 
-#check latest db schema
-RUN knex migrate:latest
-
 EXPOSE 8888/tcp
 CMD [ "node", "src/server.js" ]
