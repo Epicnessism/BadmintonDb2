@@ -5,7 +5,7 @@ const knex = require('./dbconfig');
 const Express = require('express');
 const bodyParser = require('body-parser');
 const CookieSession = require('cookie-session');
-// const config = require('./config.js');
+let cors = require('cors');
 var AWS = require("aws-sdk");
 const bcrypt = require('bcrypt');
 const createError = require('http-errors');
@@ -28,6 +28,15 @@ var path = require('path');
 const api = Express();
 
 
+//TODO CORS CONFIG HERE
+api.use(cors({
+    origin: 'http://localhost:4200',
+    credentials: true
+}))
+api.options('*', cors());
+
+
+
 
 // api.use('/', Express.static(path.join(__dirname, '../badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend')))
 api.use('/', Express.static(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/"))
@@ -45,10 +54,10 @@ api.use(CookieSession({
 }));
 
 
-// api.get('/', (req,res,next) => {
-//     console.log('landing on home');
-//     res.sendFile(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/index.html")
-// })
+//Routers
+api.use('/players', require('./routes/players').players);
+api.use('/auth', require('./routes/auth').auth);
+
 
 api.get('/', (req,res,next) => {
     console.log('landing on home');
