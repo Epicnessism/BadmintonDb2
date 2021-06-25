@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   login(body): Observable<any> {
-    return this.http.post<any>(environment.backendURL + `auth/login`, body, {withCredentials: true});
+    return this.http.post<any>(environment.backendURL + `auth/login`, body);
   }
 
   signOut() {

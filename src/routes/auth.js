@@ -2,6 +2,7 @@ const express = require('express');
 const auth = express.Router();
 
 auth.post('/login', (req, res, next) => {
+    console.log("got into /login");
     res.status(200).json({message: "success"})
     // passport.authenticate('local',  (err, user, info) => {
     //     console.log('user: '+ user);
