@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, Validators, FormBuilder } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 // import { SubscriptionService } from 'src/app/services/subscription.service';
 import { Subscription, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatchPasswordsValidator } from '../utils/match-passwords.directive';
 
 @Component({
   selector: 'app-login',
@@ -40,18 +41,24 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: [undefined || '', Validators.required]
     });
 
-    this.signUpFormGroup = this._formBuilder.group({
-      username: [undefined || '', Validators.required],
-      password: [undefined || '', Validators.required],
-      confirmPassword: [undefined || '', Validators.required],
-    });
+    // this.signUpFormGroup = this._formBuilder.group({
+    //   username: [undefined || '', Validators.required],
+    //   password: [undefined || '', Validators.required],
+    //   confirmPassword: [undefined || '', Validators.required],
+    // });
+
+    this.signUpFormGroup = new FormGroup({
+      'username': new FormControl(undefined, Validators.required),
+      'password': new FormControl(undefined, Validators.required),
+      'confirmPassword': new FormControl(undefined, Validators.required),
+    }, { validators: MatchPasswordsValidator})
   }
 
   login(): void {
     this.authService.login(this.loginFormGroup.value).pipe(
       catchError((err: HttpErrorResponse) => {
         console.log(err);
-        this.loginFormGroup.controls['username'].setValue('404 something returned failed')
+        // this.loginFormGroup.controls['username'].setValue('404 something returned failed')
         return throwError(err);
       }))
     .subscribe( result => {
@@ -71,19 +78,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.isLogin = !this.isLogin;
   }
 
-  createAccount(): void {
+  signUp(): void {
     //check if pwd inputs are the same
     console.log(this.signUpFormGroup.value);
     if(this.signUpFormGroup.controls['password'].value == this.signUpFormGroup.controls['confirmPassword'].value) {
       this.authService.signUp(this.signUpFormGroup.value).subscribe(result => {
         console.log(result);
-
       })
-    } else {
+    } else { //passwords do not match
       console.log(this.signUpFormGroup.controls['password'].value);
       console.log(this.signUpFormGroup.controls['confirmPassword'].value);
       console.log("lol");
-
     }
   }
 

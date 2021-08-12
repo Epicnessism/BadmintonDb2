@@ -1,5 +1,5 @@
 <div>
-  <mat-card class="main-card" *ngIf="isLogin; else signUp">
+  <mat-card class="main-card" *ngIf="isLogin; else signUpNgTemplate">
     <mat-card-header>
       <mat-card-title>
         <div>
@@ -20,6 +20,9 @@
           <mat-form-field class="form-fields">
             <mat-label>Password</mat-label>
             <input matInput type="password" formControlName="password" placeholder="" required>
+            <mat-error *ngIf="password?.invalid">
+              Password is <strong>required</strong>
+            </mat-error>
           </mat-form-field>
         </div>
         <div>
@@ -32,7 +35,7 @@
     </mat-card-content>
   </mat-card>
 
-  <ng-template #signUp>
+  <ng-template #signUpNgTemplate>
     <mat-card class="main-card">
       <mat-card-header>
         <mat-card-title>
@@ -54,6 +57,13 @@
             <mat-form-field class="form-fields">
               <mat-label>Password</mat-label>
               <input matInput type="password" formControlName="password" placeholder="" required>
+              <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+              <!-- <mat-error *ngIf="signUpFormGroup.errors?.passwordMistmatch && (signUpFormGroup.dirty || signUpFormGroup.touched)">
+                Passwords must match
+              </mat-error> -->
+              <mat-error *ngIf="signUpFormGroup.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -65,7 +75,7 @@
           </div>
 
           <div>
-            <button mat-raised-button color="primary" (click)="createAccount()">Create Account</button>
+            <button mat-raised-button color="primary" (click)="signUp()">Create Account</button>
           </div>
           <div>
             <button mat-raised-button color="warning" (click)="toggleIsLogin()">Login Instead</button>

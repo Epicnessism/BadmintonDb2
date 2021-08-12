@@ -54,11 +54,15 @@ api.use(CookieSession({
 }));
 
 
-//Routers
+
+//ROUTERS
 api.use('/players', require('./routes/players').players);
 api.use('/auth', require('./routes/auth').auth);
+api.use('/games', require('./routes/games').games);
+api.use('tournaments', require('./routes/tournaments').tournaments);
 
 
+//Server top-level endpoints
 api.get('/', (req,res,next) => {
     console.log('landing on home');
     // res.send(200).json({message: "landing page!!!"})
@@ -70,7 +74,7 @@ api.get('/healthcheck', (req,res) => {
     res.status(200).json({message:"200"});
 })
 
-//ENDPOINTS BEGIN HERE
+
 api.get('/currentUser', (req, res) => {
     console.log("current user check: " + req.session.username)
     res.status(200).json({

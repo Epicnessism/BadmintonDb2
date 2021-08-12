@@ -19,22 +19,26 @@ export class AuthService {
 
   authenticate(): Observable<any> {
     console.log(environment.backendURL + `auth/authenticate`);
-    return this.http.get<any>(environment.backendURL + `auth/authenticate`, {withCredentials: true});
+    // return this.http.get<any>(environment.backendURL + `auth/authenticate`, {withCredentials: true});
+    return this.http.get<any>(environment.backendURL + `auth/authenticate`);
   }
 
   login(body): Observable<any> {
+    // return this.http.post<any>(environment.backendURL + `auth/login`, body,  {withCredentials: true});
     return this.http.post<any>(environment.backendURL + `auth/login`, body);
   }
 
   signOut() {
-    this.http.get<any>(environment.backendURL + `auth/logout`, {withCredentials: true}).subscribe( result => {
+    // this.http.get<any>(environment.backendURL + `auth/logout`, {withCredentials: true}).subscribe( result => {
+    this.http.get<any>(environment.backendURL + `auth/logout`).subscribe( result => {
       console.log(result);
       this.router.navigate(['']);
     })
   }
 
   signUp(body): Observable<any> {
-    return this.http.post<any>(environment.backendURL + `auth/register`, body, {withCredentials: true});
+    // return this.http.post<any>(environment.backendURL + `auth/register`, body, {withCredentials: true});
+    return this.http.post<any>(environment.backendURL + `auth/signUp`, body);
   }
 
   routeTo(route) {
