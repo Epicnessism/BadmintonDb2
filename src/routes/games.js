@@ -5,10 +5,37 @@ const games = express.Router();
 const { v4: uuidv4, validate: validateUUID } = require('uuid');
 
 games.get('/getGame/:game_id', function(req, res, next) {
-
+    if(validateUUID(req.params.game_id)) {
+        knex.select('g1.*', 
+                    'p1.given_name as p1_given', 'p1.family_name as p1_family', 
+                    'p2.given_name as p2_given', 'p2.family_name as p2_family', 
+                    'p3.given_name as p3_given', 'p3.family_name as p3_family', 
+                    'p4.given_name as p4_given', 'p4.family_name as p4_family')
+            .from('games as g1')
+            .leftJoin('users as p1', 'g1.player_id_1', 'p1.user_id')
+            .leftJoin('users as p2', 'g1.player_id_2', 'p2.user_id')
+            .leftJoin('users as p3', 'g1.player_id_3', 'p3.user_id')
+            .leftJoin('users as p4', 'g1.player_id_4', 'p4.user_id')
+            .where('game_id', req.params.game_id)
+            .then( result => {
+                console.log(result);
+                if(result.length == 0 || result.length > 1) {
+                    console.log('found more than one game, critical error with db state');
+                    handleResponse(res, 500, 'Something went wrong on our end');
+                } else if(result.length == 1) {
+                    handleResponse(res, 200, result)
+                }
+            })
+            .catch( error => {
+                console.log(error.message);
+                handleResponse(res, 500, 'Something went wrong on our end')
+            })
+    } else {
+        handleResponse(res, 400, 'Bad Request, not a valid uuid');
+    }
 })
 
-games.get('/getGame/all/:game_ids', function(req, res, next) {
+games.get('/getGame/batch/:game_ids', function(req, res, next) {
 
 })
 
