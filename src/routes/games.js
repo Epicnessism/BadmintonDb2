@@ -4,6 +4,8 @@ const knex = require('../dbconfig');
 const games = express.Router();
 const { v4: uuidv4, validate: validateUUID } = require('uuid');
 
+
+//get a game from the database
 games.get('/getGame/:game_id', function(req, res, next) {
     if(validateUUID(req.params.game_id)) {
         knex.select('g1.*', 
@@ -35,9 +37,9 @@ games.get('/getGame/:game_id', function(req, res, next) {
     }
 })
 
-games.get('/getGame/batch/:game_ids', function(req, res, next) {
+// games.get('/getGame/batch/:game_ids', function(req, res, next) {
 
-})
+// })
 
 //create game
 games.post('/createGame', function(req, res, next) {
@@ -120,7 +122,9 @@ function validGameInputFields(game) {
 
 
 games.delete('/deleteGame', function(req, res, next) {
-
+    //do validation
+    //if req.session.username valid
+    
 })
 
 games.patch('/updateGame', function(req, res, next) {

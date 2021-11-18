@@ -11,7 +11,9 @@ exports.up = function(knex) {
         table.integer('team_1_points');
         table.integer('team_2_points');
         table.string('game_type').notNullable(); //'singles'/'doubles'
-        table.boolean('incomplete').defaultsTo(false);
+        table.string('event',2).notNullable(); //MS/WS/MD/WD/XD/NA
+
+        table.boolean('completed').defaultsTo(false);
 
         table.unique('game_id');
 
