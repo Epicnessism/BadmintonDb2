@@ -3,6 +3,10 @@ exports.up = function(knex) {
         table.increments('id');
         table.uuid('tournament_id').notNullable();
         table.uuid('player_id').notNullable();
+
+        table.boolean('gender_singles').defaultTo(false);
+        table.boolean('gender_doubles').defaultTo(false);
+        table.boolean('mixed_doubles').defaultTo(false);
         
         table.unique(['tournament_id', 'player_id']);
     })

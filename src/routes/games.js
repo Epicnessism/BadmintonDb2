@@ -49,7 +49,7 @@ games.post('/createGame', function(req, res, next) {
     //TODO USERNAME/SESSION VALIDATION
 
     validationResponse = validGameInputFields(req.body);
-    console.log("validationresponse message: ", uuidv4(),uuidv4(),uuidv4(),uuidv4(),uuidv4() );
+    console.log("validationresponse message: ", validationResponse );
     if(validationResponse.status == 400) {
         handleResponse(res, validationResponse.status, validationResponse.message)
     } else {
@@ -63,6 +63,7 @@ games.post('/createGame', function(req, res, next) {
             team_1_points: req.body.team_1_points,
             team_2_points: req.body.team_2_points,
             game_type: req.body.game_type,
+            event: req.body.event
         })
         .returning('*')
         .then(result => {
@@ -124,7 +125,7 @@ function validGameInputFields(game) {
 games.delete('/deleteGame', function(req, res, next) {
     //do validation
     //if req.session.username valid
-    
+
 })
 
 games.patch('/updateGame', function(req, res, next) {
