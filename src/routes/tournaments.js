@@ -68,14 +68,26 @@ tournaments.post('/addPlayers', async function(req, res, next) {
     if(result.length == 1) {
         console.log('existing tournament so adding players allowed');
 
+        //TODO VALIDATION FOR WHICH EVENTS AND SEEDS ARE ALLOWED.....
+        if (req.body.gender_singles == null || !req.body.gender_singles) req.body.seed_gender_singles = null;
+        if (req.body.gender_doubles == null || !req.body.gender_doubles) req.body.seed_gender_doubles = null;
+        if (req.body.mixed_doubles == null || !req.body.mixed_doubles) req.body.seed_mixed_doubles = null;
+        //TODO OR RETURN 400 BAD REQUEST? or both?
+
         knex('tournaments_to_players')
         .insert({
             tournament_id: req.body.tournament_id,
             player_id: req.body.player_id,
             gender_singles: req.body.gender_singles,
             gender_doubles: req.body.gender_doubles,
-            mixed_doubles: req.body.mixed_doubles
+            mixed_doubles: req.body.mixed_doubles,
+            seed_gender_singles: req.body.seed_gender_singles,
+            seed_gender_doubles: req.body.seed_gender_doubles,
+            seed_mixed_doubles: req.body.seed_mixed_doubles
         })
+        .onConflict(['tournament_id', 'player_id'])
+        .merge()
+        .returning("*")
         .then( resultInsert => {
             console.log(resultInsert);
             res.status(200).json(resultInsert);
@@ -90,6 +102,26 @@ tournaments.post('/addPlayers', async function(req, res, next) {
     }
 })
 
+
+// router.get('/autoComplete/:substring', authHelpers.loginRequired, function(req, res, next) {
+tournaments.get('/getAllPlayers/:tournamentId', function(req, res, next) {
+    console.log(req.params.tournamentId);
+    knex('tournaments_to_players')
+        .select("*")
+        .where('tournament_id', req.params.tournamentId)
+        .then( result => {
+            console.log(result);
+            if(result.length == 1) {
+                res.status(200).json(result);
+            } else if(result == 0) {
+                handleResponse(res, 400, "TournamentID doesn't exist");    
+            }
+        })
+        .catch( err => { //also catch if tournament_id doesn't exist error
+            console.log(err);
+            handleResponse(res, 500, err);
+        });
+} );
 
 
 //update a game
