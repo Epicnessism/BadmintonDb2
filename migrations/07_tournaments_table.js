@@ -6,6 +6,7 @@ exports.up = function(knex) {
         table.string('location');
         table.string('institution_hosting');
         table.bigInteger('hosting_date');
+        table.string('state').defaultTo('Not Started');
 
         table.boolean('mens_singles').defaultTo(false);
         table.boolean('womens_singles').defaultTo(false);

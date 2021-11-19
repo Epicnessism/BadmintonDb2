@@ -6,7 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js development",
-    "frontend": "cd badminton-stat-tracker-frontend && ng serve"
+    "frontend": "cd badminton-stat-tracker-frontend && ng serve",
+    "knexdown": "knex migrate:rollback",
+    "knexup": "knex migrate:latest && knex seed:run",
+    "knexfull": "knex migrate:rollback && knex migrate:latest && knex seed:run"
   },
   "repository": {
     "type": "git",

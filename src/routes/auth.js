@@ -12,13 +12,14 @@ const saltRounds = 7;
 auth.post('/login', async (req, res, next) => {
     console.log("req.body: ", req.body);
     let results;
-    await knex('users').select('username','password').where({username: req.body.username}).then( result => {
-        console.log("result: ", result);
-        results = result;
-    }).catch( (err) => {
-        console.log(err);
-        handleResponse(res, 500, err);
-    })
+    await knex('users').select('username','password').where({username: req.body.username})
+        .then( result => {
+            console.log("result: ", result);
+            results = result;
+        }).catch( (err) => {
+            console.log(err);
+            handleResponse(res, 500, err);
+        })
     
     await bcrypt.compare(req.body.password, results[0].password, function(err, result) {
         if(err) {
@@ -33,10 +34,11 @@ auth.post('/login', async (req, res, next) => {
 
 auth.post('/signUp', async (req,res,next) => {
     console.log("req.body: ", req.body);
-    await knex('users').select('user_id').then(result => {
-        console.log("show results: ", result);
-    })
-    console.log("after select await");
+    // await knex('users').select('user_id').then(result => {
+    //     console.log("show results: ", result);
+    // })
+    // console.log("after select await");
+    
     if(req.body.username == null || req.body.username == "") {
         handleResponse(res, 400, 'Bad Request')
     }

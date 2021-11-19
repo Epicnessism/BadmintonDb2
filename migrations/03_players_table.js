@@ -4,6 +4,7 @@ exports.up = function(knex) {
       table.uuid('player_id').notNullable();
       table.string('level',1).defaultTo('U');
       table.string('hand', 1).defaultTo('U');
+      table.string('gender',1).defaultTo('N');
       table.string('location');
       table.string('institution');
 
