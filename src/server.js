@@ -59,7 +59,7 @@ api.use(CookieSession({
 api.use('/players', require('./routes/players').players);
 api.use('/auth', require('./routes/auth').auth);
 api.use('/games', require('./routes/games').games);
-api.use('tournaments', require('./routes/tournaments').tournaments);
+api.use('/tournaments', require('./routes/tournaments').tournaments);
 
 
 //Server top-level endpoints

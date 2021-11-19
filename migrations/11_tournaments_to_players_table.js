@@ -7,6 +7,10 @@ exports.up = function(knex) {
         table.boolean('gender_singles').defaultTo(false);
         table.boolean('gender_doubles').defaultTo(false);
         table.boolean('mixed_doubles').defaultTo(false);
+
+        table.integer('seed_gender_singles').defaultTo(null);
+        table.integer('seed_gender_doubles').defaultTo(null);
+        table.integer('seed_mixed_doubles').defaultTo(null);
         
         table.unique(['tournament_id', 'player_id']);
     })

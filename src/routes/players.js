@@ -22,7 +22,7 @@ players.get('/autoComplete/:substring', function(req, res, next) {
         .leftJoin('players', 'players.player_id', 'users.user_id')
         .where('given_name', 'like', `%${req.params.substring.toLowerCase()}%`)
         .then( result => {
-            console.log(result);
+            console.log(result); 
             res.status(200).json(result);
         })
     }
