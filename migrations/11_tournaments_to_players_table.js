@@ -11,7 +11,14 @@ exports.up = function(knex) {
         table.integer('seed_gender_singles').defaultTo(null);
         table.integer('seed_gender_doubles').defaultTo(null);
         table.integer('seed_mixed_doubles').defaultTo(null);
-        
+
+        table.uuid('gender_doubles_partner_id').defaultTo(null);
+        table.uuid('mixed_doubles_partner_id').defaultTo(null);
+
+        table.foreign('gender_doubles_partner_id').references('players.player_id');
+        table.foreign('mixed_doubles_partner_id').references('players.player_id');
+        table.foreign('tournament_id').references('tournaments.tournament_id');
+        table.foreign('player_id').references('players.player_id');
         table.unique(['tournament_id', 'player_id']);
     })
   };

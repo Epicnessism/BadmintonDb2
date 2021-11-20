@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.js development",
     "frontend": "cd badminton-stat-tracker-frontend && ng serve",
     "knexdown": "knex migrate:rollback",
-    "knexup": "knex migrate:latest && knex seed:run",
+    "knexup": "knex migrate:latest",
+    "knexups": "knex migrate:latest && knex seed:run",
     "knexfull": "knex migrate:rollback && knex migrate:latest && knex seed:run"
   },
   "repository": {
