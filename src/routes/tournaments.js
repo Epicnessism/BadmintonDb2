@@ -130,6 +130,62 @@ tournaments.post('/gameUpdate', function(req, res, next) {
     
 })
 
+/**
+ * inputs the results of a set/game for a tournament and calculates the next seeding/set creation
+ * or if the next game is already created, add the corresponding players to it
+ * should also handle bracket dropdowns accordingly
+ */
+tournaments.post('/setUpdate', function(req, res, next) {
+    let eventBracketSize = null; //todo
+    let nextGameNumber = calculateNextGameNumber(eventBracketSize, req.body.gameNumber);
+})
+
+
+function calculateNextGameNumber(s, currentGameNumber) {
+    let s = 16;
+    let d = Math.log2(s);
+    let currentGameNumber = 13;
+    let levels = [];
+    let startingGame = [];
+    let s1 = s;
+    let sumGamesLevels = [];
+
+    for(let i=0; s1 > 1; i++) {
+        levels.push(Math.ceil(s1/2));
+        if(startingGame.length == 0) {
+            // console.log(levels[levels.length-1]);
+            sumGamesLevels.push(s1/2);
+            startingGame.push(1)    
+        } else {
+            // console.log(levels[levels.length-1]);
+            sumGamesLevels.push(levels[levels.length-1] + sumGamesLevels[sumGamesLevels.length-1])
+            startingGame.push(levels[levels.length-1] + Math.ceil(s1/2) + startingGame[startingGame.length-1])
+        }
+        s1 = Math.ceil(s1/2);
+    }
+    console.log(levels);
+    console.log(startingGame);
+    console.log(sumGamesLevels);
+    let g2 = null;
+
+    //calculates next seeded game number
+    for(let i=0; i <= startingGame.length; i++) {
+        if(currentGameNumber == s-1) {
+            //return null/0/na something to denote no more games to play
+            console.log("return null/0/na something to denote no more games to play");
+            return null;
+        }
+        let g = Math.ceil(currentGameNumber / 2)
+        if(g == startingGame[i]) {
+            g2 = g + sumGamesLevels[i];
+            break;
+        } else if(g < startingGame[i]) {
+            // console.log(sumGamesLevels[i-1]);
+            g2 = g + sumGamesLevels[i-1]
+            break;
+        }
+    }
+}
 
 function handleResponse(res, code, message) {
     res.status(code).json({message});

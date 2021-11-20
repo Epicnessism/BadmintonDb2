@@ -4,7 +4,7 @@ exports.up = function(knex) {
         table.uuid('set_id').notNullable().unique();
         table.uuid('tournament_id').nullable();
         table.uuid('event_id').nullable();
-        table.integer('event_game_number').nullable();
+        table.integer('event_game_number').nullable(); //game number to track bracket progress
 
         table.uuid('player_id_1').notNullable();
         table.uuid('player_id_2').nullable();
