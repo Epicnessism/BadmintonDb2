@@ -14,13 +14,18 @@ exports.up = function(knex) {
         table.boolean('womens_doubles').defaultTo(false);
         table.boolean('mixed_doubles').defaultTo(false);
 
-        table.integer('mens_singles_size').defaultTo(null);
-        table.integer('womens_singles_size').defaultTo(null);
-        table.integer('mens_doubles_size').defaultTo(null);
-        table.integer('womens_doubles_size').defaultTo(null);
-        table.integer('mixed_doubles_size').defaultTo(null);
+        table.uuid('mens_singles_event_id').nullable();
+        table.uuid('womens_singles_event_id').nullable();
+        table.uuid('mens_doubles_event_id').nullable();
+        table.uuid('womens_doubles_event_id').nullable();
+        table.uuid('mixed_doubles_event_id').nullable();
         
         table.unique('tournament_id');
+        table.foreign('mens_singles_event_id').references('events.event_id');
+        table.foreign('womens_singles_event_id').references('events.event_id');
+        table.foreign('mens_doubles_event_id').references('events.event_id');
+        table.foreign('womens_doubles_event_id').references('events.event_id');
+        table.foreign('mixed_doubles_event_id').references('events.event_id');
     })
   };
   
