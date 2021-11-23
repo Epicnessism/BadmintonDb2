@@ -8,12 +8,13 @@ exports.seed = function (knex, Promise) {
         // .then(() => knex('players').del())
         
         //delete first table last
-        return knex('events').del()
-            .then(() => knex('tournament_admins').del())
-            .then(() => knex('tournaments_to_players').del())
-            .then(() => knex('sets').del())
-            .then(() => knex('tournaments').del())
+        return knex('tournaments_to_players').del()
+            // .then(() => knex('tournament_admins').del())
+            // .then(() => knex('tournaments_to_players').del())
             .then(() => knex('games').del())
+            .then(() => knex('sets').del())
+            .then(() => knex('events').del())
+            .then(() => knex('tournaments').del())
             .then(() => knex('players').del())
             .then(() => knex('users').del())
 }

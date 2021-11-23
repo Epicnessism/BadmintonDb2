@@ -179,8 +179,8 @@ api.use(function(err, req, res, next) {
 
 
 api.listen(process.env.PORT)
-console.log(process.env);
-console.log(process.env.PORT);
+// console.log(process.env);
+// console.log(process.env.PORT);
 console.log('Listening for WS and HTTP traffic on port ' + process.env.PORT);
 
 //TODO this failed for some reason, fix later

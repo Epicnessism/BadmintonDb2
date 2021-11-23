@@ -124,27 +124,98 @@ tournaments.get('/getAllPlayers/:tournamentId', function(req, res, next) {
 } );
 
 
-//update a game
-tournaments.post('/gameUpdate', function(req, res, next) {
-    console.log(req.body);
-    
-})
-
 /**
  * inputs the results of a set/game for a tournament and calculates the next seeding/set creation
  * or if the next game is already created, add the corresponding players to it
  * should also handle bracket dropdowns accordingly
  */
-tournaments.post('/setUpdate', function(req, res, next) {
-    let eventBracketSize = null; //todo
-    let nextGameNumber = calculateNextGameNumber(eventBracketSize, req.body.gameNumber);
+tournaments.post('/updateSet', async function(req, res, next) {
+    console.log(req.body);
+    let eventDetails = null;
+    await knex('events')
+        .select("*")
+        .where('event_id', req.body.event_id)
+        .then( result => {
+            console.log("RESULTS OF FINDING EVENT_ID");
+            console.log(result);
+            if(result.length == 1) {
+                eventDetails = result[0];
+            } else {
+                handleResponse(res, 400, "Event Not Found");
+            } 
+        })
+        .catch( err => {
+            console.log(err.message);
+            handleResponse(res, 500, err);
+        });
+
+    let setId = null;
+    await knex('sets')
+        .insert({
+            set_id: req.body.set_id != null ? req.body.set_id : uuidv4(),
+            tournament_id: req.body.tournament_id,
+            event_id: eventDetails.event_id,
+            event_game_number: req.body.event_game_number,
+            player_id_1: req.body.player_id_1,
+            player_id_2: req.body.player_id_2,
+            player_id_3: req.body.player_id_3,
+            player_id_4: req.body.player_id_4,
+            game_type: req.body.game_type,
+            completed: req.body.completed
+        })
+        .onConflict(['set_id'])
+        .merge()
+        .returning("*")
+        .then( resultInsert => {
+            console.log("results Set_id insert");
+            console.log(resultInsert);
+            setId = resultInsert[0].set_id;
+        })
+        .catch( err => {
+            console.log(err);
+            handleResponse(res, 500, err);
+        });
+    
+    //after inserting the set, attempt to insert the game details now
+    //game details should be an array and looped through to support multiple game updations
+    let gameScores = req.body.game_scores; //[{gameNumber:1, team_1_points: 21, team_2_points: 18}]
+    // console.log("gameScores: ");
+    // console.log(req.body.game_scores);
+    if(gameScores) {
+        for(const game of gameScores) {
+            await knex('games')
+                .insert({
+                    game_id: game.gameId != null ? game.gameId : uuidv4(),
+                    set_id: setId,
+                    team_1_points: game.team_1_points,
+                    team_2_points: game.team_2_points,
+                    completed: game.completed,
+                    created_timestamp: moment(req.body.hosting_date).valueOf(),
+                    game_number: game.game_number
+                })
+                .onConflict(['game_id'])
+                .merge()
+                .returning("*")
+                .then( resultInsert => {
+                    // console.log(resultInsert);
+                    let nextGameNumber = calculateNextGameNumber(eventDetails.bracket_size, req.body.event_game_number);
+
+                    res.status(200).json({"SetId": setId, "gameIds": "no game Ids yet", "next game Number": nextGameNumber})
+                })
+                .catch( err => { //also catch if tournament_id doesn't exist error
+                    console.log(err);
+                    handleResponse(res, 500, err);
+                });
+        }
+    } else {
+        handleResponse(res, 200, "Set created, no game scores to input");
+    }
 })
 
 
 function calculateNextGameNumber(s, currentGameNumber) {
-    let s = 16;
-    let d = Math.log2(s);
-    let currentGameNumber = 13;
+    console.log(s);
+    console.log(currentGameNumber);
     let levels = [];
     let startingGame = [];
     let s1 = s;
@@ -153,21 +224,15 @@ function calculateNextGameNumber(s, currentGameNumber) {
     for(let i=0; s1 > 1; i++) {
         levels.push(Math.ceil(s1/2));
         if(startingGame.length == 0) {
-            // console.log(levels[levels.length-1]);
             sumGamesLevels.push(s1/2);
             startingGame.push(1)    
         } else {
-            // console.log(levels[levels.length-1]);
             sumGamesLevels.push(levels[levels.length-1] + sumGamesLevels[sumGamesLevels.length-1])
             startingGame.push(levels[levels.length-1] + Math.ceil(s1/2) + startingGame[startingGame.length-1])
         }
         s1 = Math.ceil(s1/2);
     }
-    console.log(levels);
-    console.log(startingGame);
-    console.log(sumGamesLevels);
     let g2 = null;
-
     //calculates next seeded game number
     for(let i=0; i <= startingGame.length; i++) {
         if(currentGameNumber == s-1) {
@@ -180,11 +245,12 @@ function calculateNextGameNumber(s, currentGameNumber) {
             g2 = g + sumGamesLevels[i];
             break;
         } else if(g < startingGame[i]) {
-            // console.log(sumGamesLevels[i-1]);
             g2 = g + sumGamesLevels[i-1]
             break;
         }
     }
+    // console.log(g2);
+    return g2;
 }
 
 function handleResponse(res, code, message) {
