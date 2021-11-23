@@ -220,8 +220,9 @@ function calculateNextGameNumber(s, currentGameNumber) {
     let startingGame = [];
     let s1 = s;
     let sumGamesLevels = [];
+    let g2 = null;
 
-    for(let i=0; s1 > 1; i++) {
+    while(s1 > 1) {
         levels.push(Math.ceil(s1/2));
         if(startingGame.length == 0) {
             sumGamesLevels.push(s1/2);
@@ -232,7 +233,7 @@ function calculateNextGameNumber(s, currentGameNumber) {
         }
         s1 = Math.ceil(s1/2);
     }
-    let g2 = null;
+    
     //calculates next seeded game number
     for(let i=0; i <= startingGame.length; i++) {
         if(currentGameNumber == s-1) {
@@ -249,7 +250,6 @@ function calculateNextGameNumber(s, currentGameNumber) {
             break;
         }
     }
-    // console.log(g2);
     return g2;
 }
 
