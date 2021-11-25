@@ -164,17 +164,22 @@ tournaments.post('/updateSet', async function(req, res, next) {
         if(response.status == 200) {
             
             let insertGameResponse = await Games.insertGames(req.body)
-            console.log("insertGameResponse: ");
-            console.log(insertGameResponse);
+            // console.log("insertGameResponse: ");
+            // console.log(insertGameResponse);
             if(insertGameResponse.status != 200) {
                 handleResponse(res, insertGameResponse.status, insertGameResponse.message);
                 return;
             }
 
             //after creating games, check for nextSet logic
-            let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body);
-            console.log("nextSetResponse Response: ");
-            console.log(nextSetResponse);
+            let nextWinnerGameNumber = calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.event_game_number); //todo move this out into separate func and insert
+            let nextLoserGameNumber = calculateNextLoserGameNumber(eventDetails.bracket_size, req.body.event_game_number);
+            let winners = Sets.findWinningTeam(req.body);
+            let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextWinnerGameNumber, winners);
+
+            let nextLoserSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextLoserGameNumber);
+            // console.log("nextSetResponse Response: ");
+            // console.log(nextSetResponse);
             //send response back after everything
             res.status(nextSetResponse.status).json(nextSetResponse.message);
         } else {

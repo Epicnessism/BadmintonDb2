@@ -48,8 +48,8 @@ async function insertSet(body) {
  * @param {a Set Body} body 
  * @returns something like a {status:, message:}???
  */
-async function findOrInsertNextSet(eventDetails, set) {
-    let nextGameNumber = calculateNextWinnerGameNumber(eventDetails.bracket_size, set.event_game_number); //todo move this out into separate func and insert
+async function findOrInsertNextSet(eventDetails, set, nextGameNumber, playersToInsert) {
+    // let nextGameNumber = calculateNextWinnerGameNumber(eventDetails.bracket_size, set.event_game_number); //todo move this out into separate func and insert
     console.log(nextGameNumber);
     if(!set.completed) {
         console.log("Set incomplete, not inserting next set");
@@ -64,19 +64,19 @@ async function findOrInsertNextSet(eventDetails, set) {
         .andWhere('tournament_id', set.tournament_id)
         .andWhere('event_game_number', nextGameNumber)
         .then(foundNextSet => {
-            let winners = findWinningTeam(set);
+            // let playersToInsert = findWinningTeam(set);
             if(foundNextSet.length == 1) {
                 nextSet = foundNextSet[0];
-                if(!doPlayersExistInSet(nextSet, winners.player1, winners.player2)) {
+                if(!doPlayersExistInSet(nextSet, playersToInsert.player1, playersToInsert.player2)) {
                     //players do not exist in the already existing set, so find empty spots and add them
                     if(nextSet.player_id_1 == null) {
                         //add to players 1+2
-                        nextSet.player_id_1 = winners.player1;
-                        nextSet.player_id_2 = winners.player2;
+                        nextSet.player_id_1 = playersToInsert.player1;
+                        nextSet.player_id_2 = playersToInsert.player2;
                     } else {
                         //add to players 3+4
-                        nextSet.player_id_3 = winners.player1;
-                        nextSet.player_id_4 = winners.player2;
+                        nextSet.player_id_3 = playersToInsert.player1;
+                        nextSet.player_id_4 = playersToInsert.player2;
                     }
                 }
             } else {
@@ -86,8 +86,8 @@ async function findOrInsertNextSet(eventDetails, set) {
                     tournament_id: set.tournament_id,
                     event_id: set.event_id,
                     event_game_number: nextGameNumber,
-                    player_id_1: winners.player1,
-                    player_id_2: winners.player2,
+                    player_id_1: playersToInsert.player1,
+                    player_id_2: playersToInsert.player2,
                     game_type: set.game_type,
                 }
             }
@@ -99,6 +99,11 @@ async function findOrInsertNextSet(eventDetails, set) {
     console.log(resultsInsertNextSet);
     return resultsInsertNextSet;
 }
+
+async function calculateNextLoserGameNumber() {
+
+}
+
 
 /**
  * @warn no validation on SetObject input
@@ -210,4 +215,4 @@ function calculateNextWinnerGameNumber(s, currentGameNumber) {
 }
 
 
-module.exports = {insertSet, validSetInputFields, findOrInsertNextSet, calculateNextWinnerGameNumber}
+module.exports = {insertSet, validSetInputFields, findOrInsertNextSet, calculateNextWinnerGameNumber, findWinningTeam}
