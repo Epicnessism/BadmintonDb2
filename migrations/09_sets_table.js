@@ -9,11 +9,12 @@ exports.up = function(knex) {
 
         table.uuid('player_id_1').notNullable();
         table.uuid('player_id_2').nullable();
-        table.uuid('player_id_3').notNullable();
+        table.uuid('player_id_3').nullable();
         table.uuid('player_id_4').nullable();
 
         table.string('game_type').notNullable(); //'singles'/'doubles' //TODO probably can get rid of this
         table.boolean('completed').defaultsTo(false);
+        table.integer('winning_team').nullable(); //1,2
 
         table.foreign('player_id_1').references('users.user_id');
         table.foreign('player_id_2').references('users.user_id');

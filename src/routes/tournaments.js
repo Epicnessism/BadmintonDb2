@@ -2,8 +2,9 @@ const express = require('express');
 const knex = require('../dbconfig');
 const tournaments = express.Router();
 const { v4: uuidv4 } = require('uuid');
-var moment = require('moment'); // require
+var moment = require('moment');
 const Sets = require('../controllers/Sets');
+const Games = require('../controllers/Games');
 
 //grab players by substring or all
 // router.get('/create', authHelpers.loginRequired, function(req, res, next) {
@@ -158,46 +159,24 @@ tournaments.post('/updateSet', async function(req, res, next) {
     if(validationResponse.status == 400) {
         handleResponse(res, validationResponse.status, validationResponse.message)
     } else {
-        req.body.set_id = uuidv4(); //create setid
         let response = await Sets.insertSet(req.body)
         console.log(response);
         if(response.status == 200) {
-            //todo NOW CREATE GAMES
-            //after inserting the set, attempt to insert the game details now
-            //game details should be an array and looped through to support multiple game updations
-            let gameScores = req.body.game_scores; //[{gameNumber:1, team_1_points: 21, team_2_points: 18}]
-            // console.log("gameScores: ");
-            // console.log(req.body.game_scores);
-            if(gameScores) {
-                for(const game of gameScores) {
-                    await knex('games')
-                        .insert({
-                            game_id: game.gameId != null ? game.gameId : uuidv4(),
-                            set_id: setId,
-                            team_1_points: game.team_1_points,
-                            team_2_points: game.team_2_points,
-                            completed: game.completed,
-                            created_timestamp: moment(req.body.hosting_date).valueOf(),
-                            game_number: game.game_number
-                        })
-                        .onConflict(['game_id'])
-                        .merge()
-                        .returning("*")
-                        .then( resultInsert => {
-                            // console.log(resultInsert);
-                            let nextGameNumber = calculateNextGameNumber(eventDetails.bracket_size, req.body.event_game_number);
-
-                            res.status(200).json({"SetId": setId, "gameIds": "no game Ids yet", "next game Number": nextGameNumber})
-                        })
-                        .catch( err => { //also catch if tournament_id doesn't exist error
-                            console.log(err);
-                            handleResponse(res, 500, err);
-                        });
-                }
-            } else {
-                res.status(response.status).json({message: response.message})
-                // handleResponse(res, 200, "Set created, no game scores to input");
+            
+            let insertGameResponse = await Games.insertGames(req.body)
+            console.log("insertGameResponse: ");
+            console.log(insertGameResponse);
+            if(insertGameResponse.status != 200) {
+                handleResponse(res, insertGameResponse.status, insertGameResponse.message);
+                return;
             }
+
+            //after creating games, check for nextSet logic
+            let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body);
+            console.log("nextSetResponse Response: ");
+            console.log(nextSetResponse);
+            //send response back after everything
+            res.status(nextSetResponse.status).json(nextSetResponse.message);
         } else {
             handleResponse(res, response.status, response.message)
         }
@@ -206,46 +185,6 @@ tournaments.post('/updateSet', async function(req, res, next) {
     
 })
 
-
-function calculateNextGameNumber(s, currentGameNumber) {
-    console.log(s);
-    console.log(currentGameNumber);
-    let levels = [];
-    let startingGame = [];
-    let s1 = s;
-    let sumGamesLevels = [];
-    let g2 = null;
-
-    while(s1 > 1) {
-        levels.push(Math.ceil(s1/2));
-        if(startingGame.length == 0) {
-            sumGamesLevels.push(s1/2);
-            startingGame.push(1)    
-        } else {
-            sumGamesLevels.push(levels[levels.length-1] + sumGamesLevels[sumGamesLevels.length-1])
-            startingGame.push(levels[levels.length-1] + Math.ceil(s1/2) + startingGame[startingGame.length-1])
-        }
-        s1 = Math.ceil(s1/2);
-    }
-    
-    //calculates next seeded game number
-    for(let i=0; i <= startingGame.length; i++) {
-        if(currentGameNumber == s-1) {
-            //return null/0/na something to denote no more games to play
-            console.log("return null/0/na something to denote no more games to play");
-            return null;
-        }
-        let g = Math.ceil(currentGameNumber / 2)
-        if(g == startingGame[i]) {
-            g2 = g + sumGamesLevels[i];
-            break;
-        } else if(g < startingGame[i]) {
-            g2 = g + sumGamesLevels[i-1]
-            break;
-        }
-    }
-    return g2;
-}
 
 function handleResponse(res, code, message) {
     res.status(code).json({message});
