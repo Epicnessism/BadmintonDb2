@@ -86,8 +86,8 @@ async function findOrInsertNextSet(eventDetails, set) {
                     tournament_id: set.tournament_id,
                     event_id: set.event_id,
                     event_game_number: nextGameNumber,
-                    player_id_1: set.player_id_1,
-                    player_id_2: set.player_id_2,
+                    player_id_1: winners.player1,
+                    player_id_2: winners.player2,
                     game_type: set.game_type,
                 }
             }
