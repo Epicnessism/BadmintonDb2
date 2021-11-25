@@ -48,7 +48,7 @@ games.post('/createGame', function(req, res, next) {
 
     //TODO USERNAME/SESSION VALIDATION
 
-    validationResponse = validGameInputFields(req.body);
+    let validationResponse = validGameInputFields(req.body);
     console.log("validationresponse message: ", validationResponse );
     if(validationResponse.status == 400) {
         handleResponse(res, validationResponse.status, validationResponse.message)

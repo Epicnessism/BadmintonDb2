@@ -3,7 +3,7 @@ const knex = require('../dbconfig');
 const tournaments = express.Router();
 const { v4: uuidv4 } = require('uuid');
 var moment = require('moment'); // require
-
+const Sets = require('../controllers/Sets');
 
 //grab players by substring or all
 // router.get('/create', authHelpers.loginRequired, function(req, res, next) {
@@ -149,67 +149,61 @@ tournaments.post('/updateSet', async function(req, res, next) {
             handleResponse(res, 500, err);
         });
 
-    let setId = null;
-    await knex('sets')
-        .insert({
-            set_id: req.body.set_id != null ? req.body.set_id : uuidv4(),
-            tournament_id: req.body.tournament_id,
-            event_id: eventDetails.event_id,
-            event_game_number: req.body.event_game_number,
-            player_id_1: req.body.player_id_1,
-            player_id_2: req.body.player_id_2,
-            player_id_3: req.body.player_id_3,
-            player_id_4: req.body.player_id_4,
-            game_type: req.body.game_type,
-            completed: req.body.completed
-        })
-        .onConflict(['set_id'])
-        .merge()
-        .returning("*")
-        .then( resultInsert => {
-            console.log("results Set_id insert");
-            console.log(resultInsert);
-            setId = resultInsert[0].set_id;
-        })
-        .catch( err => {
-            console.log(err);
-            handleResponse(res, 500, err);
-        });
-    
-    //after inserting the set, attempt to insert the game details now
-    //game details should be an array and looped through to support multiple game updations
-    let gameScores = req.body.game_scores; //[{gameNumber:1, team_1_points: 21, team_2_points: 18}]
-    // console.log("gameScores: ");
-    // console.log(req.body.game_scores);
-    if(gameScores) {
-        for(const game of gameScores) {
-            await knex('games')
-                .insert({
-                    game_id: game.gameId != null ? game.gameId : uuidv4(),
-                    set_id: setId,
-                    team_1_points: game.team_1_points,
-                    team_2_points: game.team_2_points,
-                    completed: game.completed,
-                    created_timestamp: moment(req.body.hosting_date).valueOf(),
-                    game_number: game.game_number
-                })
-                .onConflict(['game_id'])
-                .merge()
-                .returning("*")
-                .then( resultInsert => {
-                    // console.log(resultInsert);
-                    let nextGameNumber = calculateNextGameNumber(eventDetails.bracket_size, req.body.event_game_number);
+    let setId = req.body.set_id != null ? req.body.set_id : uuidv4();
 
-                    res.status(200).json({"SetId": setId, "gameIds": "no game Ids yet", "next game Number": nextGameNumber})
-                })
-                .catch( err => { //also catch if tournament_id doesn't exist error
-                    console.log(err);
-                    handleResponse(res, 500, err);
-                });
-        }
+
+    let validationResponse = Sets.validSetInputFields(req.body);
+    console.log("Validation response message: ", validationResponse );
+
+    if(validationResponse.status == 400) {
+        handleResponse(res, validationResponse.status, validationResponse.message)
     } else {
-        handleResponse(res, 200, "Set created, no game scores to input");
+        req.body.set_id = uuidv4(); //create setid
+        let response = await Sets.insertSet(req.body)
+        console.log(response);
+        if(response.status == 200) {
+            //todo NOW CREATE GAMES
+            //after inserting the set, attempt to insert the game details now
+            //game details should be an array and looped through to support multiple game updations
+            let gameScores = req.body.game_scores; //[{gameNumber:1, team_1_points: 21, team_2_points: 18}]
+            // console.log("gameScores: ");
+            // console.log(req.body.game_scores);
+            if(gameScores) {
+                for(const game of gameScores) {
+                    await knex('games')
+                        .insert({
+                            game_id: game.gameId != null ? game.gameId : uuidv4(),
+                            set_id: setId,
+                            team_1_points: game.team_1_points,
+                            team_2_points: game.team_2_points,
+                            completed: game.completed,
+                            created_timestamp: moment(req.body.hosting_date).valueOf(),
+                            game_number: game.game_number
+                        })
+                        .onConflict(['game_id'])
+                        .merge()
+                        .returning("*")
+                        .then( resultInsert => {
+                            // console.log(resultInsert);
+                            let nextGameNumber = calculateNextGameNumber(eventDetails.bracket_size, req.body.event_game_number);
+
+                            res.status(200).json({"SetId": setId, "gameIds": "no game Ids yet", "next game Number": nextGameNumber})
+                        })
+                        .catch( err => { //also catch if tournament_id doesn't exist error
+                            console.log(err);
+                            handleResponse(res, 500, err);
+                        });
+                }
+            } else {
+                res.status(response.status).json({message: response.message})
+                // handleResponse(res, 200, "Set created, no game scores to input");
+            }
+        } else {
+            handleResponse(res, response.status, response.message)
+        }
     }
+    
+    
 })
 
 

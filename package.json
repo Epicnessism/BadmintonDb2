@@ -23,15 +23,15 @@
   },
   "homepage": "https://github.com/Epicnessism/BadmintonDb2#readme",
   "dependencies": {
-    "aws-sdk": "^2.913.0",
+    "aws-sdk": "^2.1036.0",
     "bcrypt": "^5.0.1",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "knex": "^0.95.6",
+    "knex": "^0.95.14",
     "moment": "^2.29.1",
-    "pg": "^8.6.0",
+    "pg": "^8.7.1",
     "sqlite3": "^5.0.2",
     "uuid": "^8.3.2"
   }
