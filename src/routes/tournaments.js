@@ -173,16 +173,24 @@ tournaments.post('/updateSet', async function(req, res, next) {
 
             //after creating games, check for nextSet logic
             let nextWinnerGameNumber = Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.event_game_number)
-            let nextLoserGameNumber = calculateNextLoserGameNumber(eventDetails, req.body)
-            let winners = Sets.findWinningTeam(req.body)
-            let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextWinnerGameNumber, winners)
+            let nextLoserGameNumber = Sets.calculateNextLoserGameNumber(req.body.event_game_number)
+            console.log("nextLoserGameNumber");
+            console.log(nextLoserGameNumber);
+            let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextWinnerGameNumber, Sets.findWinningTeam(req.body))
 
             let nextLoserEvent = await Sets.findNextLoserBracket(eventDetails, req.body)
-            let nextLoserSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextLoserGameNumber)
+            console.log("nextLoserEvent");
+            console.log(nextLoserEvent);
+            let nextLoserSetResponse = null;
+            if (nextLoserEvent != null) {
+                console.log("nextLoserEventNotNull");
+                nextLoserSetResponse = await Sets.findOrInsertNextSet(nextLoserEvent, req.body, nextLoserGameNumber, Sets.findLosingTeam(req.body))
+            }
+            
             // console.log("nextSetResponse Response: ");
             // console.log(nextSetResponse);
             //send response back after everything
-            res.status(nextSetResponse.status).json(nextSetResponse.message);
+            res.status(nextSetResponse.status).json(nextSetResponse.message) //todo fix this
         } else {
             handleResponse(res, response.status, response.message)
         }

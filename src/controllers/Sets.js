@@ -60,13 +60,15 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, playersToI
 
     await knex('sets')
         .select('*')
-        .where('event_id', set.event_id)
-        .andWhere('tournament_id', set.tournament_id)
+        .where('event_id', eventDetails.event_id)
+        .andWhere('tournament_id', eventDetails.tournament_id)
         .andWhere('event_game_number', nextGameNumber)
         .then(foundNextSet => {
             // let playersToInsert = findWinningTeam(set);
             if (foundNextSet.length == 1) {
                 nextSet = foundNextSet[0];
+                console.log("next set????");
+                console.log(nextSet);
                 if (!doPlayersExistInSet(nextSet, playersToInsert.player1, playersToInsert.player2)) {
                     //players do not exist in the already existing set, so find empty spots and add them
                     if (nextSet.player_id_1 == null) {
@@ -111,6 +113,14 @@ function findWinningTeam(setObject) {
         ? { player1: setObject.player_id_1, player2: setObject.player_id_2 }
         : { player1: setObject.player_id_3, player2: setObject.player_id_4 }
 }
+
+
+function findLosingTeam(setObject) {
+    return setObject.winning_team != 1
+        ? { player1: setObject.player_id_1, player2: setObject.player_id_2 }
+        : { player1: setObject.player_id_3, player2: setObject.player_id_4 }
+}
+
 
 function doPlayersExistInSet(setObject, thisPlayer1, thisPlayer2) {
     if (setObject.game_type == 'singles') {
@@ -169,20 +179,25 @@ function validSetInputFields(set) {
     return response
 }
 
-function findNextLoserBracket(eventDetails, setObject) {
+async function findNextLoserBracket(eventDetails, setObject) {
+    let response = null;
     //first if bracket is A or C, and game is less than 3s/4 find next bracket to dropdown into.
     if ((eventDetails.bracket_level == 'A' || eventDetails.bracket_level == 'C') && setObject.event_game_number <= (3 * eventDetails.bracket_size / 4)) {
         //then find event_id of next bracket
-
+        console.log(eventDetails.bracket_level);
+        console.log(setObject.event_game_number);
         let newBracketLevel = null;
-        if (eventDetails.bracket_level == Brackets.A && setObject.event_game_number <= eventDetails.bracket_size / 2) {
+        if (eventDetails.bracket_level == 'A' && setObject.event_game_number <= eventDetails.bracket_size / 2) {
             //first round dropdowns, so go from A to C
+            console.log(Brackets.toLevel(Brackets.toValue(eventDetails.bracket_level) - 2));
             newBracketLevel = Brackets.toLevel(Brackets.toValue(eventDetails.bracket_level) - 2)
         } else {
             //second round dropdowns, go from A to B or C to D
             newBracketLevel = Brackets.toLevel(Brackets.toValue(eventDetails.bracket_level) - 1)
         }
-        await knex('sets')
+        console.log("new bracketLevel");
+        console.log(newBracketLevel);
+        await knex('events')
             .select('*')
             .where('tournament_id', setObject.tournament_id)
             .andWhere('bracket_level', newBracketLevel)
@@ -190,16 +205,19 @@ function findNextLoserBracket(eventDetails, setObject) {
             .then(foundNextBracket => {
                 if (foundNextBracket.length == 1) {
                     //get the set # from that event + set. If set doesn't exist, create and add, otherwise merge
-
+                    console.log("returning foundNextBracket[0]");
+                    console.log(foundNextBracket[0]);
+                    response = foundNextBracket[0]
                 }
 
             })
             .catch(err => {
-                console.log("error inserting set: ");
+                console.log("error finding set: ");
                 console.log(err);
                 response = { status: 500, message: err }
             })
     }
+    return response; //null if knocked out of tournament
 }
 
 
@@ -243,9 +261,9 @@ function calculateNextWinnerGameNumber(s, currentGameNumber) {
     return g2;
 }
 
-async function calculateNextLoserGameNumber(setObject) {
+function calculateNextLoserGameNumber(gameNumber) {
     // if(dropdown) //todo implement types of tournaments later
-    return newGameNumber = Math.ceil(setObject.event_game_number / 2)
+    return Math.ceil(gameNumber / 2)
 }
 
 module.exports = {
@@ -255,5 +273,6 @@ module.exports = {
     calculateNextWinnerGameNumber,
     calculateNextLoserGameNumber,
     findWinningTeam,
-    findNextLoserBracket
+    findNextLoserBracket,
+    findLosingTeam
 }
