@@ -85,8 +85,8 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, playersToI
                 //create new Set with the new game_number and with this player/players inserted
                 nextSet = {
                     set_id: uuidv4(),
-                    tournament_id: set.tournament_id,
-                    event_id: set.event_id,
+                    tournament_id: eventDetails.tournament_id,
+                    event_id: eventDetails.event_id,
                     event_game_number: nextGameNumber,
                     player_id_1: playersToInsert.player1,
                     player_id_2: playersToInsert.player2,
