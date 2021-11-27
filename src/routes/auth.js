@@ -11,17 +11,21 @@ const saltRounds = 7;
 
 auth.post('/login', async (req, res, next) => {
     console.log("req.body: ", req.body);
-    let results;
-    await knex('users').select('username','password').where({username: req.body.username})
+    let foundUser = await knex('users').select('username','password').where({username: req.body.username})
         .then( result => {
             console.log("result: ", result);
-            results = result;
+            return result
         }).catch( (err) => {
             console.log(err);
             handleResponse(res, 500, err);
         })
     
-    await bcrypt.compare(req.body.password, results[0].password, function(err, result) {
+    if(foundUser.length != 1) {
+        handleResponse(res, 400, "Invalid Credentials")
+        return
+    }
+    
+    await bcrypt.compare(req.body.password, foundUser[0].password, function(err, result) {
         if(err) {
             handleResponse(res, 500, {message: "bcrypt failure"})
         } else if(result) {
