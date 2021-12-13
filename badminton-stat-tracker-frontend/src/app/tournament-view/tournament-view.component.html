@@ -1,0 +1,24 @@
+<div>
+  Tournament View Data
+</div>
+<div flex="row">
+  <mat-selection-list>
+    <mat-list-option *ngFor="let player of firstRoundOfPlayers.slice(0,bracketSize)">
+      {{player}}
+    </mat-list-option>
+  </mat-selection-list>
+</div>
+<div flex="25">
+  <mat-selection-list>
+    <mat-list-option *ngFor="let player of secondRoundPlayers">
+      {{player}}
+    </mat-list-option>
+  </mat-selection-list>
+</div>
+<div>
+  <mat-selection-list>
+    <mat-list-option *ngFor="let player of thirdRoundPlayers">
+      {{player}}
+    </mat-list-option>
+  </mat-selection-list>
+</div>

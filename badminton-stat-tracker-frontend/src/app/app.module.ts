@@ -28,14 +28,22 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatGridListModule} from '@angular/material/grid-list';
 // import { NotificationsComponent } from './components/notifications/notifications.component';
 import { MatBadgeModule } from '@angular/material/badge';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TournamentViewComponent } from './tournament-view/tournament-view.component';
+import { TournamentEventComponent } from './tournament-event/tournament-event.component';
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    TournamentViewComponent,
+    TournamentEventComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,
@@ -60,7 +68,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatAutocompleteModule,
     MatProgressSpinnerModule,
     MatDividerModule,
-    MatBadgeModule
+    MatBadgeModule,
+    DragDropModule,
+    MatGridListModule
   ],
   providers: [],
   bootstrap: [AppComponent]
