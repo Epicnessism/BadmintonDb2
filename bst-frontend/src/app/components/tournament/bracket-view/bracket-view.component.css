@@ -1,0 +1,11 @@
+.tile_width {
+  min-width: 400px;
+}
+
+.tile_border_bottom {
+  border-bottom: 1px solid black;
+}
+
+.tile_border_right {
+  border-right: 1px solid black;
+}
