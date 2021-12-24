@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Tile } from 'src/app/interfaces/tile.model';
+import { Set } from 'src/app/interfaces/set.model';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
+import { BracketData } from 'src/app/interfaces/bracket-data.model';
 
 @Component({
   selector: 'app-bracket-view',
@@ -12,6 +14,8 @@ export class BracketViewComponent implements OnInit {
   eventId: string = 'edde8206-78cb-4c59-8125-dc8ca3c8fe97';
   typesOfShoes: string[] = ['Boots', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers'];
   bracket: Tile[][] = [];
+  bracketData: Set[] = [];
+
   depth1: Tile[] = [
     {name: "Tony", gameNumber: 1, statusColor: "Red", score: ""},
     {name: "Kyle", gameNumber: 1, statusColor: "Green", score: ""},
@@ -56,7 +60,13 @@ export class BracketViewComponent implements OnInit {
 
   getBracketData(eventId: string): void {
     this.tournamentDataService.getBracketData(eventId).subscribe(result => {
+      console.log(result[0]);
+      this.bracketData = result;
       console.log(result);
+      console.log(this.bracketData);
+      console.log(result);
+      console.log(this.depth1.length);
+
     });
   }
 

@@ -9,6 +9,21 @@ exports.seed = function(knex) {
         {player_id: "143e4567-e89b-12d3-a456-426614174033", gender: 'F', level: 'B', hand: 'R', location: 'VA', institution: 'GMU'},
         {player_id: "144e4567-e89b-12d3-a456-426614174001", gender: 'F', level: 'A', hand: 'R', location: 'VA', institution: 'GMU'},
         {player_id: "155e4567-e89b-12d3-a456-426614174009", gender: 'M', level: 'A', hand: 'R', location: 'VA'},
+
+        {player_id: "15703364-b3fc-4e82-9752-32c187c2b254", gender: 'M', level: 'C', hand: 'L', location: 'VA', institution: 'GMU'},
+        {player_id: "cf9bdd43-baf2-4d63-a5fc-163e01cf429c", gender: 'M'},
+        {player_id: "7c72223f-c428-4a1f-805e-c2bc16540138", gender: 'M', level: 'B', hand: 'R', location: 'VA', institution: 'GMU'},
+        {player_id: "f77a3a0d-bb1b-460b-9fa1-6ffa8fe96f06", gender: 'M', level: 'A', hand: 'R', location: 'VA', institution: 'GMU'},
+        {player_id: "d686fece-741b-426b-b202-34ab0e019caa", gender: 'M', level: 'A', hand: 'R', location: 'VA'},
+        {player_id: "3a9f4bcd-6acb-4c57-8ceb-1bb18fec53c8", gender: 'M', level: 'C', hand: 'L', location: 'VA', institution: 'GMU'},
+        {player_id: "ff1ca758-edef-4050-8124-55048e7d68af", gender: 'M'},
+        {player_id: "d50d55d6-0907-497c-9b69-7e7fcf1ffc44", gender: 'M', level: 'B', hand: 'R', location: 'VA', institution: 'GMU'},
+        {player_id: "dc39b65d-e991-4598-9bfb-f65400c39007", gender: 'M', level: 'A', hand: 'R', location: 'VA', institution: 'GMU'},
+        {player_id: "d51ac89c-577a-4f61-9dcb-1f8d72207564", gender: 'M', level: 'A', hand: 'R', location: 'VA'},
+        {player_id: "0a5d11b4-19cb-4066-ac66-1be812f699db", gender: 'M'},
+        {player_id: "bbb6e8bf-cb18-49a4-aee4-65ad6950f759", gender: 'M', level: 'B', hand: 'R', location: 'VA', institution: 'GMU'},
+        {player_id: "b4a5e5e7-d955-4200-a41c-d22211827e75", gender: 'M', level: 'A', hand: 'R', location: 'VA', institution: 'GMU'},
+        {player_id: "6f7303e7-fb96-49fa-9fcd-4b1d880e3591", gender: 'M', level: 'A', hand: 'R', location: 'VA'},
       ]);
     });
 };
