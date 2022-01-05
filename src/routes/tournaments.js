@@ -168,7 +168,7 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
     await knex('sets').select( 
         's.id as db_set_id',
         's.set_id',
-        // 's.event_id',
+        's.event_id',
         's.game_type',
         // 's.player_id_1 as p1_id',
         // 's.player_id_2 as p2_id',
@@ -191,7 +191,7 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
         .leftJoin('users as p4', 's.player_id_4', 'p4.user_id')
         .leftJoin('games as g', 'g.set_id', 's.set_id')
         .where('s.event_id', req.params.event_id)
-        .groupBy('s.id','s.set_id','s.game_type')
+        .groupBy('s.id','s.set_id','s.event_id','s.game_type')
         .then(result => {
             console.log(result);
             if (result.length > 1) {
