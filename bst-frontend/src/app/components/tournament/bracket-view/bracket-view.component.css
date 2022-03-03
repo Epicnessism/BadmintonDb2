@@ -9,3 +9,7 @@
 .tile_border_right {
   border-right: 1px solid black;
 }
+
+.score_list{
+  display : contents;
+}
