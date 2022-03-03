@@ -13,7 +13,7 @@ export class TournamentDataService {
   constructor(private http: HttpClient) {
   }
 
-  getBracketData(eventId: string): Observable<Set[]> {
+  getBracketData(eventId: string): Observable<any> {
     console.log(`${environment.backendURL}tournaments/getBracketSetData/${eventId}`);
     return this.http.get<any>(`${environment.backendURL}tournaments/getBracketSetData/${eventId}`);
   }

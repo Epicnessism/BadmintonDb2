@@ -164,37 +164,33 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
     //         handleResponse(res, 500, 'Something went wrong on our end')
     //     })
 
-    //given an event_id, get all sets and games for that bracket and return
-    await knex('sets').select( 
-        's.id as db_set_id',
-        's.set_id',
-        's.event_id',
-        's.game_type',
-        // 's.player_id_1 as p1_id',
-        // 's.player_id_2 as p2_id',
-        // 's.player_id_3 as p3_id',
-        // 's.player_id_4 as p4_id',
-        // 'p1.given_name as p1_given', 'p1.family_name as p1_family',
-        // 'p2.given_name as p2_given', 'p2.family_name as p2_family',
-        // 'p3.given_name as p3_given', 'p3.family_name as p3_family',
-        // 'p4.given_name as p4_given', 'p4.family_name as p4_family',
-        knex.raw("array_agg(distinct concat(g.game_number, ':', g.team_1_points)) as t1_pts"),
-        knex.raw("array_agg(distinct concat(g.game_number, ':', g.team_2_points)) as t2_pts"),
-        knex.raw("array_agg(distinct s.tournament_id) as tournament"),
-        knex.raw("array_agg(distinct s.event_id) as event"),
-        knex.raw("array_agg(distinct (s.player_id_1, s.player_id_2, s.player_id_3, s.player_id_4)) as player_ids")
+    // //given an event_id, get all sets and games for that bracket and return
+    await knex('sets').select(
+        'sets.set_id',
+        'sets.event_id',
+        'sets.game_type',
+        'sets.event_game_number',
+        knex.raw("array_agg(distinct concat(games.game_number, ':', games.team_1_points)) as t1_pts"),
+        knex.raw("array_agg(distinct concat(games.game_number, ':', games.team_2_points)) as t2_pts"),
+        knex.raw("array_agg(distinct (sets.team_id_1)) as team_1_ids"),
+        knex.raw("array_agg(distinct (sets.team_id_2)) as team_2_ids"),
+        knex.raw("array_agg(distinct concat(users.given_name, ' ', users.family_name) ) filter (where teams_to_players.team_id = sets.team_id_1) as t1_names"),
+        knex.raw("array_agg(distinct concat(users.given_name, ' ', users.family_name)) filter (where teams_to_players.team_id = sets.team_id_2) as t2_names"),
+        knex.raw("array_agg(distinct concat(teams_to_players.player_id_1 , '|', teams_to_players.player_id_2) ) filter (where teams_to_players.team_id = sets.team_id_1) as t1_player_ids"),
+        knex.raw("array_agg(distinct concat(teams_to_players.player_id_1 , '|', teams_to_players.player_id_2)) filter (where teams_to_players.team_id = sets.team_id_2) as t2_player_ids"),
         )
-        .from('sets as s')
-        .leftJoin('users as p1', 's.player_id_1', 'p1.user_id')
-        .leftJoin('users as p2', 's.player_id_2', 'p2.user_id')
-        .leftJoin('users as p3', 's.player_id_3', 'p3.user_id')
-        .leftJoin('users as p4', 's.player_id_4', 'p4.user_id')
-        .leftJoin('games as g', 'g.set_id', 's.set_id')
-        .where('s.event_id', req.params.event_id)
-        .groupBy('s.id','s.set_id','s.event_id','s.game_type')
+        .from('sets')
+        // .leftjoin("left join games on sets.set_id = games.set_id")
+        .joinRaw(knex.raw('left join games on sets.set_id = games.set_id'))
+        .joinRaw(knex.raw('left join teams_to_players on teams_to_players.team_id = any (array[sets.team_id_1, sets.team_id_2])'))
+        .joinRaw(knex.raw('left join users on users.user_id = any (array[teams_to_players.player_id_1, teams_to_players.player_id_2])'))
+        .where('sets.event_id', req.params.event_id)
+        .groupBy('sets.set_id','sets.event_id','sets.game_type','sets.event_game_number')
+        .orderBy('sets.event_game_number')
         .then(result => {
             console.log(result);
-            if (result.length > 1) {
+            console.log(result.length);
+            if (result.length >= 1) {
                 res.status(200).json({result})
             } else {
                 handleResponse(res, 400, "Bad Request")

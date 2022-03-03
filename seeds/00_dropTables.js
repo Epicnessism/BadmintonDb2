@@ -15,6 +15,7 @@ exports.seed = function (knex, Promise) {
             .then(() => knex('sets').del())
             .then(() => knex('events').del())
             .then(() => knex('tournaments').del())
+            .then(() => knex('teams_to_players').del())
             .then(() => knex('players').del())
             .then(() => knex('users').del())
 }
