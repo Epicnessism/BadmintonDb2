@@ -4,6 +4,7 @@
       <{{i+1}}>  {{tile.t1_names}} |  {{tile.t2_names}}
       <span class="score_list" *ngFor="let point of tile.t1_pts; index as ind"> {{point[1]}}:{{tile.t2_pts[ind][1]}}<span class="score_list" *ngIf="ind < tile.t1_pts.length-1">,</span> </span>
       <!-- TODO why do spans not in-line automatically????????? investigate in the future -->
+      <button mat-button (click)="openDialog()">Open dialog</button>
     </mat-list-option>
   </mat-selection-list>
 </div>

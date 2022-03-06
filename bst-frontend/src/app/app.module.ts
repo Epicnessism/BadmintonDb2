@@ -27,10 +27,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {MatDialogModule} from '@angular/material/dialog';
 // import {MatGridListModule} from '@angular/material/grid-list';
 import { MatBadgeModule } from '@angular/material/badge';
 import { LoginComponent } from './components/login/login.component';
-import { BracketViewComponent } from './components/tournament/bracket-view/bracket-view.component';
+import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 
@@ -41,7 +42,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     AppComponent,
     LoginComponent,
     BracketViewComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    SetDetailsDiaglogComponent
   ],
   imports: [
     BrowserModule,
@@ -68,9 +70,10 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     MatDividerModule,
     MatBadgeModule,
     DragDropModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatDialogModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

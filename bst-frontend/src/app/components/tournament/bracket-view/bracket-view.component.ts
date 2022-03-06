@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Inject } from '@angular/core';
 import { Tile } from 'src/app/interfaces/tile.model';
 import { Set } from 'src/app/interfaces/set.model';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
 import { BracketData } from 'src/app/interfaces/bracket-data.model';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-bracket-view',
@@ -13,7 +14,7 @@ import { BracketData } from 'src/app/interfaces/bracket-data.model';
 export class BracketViewComponent implements OnInit {
 
   eventId: string = 'edde8206-78cb-4c59-8125-dc8ca3c8fe97';
-  typesOfShoes: string[] = ['Boots', 'Clogs', 'Loafers', 'Moccasins', 'Sneakers'];
+  bracketMetaData: Map<string,string> = new Map();
   bracket: any[][] = [];
   bracketData: any[] = [];
 
@@ -38,14 +39,22 @@ export class BracketViewComponent implements OnInit {
   id: string[] = ['one', 'two', 'three', 'four']
 
   constructor(
-    private tournamentDataService: TournamentDataService
+    private tournamentDataService: TournamentDataService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
-
+    this.bracketMetaData.set('bracketSize', '16');
 
     this.getBracketData(this.eventId);
+  }
 
+  openDialog() {
+    const dialogRef = this.dialog.open(SetDetailsDiaglogComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
   getBracketData(eventId: string): void {
@@ -59,7 +68,9 @@ export class BracketViewComponent implements OnInit {
   }
 
   splitBracketData(): void {
-    this.depth1 = this.bracketData.splice(0,8);
+    let bracketsize = this.bracketMetaData.get("bracketSize")!;
+    console.log(bracketsize);
+    this.depth1 = this.bracketData.splice(0, parseInt(bracketsize) /2);
     console.log(this.depth1);
 
     this.bracket.push(this.depth1);
@@ -69,4 +80,24 @@ export class BracketViewComponent implements OnInit {
     console.log(this.bracket);
   }
 
+}
+
+export interface DialogData {
+  animal: string;
+  name: string;
+}
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  templateUrl: 'dialog-overview-example-dialog.html',
+})
+export class SetDetailsDiaglogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<SetDetailsDiaglogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }
