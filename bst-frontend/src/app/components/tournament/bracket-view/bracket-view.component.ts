@@ -5,6 +5,21 @@ import { TournamentDataService } from 'src/app/services/tournament-data.service'
 import { BracketData } from 'src/app/interfaces/bracket-data.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
+
+export interface SetData {
+  eventGameNumber: number;
+  eventId: string; //TODO uuid type in the future?
+  gameType: string;
+  setId: string;
+  t1_names: string[];
+  t1_player_ids: string[];
+  t1_pts: string[][];
+  t2_names: string[];
+  t2_player_ids: string[];
+  t2_pts: string[][];
+}
+
+
 @Component({
   selector: 'app-bracket-view',
   changeDetection: ChangeDetectionStrategy.Default, //TODO FIX THIS SO WE CAN UPDATE OUR DATA
@@ -49,8 +64,9 @@ export class BracketViewComponent implements OnInit {
     this.getBracketData(this.eventId);
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(SetDetailsDiaglogComponent);
+  openDialog(setData: any) { //TODO add data interface for setData
+    console.log(setData);
+    const dialogRef = this.dialog.open(SetDetailsDiaglogComponent, {data: setData});
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
@@ -82,11 +98,6 @@ export class BracketViewComponent implements OnInit {
 
 }
 
-export interface DialogData {
-  animal: string;
-  name: string;
-}
-
 @Component({
   selector: 'dialog-overview-example-dialog',
   templateUrl: 'dialog-overview-example-dialog.html',
@@ -94,8 +105,13 @@ export interface DialogData {
 export class SetDetailsDiaglogComponent {
   constructor(
     public dialogRef: MatDialogRef<SetDetailsDiaglogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA) public setData: SetData,
   ) {}
+
+  updateSet(): void {
+    //TODO add functionality here
+    this.dialogRef.close();
+  }
 
   onNoClick(): void {
     this.dialogRef.close();
