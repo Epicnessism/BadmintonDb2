@@ -14,13 +14,13 @@ export class ValidGameDataService {
   }
 
   //TODO add enum to return different reasons for invalid state
-  validateGamePointsNum(t1Points: number, t2Points: number) {
+  validateGamePointsNum(t1Points: number, t2Points: number): boolean {
     if(t1Points == t2Points) { return false}
 
     let maxPoints = t1Points > t2Points ? t1Points : t2Points;
     let winByTwo = t1Points >= t2Points + 2 || t2Points >= t1Points + 2;
     let exactlyTwoIfPastTwentyOne = maxPoints > 21 ? (maxPoints == t1Points + 2 || maxPoints == t2Points + 2) : true;
 
-    return maxPoints && winByTwo && exactlyTwoIfPastTwentyOne
+    return winByTwo && exactlyTwoIfPastTwentyOne
   }
 }
