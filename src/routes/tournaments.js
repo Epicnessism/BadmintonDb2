@@ -129,41 +129,6 @@ tournaments.get('/getAllPlayers/:tournamentId', function (req, res, next) {
 tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) {
     console.log(req.params);
 
-    // await knex('sets').select( 
-    //     's.id as db_set_id',
-    //     's.set_id',
-    //     's.event_id',
-    //     's.game_type',
-    //     's.player_id_1 as p1_id',
-    //     's.player_id_2 as p2_id',
-    //     's.player_id_3 as p3_id',
-    //     's.player_id_4 as p4_id',
-    //     'p1.given_name as p1_given', 'p1.family_name as p1_family',
-    //     'p2.given_name as p2_given', 'p2.family_name as p2_family',
-    //     'p3.given_name as p3_given', 'p3.family_name as p3_family',
-    //     'p4.given_name as p4_given', 'p4.family_name as p4_family',
-    //     'g.team_1_points', 'g.team_2_points', 'g.game_number', 'g.game_id')
-    //     .from('sets as s')
-    //     .leftJoin('users as p1', 's.player_id_1', 'p1.user_id')
-    //     .leftJoin('users as p2', 's.player_id_2', 'p2.user_id')
-    //     .leftJoin('users as p3', 's.player_id_3', 'p3.user_id')
-    //     .leftJoin('users as p4', 's.player_id_4', 'p4.user_id')
-    //     .leftJoin('games as g', 'g.set_id', 's.set_id')
-    //     .where('s.event_id', req.params.event_id)
-    //     .orderBy('s.id', 'asc')
-    //     .then(result => {
-    //         console.log(result);
-    //         if (result.length > 1) {
-    //             res.status(200).json({result})
-    //         } else {
-    //             handleResponse(res, 400, "Bad Request")
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.log(error.message);
-    //         handleResponse(res, 500, 'Something went wrong on our end')
-    //     })
-
     // //given an event_id, get all sets and games for that bracket and return
     await knex('sets').select(
         'sets.set_id',

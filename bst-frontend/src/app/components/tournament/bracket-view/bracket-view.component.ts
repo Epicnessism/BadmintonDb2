@@ -4,6 +4,7 @@ import { Set } from 'src/app/interfaces/set.model';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
 import { BracketData } from 'src/app/interfaces/bracket-data.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { ValidGameDataService } from 'src/app/services/valid-game-data.service';
 
 
 export interface SetData {
@@ -28,28 +29,18 @@ export interface SetData {
 })
 export class BracketViewComponent implements OnInit {
 
-  eventId: string = 'edde8206-78cb-4c59-8125-dc8ca3c8fe97';
-  bracketMetaData: Map<string,string> = new Map();
-  bracket: any[][] = [];
-  bracketData: any[] = [];
+  eventId: string = 'edde8206-78cb-4c59-8125-dc8ca3c8fe97'
+  bracketMetaData: Map<string,string> = new Map()
+  bracket: any[][] = []
+  bracketData: any[] = []
 
-  depth1: any[] = [];
+  depth1: any[] = []
 
-  depth2: any[] = [
-    {name: "Kyle", gameNumber: 3, statusColor: "Orange", score: "21/16, 19/21, 21/5"},
-    {name: "Alex", gameNumber: 3, statusColor: "Orange", score: ""},
-    {name: "Zoe", gameNumber: 3, statusColor: "Orange", score: ""},
-    {name: "Tim", gameNumber: 3, statusColor: "Orange", score: ""},
-  ]
+  depth2: any[] = []
 
-  depth3: any[] = [
-    {name: "Kyle", gameNumber: -1, statusColor: "Orange", score: ""},
-    {name: "Tim", gameNumber: 3, statusColor: "Orange", score: ""},
-  ]
+  depth3: any[] = []
 
-  depth4: any[] = [
-    {name: "Tim", gameNumber: 3, statusColor: "Orange", score: ""},
-  ]
+  depth4: any[] = []
 
   id: string[] = ['one', 'two', 'three', 'four']
 
@@ -106,10 +97,12 @@ export class SetDetailsDiaglogComponent {
   constructor(
     public dialogRef: MatDialogRef<SetDetailsDiaglogComponent>,
     @Inject(MAT_DIALOG_DATA) public setData: SetData,
+    private validGameDataService: ValidGameDataService
   ) {}
 
   updateSet(): void {
     //TODO add functionality here
+    this.validGameDataService.validateGamePointsString(this.setData.t1_pts, this.setData.t2_pts)
     this.dialogRef.close();
   }
 
