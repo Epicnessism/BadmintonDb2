@@ -34,3 +34,4 @@ We leverage [Angular Material](https://material.angular.io/components/categories
 
 - [Explaining how (change) and (ngModelChange) events work](https://ultimatecourses.com/blog/difference-change-ngmodelchange-angular)
 - [Great StackOverflow explanation on how to make custom input validation errors](https://stackoverflow.com/questions/47884655/display-custom-validator-error-with-mat-error)
+- [Mooooore documentation on how to make custom validation???](https://medium.com/angular-in-depth/angular-forms-reactive-form-including-angular-material-and-custom-validator-9ef324cc3b08)
