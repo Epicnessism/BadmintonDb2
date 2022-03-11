@@ -135,6 +135,8 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
         'sets.event_id',
         'sets.game_type',
         'sets.event_game_number',
+        'sets.completed', 
+        'sets.winning_team',
         knex.raw("array_agg(distinct array[cast(games.game_number as text), cast(games.team_1_points as text)]) as t1_pts"),
         knex.raw("array_agg(distinct array[cast(games.game_number as text), cast(games.team_2_points as text)]) as t2_pts"),
         knex.raw("array_agg(distinct (sets.team_id_1)) as team_1_ids"),
@@ -150,7 +152,7 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
         .joinRaw(knex.raw('left join teams_to_players on teams_to_players.team_id = any (array[sets.team_id_1, sets.team_id_2])'))
         .joinRaw(knex.raw('left join users on users.user_id = any (array[teams_to_players.player_id_1, teams_to_players.player_id_2])'))
         .where('sets.event_id', req.params.event_id)
-        .groupBy('sets.set_id','sets.event_id','sets.game_type','sets.event_game_number')
+        .groupBy('sets.set_id','sets.event_id','sets.game_type','sets.event_game_number', 'sets.completed', 'sets.winning_team')
         .orderBy('sets.event_game_number')
         .then(result => {
             console.log(result);
