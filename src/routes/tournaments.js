@@ -158,7 +158,7 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
             console.log(result);
             console.log(result.length);
             if (result.length >= 1) {
-                res.status(200).json({result})
+                res.status(200).json(result)
             } else {
                 handleResponse(res, 400, "Bad Request")
             }

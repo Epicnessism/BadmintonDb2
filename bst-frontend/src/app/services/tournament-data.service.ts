@@ -13,9 +13,14 @@ export class TournamentDataService {
   constructor(private http: HttpClient) {
   }
 
-  getBracketData(eventId: string): Observable<any> {
-    console.log(`${environment.backendURL}tournaments/getBracketSetData/${eventId}`);
-    return this.http.get<any>(`${environment.backendURL}tournaments/getBracketSetData/${eventId}`);
+  getBracketData(eventId: string): Observable<Set[]> {
+    console.log(`${environment.backendURL}tournaments/getBracketSetData/${eventId}`)
+    return this.http.get<any>(`${environment.backendURL}tournaments/getBracketSetData/${eventId}`)
   }
+
+  // postSetData(setData: SetData): Observable<any> {
+  //   console.log(`${environment.backendURL}tournaments/postSetData/${setData.setId}`);
+
+  // }
 
 }

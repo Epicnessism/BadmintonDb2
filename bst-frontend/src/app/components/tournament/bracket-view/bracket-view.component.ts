@@ -6,21 +6,6 @@ import { BracketData } from 'src/app/interfaces/bracket-data.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ValidGameDataService } from 'src/app/services/valid-game-data.service';
 
-
-export interface SetData {
-  eventGameNumber: number;
-  eventId: string; //TODO uuid type in the future?
-  gameType: string;
-  setId: string;
-  t1_names: string[];
-  t1_player_ids: string[];
-  t1_pts: string[][];
-  t2_names: string[];
-  t2_player_ids: string[];
-  t2_pts: string[][];
-}
-
-
 @Component({
   selector: 'app-bracket-view',
   changeDetection: ChangeDetectionStrategy.Default, //TODO FIX THIS SO WE CAN UPDATE OUR DATA
@@ -32,7 +17,7 @@ export class BracketViewComponent implements OnInit {
   eventId: string = 'edde8206-78cb-4c59-8125-dc8ca3c8fe97'
   bracketMetaData: Map<string,string> = new Map()
   bracket: any[][] = []
-  bracketData: any[] = []
+  bracketData: Set[] = []
 
   depth1: any[] = []
 
@@ -66,7 +51,8 @@ export class BracketViewComponent implements OnInit {
 
   getBracketData(eventId: string): void {
     this.tournamentDataService.getBracketData(eventId).subscribe(result => {
-      this.bracketData = result.result;
+      console.log(result);
+      this.bracketData = result;
       console.log(this.bracketData);
       console.log(this.bracketData[0]);
       console.log(this.bracketData.length);
@@ -96,7 +82,7 @@ export class BracketViewComponent implements OnInit {
 export class SetDetailsDiaglogComponent {
   constructor(
     public dialogRef: MatDialogRef<SetDetailsDiaglogComponent>,
-    @Inject(MAT_DIALOG_DATA) public setData: SetData,
+    @Inject(MAT_DIALOG_DATA) public setData: Set,
     private validGameDataService: ValidGameDataService
   ) {}
 

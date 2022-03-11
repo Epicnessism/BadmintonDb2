@@ -1,15 +1,15 @@
 export interface Set {
   completed: boolean,
-  created_timestamp: string,
-  db_set_id: number,
-  event_game_number: number,
-  event_id: string,
-  game_type: string,
-  game_number: number,
-  id: number,
-  set_id: string,
-  team_1_points: string,
-  team_2_points: string,
-  tournament_id: string,
-  winning_team: string
+  eventId: string,
+  eventGameNumber: number,
+  gameType: string,
+  setId: string,
+  t1_names: string[],
+  t1_player_ids: string[],
+  t1_pts: string[][],
+  t2_names: string[],
+  t2_player_ids: string[],
+  t2_pts: string[][],
+  winningTeam: string,
+  createdTimestamp: string
 }
