@@ -40,7 +40,7 @@ export class BracketViewComponent implements OnInit {
     this.getBracketData(this.eventId);
   }
 
-  openDialog(setData: Set) { //TODO add data interface for setData
+  openDialog(setData: Set) {
     console.log(setData);
     const dialogRef = this.dialog.open(SetDetailsDiaglogComponent, {data: setData});
 
