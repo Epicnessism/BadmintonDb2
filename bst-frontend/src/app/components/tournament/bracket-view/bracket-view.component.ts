@@ -87,12 +87,25 @@ export class SetDetailsDiaglogComponent {
   ) {}
 
   updateSet(): void {
-    //TODO add functionality here
-    this.validGameDataService.validateGamePointsString(this.setData.t1_pts, this.setData.t2_pts)
-    this.dialogRef.close();
+    let isValidPoints = this.validGameDataService.validateGamePointsString(this.setData.t1_pts, this.setData.t2_pts)
+    console.log(`the validity of the set points is: ${isValidPoints}`);
+
+    let isValidNumberOfGames = false //todo add this, requires reading metadata
+    if(isValidPoints) {
+      //todo push to db
+    }
+    this.onNoClick()
+  }
+
+  validateInput(setData: Set, gameNumber: number, event: any): boolean {
+    console.log(event)
+    return true
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.close()
   }
 }
+
+// un-used code that works for getting each change event of a form input
+// (ngModelChange)="validateInput(setData, ind, $event)"

@@ -27,3 +27,10 @@ We leverage [Angular Material](https://material.angular.io/components/categories
 4. cd back into the root folder, and run `npm run frontend` to spin up the angular webserver
 5. run `npm run knexfull` to run the knex mgirations AND seed the db.
 6. run `npm run dev` to spin up the node express backend server.
+
+
+
+### Supporting and future reference material
+
+- [Explaining how (change) and (ngModelChange) events work](https://ultimatecourses.com/blog/difference-change-ngmodelchange-angular)
+- [Great StackOverflow explanation on how to make custom input validation errors](https://stackoverflow.com/questions/47884655/display-custom-validator-error-with-mat-error)
