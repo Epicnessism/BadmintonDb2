@@ -82,19 +82,30 @@ export class BracketViewComponent implements OnInit {
 export class SetDetailsDiaglogComponent {
   constructor(
     public dialogRef: MatDialogRef<SetDetailsDiaglogComponent>,
+    private tournamentDataService: TournamentDataService,
     @Inject(MAT_DIALOG_DATA) public setData: Set,
     private validGameDataService: ValidGameDataService
   ) {}
 
   updateSet(): void {
-    let isValidPoints = this.validGameDataService.validateGamePointsString(this.setData.t1_pts, this.setData.t2_pts)
+    let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.setData.t1_pts, this.setData.t2_pts)
     console.log(`the validity of the set points is: ${isValidPoints}`);
 
     let isValidNumberOfGames = false //todo add this, requires reading metadata
+
     if(isValidPoints) {
-      //todo push to db
+
+      this.tournamentDataService.postSetData(this.setData).subscribe( result => {
+        console.log(result);
+        if(result != null) {
+          this.onNoClick()
+        } else {
+          console.log("Error updating set!");
+
+        }
+      })
     }
-    this.onNoClick()
+
   }
 
   validateInput(setData: Set, gameNumber: number, event: any): boolean {

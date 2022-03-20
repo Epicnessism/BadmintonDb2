@@ -128,8 +128,6 @@ tournaments.get('/getAllPlayers/:tournamentId', function (req, res, next) {
 
 tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) {
     console.log(req.params);
-
-    // //given an event_id, get all sets and games for that bracket and return
     await knex('sets').select(
         'sets.set_id',
         'sets.event_id',
@@ -147,7 +145,6 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
         knex.raw("array_agg(distinct concat(teams_to_players.player_id_1 , '|', teams_to_players.player_id_2)) filter (where teams_to_players.team_id = sets.team_id_2) as t2_player_ids"),
         )
         .from('sets')
-        // .leftjoin("left join games on sets.set_id = games.set_id")
         .joinRaw(knex.raw('left join games on sets.set_id = games.set_id'))
         .joinRaw(knex.raw('left join teams_to_players on teams_to_players.team_id = any (array[sets.team_id_1, sets.team_id_2])'))
         .joinRaw(knex.raw('left join users on users.user_id = any (array[teams_to_players.player_id_1, teams_to_players.player_id_2])'))
@@ -178,11 +175,16 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
 tournaments.post('/updateSet', async function (req, res, next) {
     console.log(req.body);
     let eventDetails = null;
+    let setId = req.body.set_id != null ? req.body.set_id : uuidv4();
+
+    /*
+    attempt to find the setId in the events table to see if it exists. If it doesn't exist, throw 404
+    */
     await knex('events')
         .select("*")
         .where('event_id', req.body.event_id)
         .then(result => {
-            console.log("RESULTS OF FINDING EVENT_ID");
+            console.log("RESULTS OF FINDING EVENT_ID: ");
             console.log(result);
             if (result.length == 1) {
                 eventDetails = result[0];
@@ -195,14 +197,11 @@ tournaments.post('/updateSet', async function (req, res, next) {
             handleResponse(res, 500, err);
         });
 
-    let setId = req.body.set_id != null ? req.body.set_id : uuidv4();
-
-
-    let validationResponse = Sets.validSetInputFields(req.body);
+    let validationResponse = Sets.validateSetFormatData(req.body);
 
     if (validationResponse.status == 400) {
         handleResponse(res, validationResponse.status, validationResponse.message)
-    } else {
+    } else { 
         let response = await Sets.insertSet(req.body)
         console.log(response);
         if (response.status == 200) {

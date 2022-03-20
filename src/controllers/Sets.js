@@ -132,37 +132,31 @@ function doPlayersExistInSet(setObject, thisPlayer1, thisPlayer2) {
 }
 
 /**
- * validates the input of a set object
+ * validates the input of a set object for team_ids, game type, completed, and winning_team
  * @param {} game 
  * @returns 
  */
-function validSetInputFields(set) {
+function validateSetFormatData(set) {
     var response = { message: [] }
 
-    if ((set.player_id_1 == null || set.player_id_3 == null)) {
-        response.message != 'player_id_1 and/or player_id_3 is null which is not a valid set\n'
+    if ((set.team_id_1 == null || set.team_id_2 == null)) {
+        response.message = 'team_id_1 and/or team_id_2 is null which is not a valid team_id value'
     }
 
 
-    if (set.game_type == 'doubles' && (set.player_id_2 == null || set.player_id_4 == null)) {
-        response.message.push('player_id_2 and/or player_id_4 are null when game_type is doubles')
-    }
-    if (set.game_type == 'singles' && (set.player_id_2 != null || set.player_id_4 != null)) {
-        response.message.push('player_id_2 and/or player_id_4 are NOT null when game_type is singles')
-    }
+    // if (set.game_type == 'doubles' && (set.player_id_2 == null || set.player_id_4 == null)) {
+    //     response.message.push('player_id_2 and/or player_id_4 are null when game_type is doubles')
+    // }
+    // if (set.game_type == 'singles' && (set.player_id_2 != null || set.player_id_4 != null)) {
+    //     response.message.push('player_id_2 and/or player_id_4 are NOT null when game_type is singles')
+    // }
 
 
-    if (set.player_id_1 == null || !validateUUID(set.player_id_1)) {
+    if (set.team_id_1 == null || !validateUUID(set.team_id_1)) {
         response.message.push('player_id_1 is not a valid uuid')
     }
-    if (set.player_id_2 != null && !validateUUID(set.player_id_2)) {
+    if (set.team_id_2 != null && !validateUUID(set.team_id_2)) {
         response.message.push('player_id_2 is not a valid uuid')
-    }
-    if (set.player_id_3 == null || !validateUUID(set.player_id_3)) {
-        response.message.push('player_id_3 is not a valid uuid')
-    }
-    if (set.player_id_2 != null && !validateUUID(set.player_id_4)) {
-        response.message.push('player_id_4 is not a valid uuid')
     }
 
     //make sure completed and winners are in sync
@@ -170,12 +164,11 @@ function validSetInputFields(set) {
         response.message.push('completed and winning_team not in the right state')
     }
 
+    console.log(response.message);
 
     if (response.message.length != 0) {
         response.status = 400
     }
-
-    console.log(response.message);
     return response
 }
 
@@ -268,7 +261,7 @@ function calculateNextLoserGameNumber(gameNumber) {
 
 module.exports = {
     insertSet,
-    validSetInputFields,
+    validateSetFormatData,
     findOrInsertNextSet,
     calculateNextWinnerGameNumber,
     calculateNextLoserGameNumber,

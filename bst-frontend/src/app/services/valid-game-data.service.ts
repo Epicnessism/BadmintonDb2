@@ -7,7 +7,7 @@ export class ValidGameDataService {
 
   constructor() { }
 
-  validateGamePointsString(t1PointsStringArray: string[][], t2PointsStringArray: string[][]) {
+  validateGamePointsStrings(t1PointsStringArray: string[][], t2PointsStringArray: string[][]) {
     let t1Points: number[] = t1PointsStringArray.map(gameArray => Number(gameArray[1]))
     let t2Points: number[] = t2PointsStringArray.map(gameArray => Number(gameArray[1]))
     for(let i = 0; i < t1Points.length; i++) {
