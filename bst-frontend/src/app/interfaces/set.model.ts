@@ -1,15 +1,18 @@
 export interface Set {
   completed: boolean,
-  eventId: string,
   eventGameNumber: number,
+  eventId: string,
   gameType: string,
   setId: string,
-  t1_names: string[],
-  t1_player_ids: string[],
-  t1_pts: string[][],
-  t2_names: string[],
-  t2_player_ids: string[],
-  t2_pts: string[][],
+  team_1_names: string[],
+  team_1_player_ids: string[],
+  team_1_points: string[][],
+  team_2_names: string[],
+  team_2_player_ids: string[],
+  team_2_points: string[][],
+  team_1_id: string,
+  team_2_id: string,
   winningTeam: string,
-  createdTimestamp: string
+  createdTimestamp: string,
+  tournament_id: string
 }

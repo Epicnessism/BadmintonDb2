@@ -13,20 +13,24 @@ async function insertGames(setObject) {
     console.log("inside insertGames");
     
     //gameScores = [{gameNumber:1, team_1_points: 21, team_2_points: 18}]
-    let gameScores = setObject.game_scores;
+    console.log(setObject);
+
+    let gameScores = setObject.team_1_points != null && setObject.team_2_points != null
     if(gameScores) {
-        for(const game of gameScores) {
-            let validation = validateGameInput(game);
+        for(const [index, game] of Object.entries(setObject.team_1_points)) {
+            const gameObject = {"team_1_points" : game[1], "team_2_points" : setObject.team_2_points[index][1]}
+            let validation = validateGameInput(gameObject);
+            const completedGame = validation.status == 200
             if(validation.status != 400) {
                 await knex('games')
                     .insert({
-                        game_id: game.gameId != null ? game.gameId : uuidv4(),
+                        game_id: gameObject.gameId != null ? gameObject.gameId : uuidv4(),
                         set_id: setObject.set_id,
-                        team_1_points: game.team_1_points,
-                        team_2_points: game.team_2_points,
-                        completed: game.completed,
+                        team_1_points: gameObject.team_1_points,
+                        team_2_points: gameObject.team_2_points,
+                        completed: completedGame,
                         created_timestamp: moment(setObject.created_timestamp).valueOf(),
-                        game_number: game.game_number
+                        game_number: game[0]
                     })
                     .onConflict(['game_id'])
                     .merge()
@@ -42,6 +46,7 @@ async function insertGames(setObject) {
                 return {status: validation.status, message: validation.message}
             }
         }
+        console.log({status: 200, message: "All games inserted"});
         return {status: 200, message: "All games inserted"};
     } else {
         return {status: 203, message: "No game scores to input"};

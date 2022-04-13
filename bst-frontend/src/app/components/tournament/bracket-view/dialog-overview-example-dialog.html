@@ -1,18 +1,19 @@
 <div mat-dialog-content>
-  <h1 mat-dialog-title>{{setData.t1_names}}</h1>
-  <mat-form-field appearance="outline" *ngFor="let game of setData.t1_pts; index as ind">
-    <mat-label>Game: {{setData.t1_pts[ind][0]}}</mat-label>
-    <input matInput type="number" [(ngModel)]="setData.t1_pts[ind][1]">
+  <h1 mat-dialog-title>{{setData.team_1_names}}</h1>
+  <mat-form-field appearance="outline" *ngFor="let game of setData.team_1_points; index as ind">
+    <mat-label>Game: {{setData.team_1_points[ind][0]}}</mat-label>
+    <input matInput type="number" [(ngModel)]="setData.team_1_points[ind][1]">
   </mat-form-field>
   <!-- TODO add button/functionality to add new game field or limit based on setMetaData-->
-  <h1 mat-dialog-title>{{setData.t2_names}}</h1>
-  <mat-form-field appearance="outline" *ngFor="let game of setData.t2_pts; index as ind">
-    <mat-label>Game: {{setData.t2_pts[ind][0]}}</mat-label>
-    <input matInput type="number" [(ngModel)]="setData.t2_pts[ind][1]">
+  <h1 mat-dialog-title>{{setData.team_2_names}}</h1>
+  <mat-form-field appearance="outline" *ngFor="let game of setData.team_2_points; index as ind">
+    <mat-label>Game: {{setData.team_2_points[ind][0]}}</mat-label>
+    <input matInput type="number" [(ngModel)]="setData.team_2_points[ind][1]">
   </mat-form-field>
 </div>
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>
   <button mat-button (click)="updateSet()">Update</button>
+  <button mat-button (click)="completedSet()">Completed</button>
   <!-- <button mat-button [mat-dialog-close]="setData.animal" cdkFocusInitial>Ok</button> -->
 </div>

@@ -15,10 +15,8 @@ async function insertSet(body) {
             tournament_id: body.tournament_id,
             event_id: body.event_id,
             event_game_number: body.event_game_number,
-            player_id_1: body.player_id_1,
-            player_id_2: body.player_id_2,
-            player_id_3: body.player_id_3,
-            player_id_4: body.player_id_4,
+            team_id_1: body.team_1_id,
+            team_id_2: body.team_2_id,
             game_type: body.game_type,
             completed: body.completed,
             winning_team: body.winning_team
@@ -109,16 +107,12 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, playersToI
  * @returns 
  */
 function findWinningTeam(setObject) {
-    return setObject.winning_team == 1
-        ? { player1: setObject.player_id_1, player2: setObject.player_id_2 }
-        : { player1: setObject.player_id_3, player2: setObject.player_id_4 }
+    return setObject.winning_team == 1 ? setObject.team_id_1 : setObject.team_id_2
 }
 
 
 function findLosingTeam(setObject) {
-    return setObject.winning_team != 1
-        ? { player1: setObject.player_id_1, player2: setObject.player_id_2 }
-        : { player1: setObject.player_id_3, player2: setObject.player_id_4 }
+    return setObject.winning_team == 1 ? setObject.team_id_2 : setObject.team_id_1
 }
 
 
@@ -139,24 +133,18 @@ function doPlayersExistInSet(setObject, thisPlayer1, thisPlayer2) {
 function validateSetFormatData(set) {
     var response = { message: [] }
 
-    if ((set.team_id_1 == null || set.team_id_2 == null)) {
-        response.message = 'team_id_1 and/or team_id_2 is null which is not a valid team_id value'
+    // let setId = req.body.set_id != null ? req.body.set_id : uuidv4(); //TODO set this to null?
+
+    if ((set.team_1_id == null || set.team_2_id == null)) {
+        response.message.push('team_1_id and/or team_2_id is null which is not a valid team_id value')
     }
 
-
-    // if (set.game_type == 'doubles' && (set.player_id_2 == null || set.player_id_4 == null)) {
-    //     response.message.push('player_id_2 and/or player_id_4 are null when game_type is doubles')
-    // }
-    // if (set.game_type == 'singles' && (set.player_id_2 != null || set.player_id_4 != null)) {
-    //     response.message.push('player_id_2 and/or player_id_4 are NOT null when game_type is singles')
-    // }
-
-
-    if (set.team_id_1 == null || !validateUUID(set.team_id_1)) {
-        response.message.push('player_id_1 is not a valid uuid')
+    console.log(set.team_1_id);
+    if (set.team_1_id == null || !validateUUID(set.team_1_id[0])) {
+        response.message.push('team_1_id is not a valid uuid')
     }
-    if (set.team_id_2 != null && !validateUUID(set.team_id_2)) {
-        response.message.push('player_id_2 is not a valid uuid')
+    if (set.team_2_id != null && !validateUUID(set.team_2_id[0])) {
+        response.message.push('team_2_id is not a valid uuid')
     }
 
     //make sure completed and winners are in sync
@@ -174,6 +162,7 @@ function validateSetFormatData(set) {
 
 async function findNextLoserBracket(eventDetails, setObject) {
     let response = null;
+    console.log(setObject);
     //first if bracket is A or C, and game is less than 3s/4 find next bracket to dropdown into.
     if ((eventDetails.bracket_level == 'A' || eventDetails.bracket_level == 'C') && setObject.event_game_number <= (3 * eventDetails.bracket_size / 4)) {
         //then find event_id of next bracket
@@ -215,8 +204,8 @@ async function findNextLoserBracket(eventDetails, setObject) {
 
 
 function calculateNextWinnerGameNumber(s, currentGameNumber) {
-    // console.log(s);
-    // console.log(currentGameNumber);
+    console.log(s);
+    console.log(currentGameNumber);
     let levels = [];
     let startingGame = [];
     let s1 = s;

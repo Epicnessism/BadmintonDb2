@@ -19,6 +19,7 @@ export class TournamentDataService {
   }
 
   postSetData(setData: Set): Observable<Set[]> {
+    console.log(setData);
     console.log(`${environment.backendURL}tournaments/updateSet`);
     return this.http.post<any>(`${environment.backendURL}tournaments/updateSet`, setData,  {withCredentials: true})
   }

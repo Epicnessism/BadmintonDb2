@@ -88,13 +88,13 @@ export class SetDetailsDiaglogComponent {
   ) {}
 
   updateSet(): void {
-    let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.setData.t1_pts, this.setData.t2_pts)
+    let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.setData.team_1_points, this.setData.team_2_points)
     console.log(`the validity of the set points is: ${isValidPoints}`);
 
     let isValidNumberOfGames = false //todo add this, requires reading metadata
 
     if(isValidPoints) {
-
+      console.log(this.setData);
       this.tournamentDataService.postSetData(this.setData).subscribe( result => {
         console.log(result);
         if(result != null) {
@@ -106,6 +106,12 @@ export class SetDetailsDiaglogComponent {
       })
     }
 
+  }
+
+
+  completedSet(): void {
+    //TODO do logic for setting completed value and winning team value before calling updateSet
+    this.updateSet()
   }
 
   validateInput(setData: Set, gameNumber: number, event: any): boolean {
