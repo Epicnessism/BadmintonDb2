@@ -18,13 +18,13 @@ async function insertGames(setObject) {
     let gameScores = setObject.team_1_points != null && setObject.team_2_points != null
     if(gameScores) {
         for(const [index, game] of Object.entries(setObject.team_1_points)) {
-            const gameObject = {"team_1_points" : game[1], "team_2_points" : setObject.team_2_points[index][1]}
+            const gameObject = {"game_id": game[2] , "team_1_points" : game[1], "team_2_points" : setObject.team_2_points[index][1]}
             let validation = validateGameInput(gameObject);
             const completedGame = validation.status == 200
             if(validation.status != 400) {
                 await knex('games')
                     .insert({
-                        game_id: gameObject.gameId != null ? gameObject.gameId : uuidv4(),
+                        game_id: gameObject.game_id != null ? gameObject.game_id : uuidv4(),
                         set_id: setObject.set_id,
                         team_1_points: gameObject.team_1_points,
                         team_2_points: gameObject.team_2_points,

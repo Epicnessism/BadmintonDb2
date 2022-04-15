@@ -46,7 +46,7 @@ async function insertSet(body) {
  * @param {a Set Body} body 
  * @returns something like a {status:, message:}???
  */
-async function findOrInsertNextSet(eventDetails, set, nextGameNumber, playersToInsert) {
+async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
     // let nextGameNumber = calculateNextWinnerGameNumber(eventDetails.bracket_size, set.event_game_number); //todo move this out into separate func and insert
     console.log(nextGameNumber);
     if (!set.completed) {
@@ -67,16 +67,14 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, playersToI
                 nextSet = foundNextSet[0];
                 console.log("next set????");
                 console.log(nextSet);
-                if (!doPlayersExistInSet(nextSet, playersToInsert.player1, playersToInsert.player2)) {
+                if (!doPlayersExistInSet(nextSet, team_id)) {
                     //players do not exist in the already existing set, so find empty spots and add them
-                    if (nextSet.player_id_1 == null) {
-                        //add to players 1+2
-                        nextSet.player_id_1 = playersToInsert.player1;
-                        nextSet.player_id_2 = playersToInsert.player2;
+                    if (nextSet.team_1_id == null) {
+                        //add to team 1
+                        nextSet.team_1_id = team_id;
                     } else {
-                        //add to players 3+4
-                        nextSet.player_id_3 = playersToInsert.player1;
-                        nextSet.player_id_4 = playersToInsert.player2;
+                        //add to team 2
+                        nextSet.team_2_id = team_id;
                     }
                 }
             } else {
@@ -86,8 +84,8 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, playersToI
                     tournament_id: eventDetails.tournament_id,
                     event_id: eventDetails.event_id,
                     event_game_number: nextGameNumber,
-                    player_id_1: playersToInsert.player1,
-                    player_id_2: playersToInsert.player2,
+                    team_1_id: team_id,
+                    team_2_id: null,
                     game_type: set.game_type,
                 }
             }
@@ -116,13 +114,8 @@ function findLosingTeam(setObject) {
 }
 
 
-function doPlayersExistInSet(setObject, thisPlayer1, thisPlayer2) {
-    if (setObject.game_type == 'singles') {
-        return setObject.player_id_1 == thisPlayer1 || setObject.player_id_3 == thisPlayer1
-    } else {
-        return (setObject.player_id_1 == thisPlayer1 && setObject.player_id_2 == thisPlayer2)
-            || (setObject.player_id_3 == thisPlayer1 && setObject.player_id_4 == thisPlayer2)
-    }
+function doPlayersExistInSet(setObject, team_id) {
+    return setObject.team_1_id == team_id
 }
 
 /**
