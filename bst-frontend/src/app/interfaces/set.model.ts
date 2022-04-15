@@ -12,7 +12,7 @@ export interface Set {
   team_2_points: string[][],
   team_1_id: string,
   team_2_id: string,
-  winningTeam: string,
+  winning_team: number,
   createdTimestamp: string,
   tournament_id: string
 }

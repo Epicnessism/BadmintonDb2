@@ -131,12 +131,11 @@ function validateSetFormatData(set) {
     if ((set.team_1_id == null || set.team_2_id == null)) {
         response.message.push('team_1_id and/or team_2_id is null which is not a valid team_id value')
     }
-
     console.log(set.team_1_id);
-    if (set.team_1_id == null || !validateUUID(set.team_1_id[0])) {
+    if (set.team_1_id == null || !validateUUID(set.team_1_id)) {
         response.message.push('team_1_id is not a valid uuid')
     }
-    if (set.team_2_id != null && !validateUUID(set.team_2_id[0])) {
+    if (set.team_2_id != null && !validateUUID(set.team_2_id)) {
         response.message.push('team_2_id is not a valid uuid')
     }
 
@@ -155,7 +154,7 @@ function validateSetFormatData(set) {
 
 async function findNextLoserBracket(eventDetails, setObject) {
     let response = null;
-    console.log(setObject);
+    console.log("inside findLoserBracket");
     //first if bracket is A or C, and game is less than 3s/4 find next bracket to dropdown into.
     if ((eventDetails.bracket_level == 'A' || eventDetails.bracket_level == 'C') && setObject.event_game_number <= (3 * eventDetails.bracket_size / 4)) {
         //then find event_id of next bracket

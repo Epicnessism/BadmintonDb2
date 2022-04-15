@@ -113,7 +113,7 @@ export class SetDetailsDiaglogComponent {
     //TODO do logic for setting completed value and winning team value before calling updateSet
     this.setData.completed = true;
     //TODO replace this with a manaul button override for special cases
-    this.setData.winningTeam = "1"
+    this.setData.winning_team = 1
 
     this.updateSet()
   }

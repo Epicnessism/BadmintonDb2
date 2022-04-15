@@ -185,7 +185,9 @@ tournaments.post('/updateSet', async function (req, res, next) {
 
     let validationResponse = Sets.validateSetFormatData(req.body);
     if (validationResponse.status == 400) {
+        console.log("handleResponse set format error");
         handleResponse(res, validationResponse.status, validationResponse.message)
+        return
     }
 
     /*
@@ -200,7 +202,8 @@ tournaments.post('/updateSet', async function (req, res, next) {
             if (result.length == 1) {
                 eventDetails = result[0];
             } else {
-                handleResponse(res, 400, "Event Not Found");
+                handleResponse(res, 400, "Event Not Found")
+                retu
             }
         })
         .catch(err => {
@@ -222,51 +225,59 @@ tournaments.post('/updateSet', async function (req, res, next) {
             // console.log("RESULTS OF FINDING SET_ID AND TEAM_IDS: ");
             // console.log(result);
             if (result.length != 1) {
+                console.log("handleResponse 400 set not found");
                 handleResponse(res, 400, "Set Not Found");
             }
         })
         .catch(err => {
             console.log(err.message);
+            console.log("handleResponse 500");
             handleResponse(res, 500, err);
         });
     
     //insert set
     const response = await Sets.insertSet(req.body) //TODO this should be just a completed/winning patch...
     console.log(response);
-    if (response.status == 200) {
 
-        //insert the games of the set
-        let insertGameResponse = await Games.insertGames(req.body)
-        console.log("Insert Games Response: ", insertGameResponse);
-        if (insertGameResponse.status != 200) {
-            handleResponse(res, insertGameResponse.status, insertGameResponse.message);
-            return;
-        }
-
-        console.log(eventDetails);
-        //after creating games, check for nextSet logic
-        let nextWinnerGameNumber = Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.event_game_number)
-        let nextLoserGameNumber = Sets.calculateNextLoserGameNumber(req.body.event_game_number)
-
-        console.log(nextWinnerGameNumber + " : " + nextLoserGameNumber);
-
-        let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextWinnerGameNumber, Sets.findWinningTeam(req.body))
-
-
-        let nextLoserEvent = await Sets.findNextLoserBracket(eventDetails, req.body)
-        let nextLoserSetResponse = null;
-        if (nextLoserEvent != null) {
-            nextLoserSetResponse = await Sets.findOrInsertNextSet(nextLoserEvent, req.body, nextLoserGameNumber, Sets.findLosingTeam(req.body))
-        }
-
-        // console.log("nextSetResponse Response: ");
-        // console.log(nextSetResponse);
-        //send response back after everything
-        res.status(nextSetResponse.status).json(nextSetResponse.message) //todo fix this
-    } else {
+    if (response.status != 200) {
+        console.log("handleResponse failure not 200 insertSet");
         handleResponse(res, response.status, response.message)
+        return
     }
 
+    //insert the games of the set
+    let insertGameResponse = await Games.insertGames(req.body)
+    console.log("Insert Games Response: ", insertGameResponse);
+    if (insertGameResponse.status != 200) {
+        console.log("handleResponse failure not 200 inserGames");
+        handleResponse(res, insertGameResponse.status, insertGameResponse.message);
+        return
+    }
+
+    console.log(eventDetails);
+    //after creating games, check for nextSet logic
+    let nextWinnerGameNumber = Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.event_game_number)
+    let nextLoserGameNumber = Sets.calculateNextLoserGameNumber(req.body.event_game_number)
+
+    console.log(nextWinnerGameNumber + " : " + nextLoserGameNumber);
+
+    let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextWinnerGameNumber, Sets.findWinningTeam(req.body))
+
+    console.log(nextSetResponse);
+    console.log("after net set response ---------------------");
+    let nextLoserEvent = await Sets.findNextLoserBracket(eventDetails, req.body)
+    let nextLoserSetResponse = null;
+    console.log("after next loser event");
+    console.log(nextLoserEvent);
+    if (nextLoserEvent != null) {
+        nextLoserSetResponse = await Sets.findOrInsertNextSet(nextLoserEvent, req.body, nextLoserGameNumber, Sets.findLosingTeam(req.body))
+    }
+
+    console.log("nextSetResponse Response: ");
+    console.log(nextSetResponse);
+    //send response back after everything
+    // res.status(nextSetResponse.status).json(nextSetResponse.message) //todo fix this
+    return handleResponse(res, nextSetResponse.status, nextSetResponse.message)
 })
 
 
