@@ -197,7 +197,7 @@ async function findNextLoserBracket(eventDetails, setObject) {
     return response; //null if knocked out of tournament
 }
 
-
+// TODO s == bracketsize...fix this code to be moreadable
 function calculateNextWinnerGameNumber(s, currentGameNumber) {
     console.log(s);
     console.log(currentGameNumber);

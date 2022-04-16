@@ -62,14 +62,15 @@ export class BracketViewComponent implements OnInit {
 
   splitBracketData(): void {
     let bracketsize = this.bracketMetaData.get("bracketSize")!;
-    console.log(bracketsize);
-    this.depth1 = this.bracketData.splice(0, parseInt(bracketsize) /2);
-    console.log(this.depth1);
+    let depthOfBracket = Math.log2(parseInt(bracketsize));
 
-    this.bracket.push(this.depth1);
-    this.bracket.push(this.depth2);
-    this.bracket.push(this.depth3);
-    this.bracket.push(this.depth4);
+    for(let layer = 1; layer <= depthOfBracket; layer++) {
+      let thisLayer = this.depth1 = this.bracketData.splice(0, parseInt(bracketsize) / Math.pow(2, layer));
+      console.log('this layer depth is: %d', layer);
+      console.log('this layer is: %s', thisLayer);
+      this.bracket.push(thisLayer)
+    }
+
     console.log(this.bracket);
   }
 
