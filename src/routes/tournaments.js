@@ -135,27 +135,25 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
         'sets.event_game_number',
         'sets.completed', 
         'sets.winning_team',
-        'sets.team_id_1 as team_1_id',
-        'sets.team_id_2 as team_2_id',
+        'sets.team_1_id as team_1_id',
+        'sets.team_2_id as team_2_id',
         'sets.tournament_id as tournament_id',
         knex.raw("array_agg(distinct array[cast(games.game_number as text), cast(games.team_1_points as text), cast(games.game_id as text)]) as team_1_points"),
         knex.raw("array_agg(distinct array[cast(games.game_number as text), cast(games.team_2_points as text), cast(games.game_id as text)]) as team_2_points"),
-        // knex.raw("array_agg(distinct (sets.team_id_1)) as team_1_id"),
-        // knex.raw("array_agg(distinct (sets.team_id_2)) as team_2_id"),
-        knex.raw("array_agg(distinct concat(users.given_name, ' ', users.family_name) ) filter (where teams_to_players.team_id = sets.team_id_1) as team_1_names"),
-        knex.raw("array_agg(distinct concat(users.given_name, ' ', users.family_name)) filter (where teams_to_players.team_id = sets.team_id_2) as team_2_names"),
-        knex.raw("array_agg(distinct concat(teams_to_players.player_id_1 , '|', teams_to_players.player_id_2) ) filter (where teams_to_players.team_id = sets.team_id_1) as team_1_player_ids"),
-        knex.raw("array_agg(distinct concat(teams_to_players.player_id_1 , '|', teams_to_players.player_id_2)) filter (where teams_to_players.team_id = sets.team_id_2) as team_2_player_ids"),
+        knex.raw("array_agg(distinct concat(users.given_name, ' ', users.family_name) ) filter (where teams_to_players.team_id = sets.team_1_id) as team_1_names"),
+        knex.raw("array_agg(distinct concat(users.given_name, ' ', users.family_name)) filter (where teams_to_players.team_id = sets.team_2_id) as team_2_names"),
+        knex.raw("array_agg(distinct concat(teams_to_players.player_id_1 , '|', teams_to_players.player_id_2) ) filter (where teams_to_players.team_id = sets.team_1_id) as team_1_player_ids"),
+        knex.raw("array_agg(distinct concat(teams_to_players.player_id_1 , '|', teams_to_players.player_id_2)) filter (where teams_to_players.team_id = sets.team_2_id) as team_2_player_ids"),
         )
         .from('sets')
         .joinRaw(knex.raw('left join games on sets.set_id = games.set_id'))
-        .joinRaw(knex.raw('left join teams_to_players on teams_to_players.team_id = any (array[sets.team_id_1, sets.team_id_2])'))
+        .joinRaw(knex.raw('left join teams_to_players on teams_to_players.team_id = any (array[sets.team_1_id, sets.team_2_id])'))
         .joinRaw(knex.raw('left join users on users.user_id = any (array[teams_to_players.player_id_1, teams_to_players.player_id_2])'))
         .where('sets.event_id', req.params.event_id)
         .groupBy('sets.set_id','sets.event_id',
         'sets.game_type','sets.event_game_number', 
         'sets.completed', 'sets.winning_team',
-        'sets.team_id_1', 'sets.team_id_2',
+        'sets.team_1_id', 'sets.team_2_id',
         'sets.tournament_id')
         .orderBy('sets.event_game_number')
         .then(result => {
@@ -203,44 +201,47 @@ tournaments.post('/updateSet', async function (req, res, next) {
                 eventDetails = result[0];
             } else {
                 handleResponse(res, 400, "Event Not Found")
-                retu
+                return
             }
         })
         .catch(err => {
-            console.log(err.message);
-            handleResponse(res, 500, err);
+            console.log(err.message)
+            handleResponse(res, 500, err)
+            return
         });
 
-    console.log("RESULTS OF FINDING EVENT_ID: ");
-    console.log(eventDetails);
+    console.log("RESULTS OF FINDING EVENT_ID: ")
+    console.log(eventDetails)
 
     // how to validate if team_ids exist? 
     //todo get setData from db based on setId?
     await knex('sets')
         .select("*")
         .where('set_id', req.body.set_id)
-        .andWhere('team_id_1', req.body.team_1_id)
-        // .where('team_id_2', req.body.team_2_id)
+        .andWhere('team_1_id', req.body.team_1_id)
+        .andWhere('team_2_id', req.body.team_2_id)
         .then(result => { //TODO consider creating a function to check that results exists...
             // console.log("RESULTS OF FINDING SET_ID AND TEAM_IDS: ");
             // console.log(result);
             if (result.length != 1) {
-                console.log("handleResponse 400 set not found");
-                handleResponse(res, 400, "Set Not Found");
+                console.log("handleResponse 400 set not found")
+                handleResponse(res, 400, "Set Not Found")
+                return
             }
         })
         .catch(err => {
-            console.log(err.message);
-            console.log("handleResponse 500");
-            handleResponse(res, 500, err);
+            console.log(err.message)
+            console.log("handleResponse 500")
+            handleResponse(res, 500, err)
+            return
         });
     
     //insert set
     const response = await Sets.insertSet(req.body) //TODO this should be just a completed/winning patch...
-    console.log(response);
+    console.log(response)
 
     if (response.status != 200) {
-        console.log("handleResponse failure not 200 insertSet");
+        console.log("handleResponse failure not 200 insertSet")
         handleResponse(res, response.status, response.message)
         return
     }

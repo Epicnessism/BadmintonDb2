@@ -15,8 +15,8 @@ async function insertSet(body) {
             tournament_id: body.tournament_id,
             event_id: body.event_id,
             event_game_number: body.event_game_number,
-            team_id_1: body.team_1_id,
-            team_id_2: body.team_2_id,
+            team_1_id: body.team_1_id,
+            team_2_id: body.team_2_id,
             game_type: body.game_type,
             completed: body.completed,
             winning_team: body.winning_team
@@ -48,7 +48,9 @@ async function insertSet(body) {
  */
 async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
     // let nextGameNumber = calculateNextWinnerGameNumber(eventDetails.bracket_size, set.event_game_number); //todo move this out into separate func and insert
+    console.log("inside findInsertNextSet");
     console.log(nextGameNumber);
+    console.log(team_id);
     if (!set.completed) {
         console.log("Set incomplete, not inserting next set");
         return { status: 400, message: 'Set not completed' }
@@ -105,12 +107,13 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
  * @returns 
  */
 function findWinningTeam(setObject) {
-    return setObject.winning_team == 1 ? setObject.team_id_1 : setObject.team_id_2
+    console.log('inside find winning team: %s', setObject);
+    return setObject.winning_team == 1 ? setObject.team_1_id : setObject.team_2_id
 }
 
 
 function findLosingTeam(setObject) {
-    return setObject.winning_team == 1 ? setObject.team_id_2 : setObject.team_id_1
+    return setObject.winning_team == 1 ? setObject.team_2_id : setObject.team_1_id
 }
 
 

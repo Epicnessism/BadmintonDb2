@@ -8,7 +8,7 @@ describe('test finding winning team', () => {
     
     for(let test of arrayOfTestValues) {
         it(test[3], () => {
-            let setObject = {winning_team: test[0], team_id_1: test[1], team_id_2: test[2]}
+            let setObject = {winning_team: test[0], team_1_id: test[1], team_2_id: test[2]}
             expect(Sets.findWinningTeam(setObject)).toBe(test[4])
         })
     }
@@ -23,7 +23,7 @@ describe('test finding losing team', () => {
     
     for(let test of arrayOfTestValues) {
         it(test[3], () => {
-            let setObject = {winning_team: test[0], team_id_1: test[1], team_id_2: test[2]}
+            let setObject = {winning_team: test[0], team_1_id: test[1], team_2_id: test[2]}
             expect(Sets.findLosingTeam(setObject)).toBe(test[4])
         })
     }

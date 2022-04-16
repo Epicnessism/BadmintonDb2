@@ -7,15 +7,15 @@ exports.up = function(knex) {
         table.integer('event_game_number').nullable(); //game number to track bracket progress
         table.bigInteger('created_timestamp');
 
-        table.uuid('team_id_1').nullable();
-        table.uuid('team_id_2').nullable();
+        table.uuid('team_1_id').nullable();
+        table.uuid('team_2_id').nullable();
 
         table.string('game_type').notNullable(); //'singles'/'doubles' //TODO probably can get rid of this
         table.boolean('completed').defaultsTo(false);
         table.integer('winning_team').nullable(); //1,2
 
-        table.foreign('team_id_1').references('teams_to_players.team_id');
-        table.foreign('team_id_2').references('teams_to_players.team_id');
+        table.foreign('team_1_id').references('teams_to_players.team_id');
+        table.foreign('team_2_id').references('teams_to_players.team_id');
         table.foreign('tournament_id').references('tournaments.tournament_id');
         table.foreign('event_id').references('events.event_id');
     })
