@@ -105,7 +105,6 @@ export class SetDetailsDiaglogComponent {
         }
       })
     }
-
   }
 
 
