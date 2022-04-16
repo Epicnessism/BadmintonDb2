@@ -37,6 +37,7 @@ export class BracketViewComponent implements OnInit {
   ngOnInit(): void {
     this.bracketMetaData.set('bracketSize', '16');
 
+    this.getEventMetaData(this.eventId);
     this.getBracketData(this.eventId);
   }
 
@@ -46,6 +47,13 @@ export class BracketViewComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
+    });
+  }
+
+
+  getEventMetaData(eventId: string) {
+    this.tournamentDataService.getEventMetaData(eventId).subscribe(result => {
+      console.log(result);
     });
   }
 
