@@ -4,7 +4,7 @@
   "description": "badminton 2.0 rework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "nodemon src/server.js development",
     "frontend": "cd bst-frontend && ng serve",
     "knexdown": "knex migrate:rollback",
@@ -33,6 +33,10 @@
     "moment": "^2.29.1",
     "pg": "^8.7.1",
     "sqlite3": "^5.0.2",
+    "ts-node": "^10.7.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
   }
 }
