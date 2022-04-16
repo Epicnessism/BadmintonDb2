@@ -13,4 +13,8 @@ function toValue(value) {
     return bracketLevels[value]
 }
 
-module.exports = {bracketLevels, toLevel, toValue}
+module.exports = {
+    bracketLevels, 
+    toLevel, 
+    toValue
+}
