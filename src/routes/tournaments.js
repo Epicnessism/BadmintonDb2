@@ -124,7 +124,20 @@ tournaments.get('/getAllPlayers/:tournamentId', function (req, res, next) {
 });
 
 
-// tournaments.get('/getBracketMetaData/:event_id')
+tournaments.get('/getEventMetaData/:event_id', async function (req, res, next) {
+    console.log(req.params);
+    await knex('events')
+        .select()
+        .from('events')
+        .where('event_id', req.params.event_id)
+        .then( result => {
+            if(result.length != 1) {
+                return handleResponse(res, 500, 'Too many records')
+            }
+            console.log('result of getMetaData: %s', result)
+            return res.status(200).json(result)
+        })
+})
 
 tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) {
     console.log(req.params);

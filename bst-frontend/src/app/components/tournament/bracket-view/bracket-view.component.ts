@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, Inject } from '@angular/core';
-import { Tile } from 'src/app/interfaces/tile.model';
 import { Set } from 'src/app/interfaces/set.model';
+import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
 import { BracketData } from 'src/app/interfaces/bracket-data.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -15,7 +15,7 @@ import { ValidGameDataService } from 'src/app/services/valid-game-data.service';
 export class BracketViewComponent implements OnInit {
 
   eventId: string = 'edde8206-78cb-4c59-8125-dc8ca3c8fe97'
-  bracketMetaData: Map<string,string> = new Map()
+  bracketMetaData: EventMetaData | undefined
   bracket: any[][] = []
   bracketData: Set[] = []
 
@@ -35,10 +35,7 @@ export class BracketViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.bracketMetaData.set('bracketSize', '16');
-
-    this.getEventMetaData(this.eventId);
-    this.getBracketData(this.eventId);
+    this.getData()
   }
 
   openDialog(setData: Set) {
@@ -50,14 +47,20 @@ export class BracketViewComponent implements OnInit {
     });
   }
 
+  async getData() {
+    await this.getEventMetaData(this.eventId);
+    await this.getBracketData(this.eventId);
+  }
 
-  getEventMetaData(eventId: string) {
+
+  async getEventMetaData(eventId: string) {
     this.tournamentDataService.getEventMetaData(eventId).subscribe(result => {
       console.log(result);
+      this.bracketMetaData = result[0]
     });
   }
 
-  getBracketData(eventId: string): void {
+  async getBracketData(eventId: string) {
     this.tournamentDataService.getBracketData(eventId).subscribe(result => {
       console.log(result);
       this.bracketData = result;
@@ -69,14 +72,17 @@ export class BracketViewComponent implements OnInit {
   }
 
   splitBracketData(): void {
-    let bracketsize = this.bracketMetaData.get("bracketSize")!;
-    let depthOfBracket = Math.log2(parseInt(bracketsize));
+    if(this.bracketMetaData != null) {
+      let bracketsize = this.bracketMetaData.bracket_size;
+      let depthOfBracket = Math.log2(bracketsize);
 
-    for(let layer = 1; layer <= depthOfBracket; layer++) {
-      let thisLayer = this.depth1 = this.bracketData.splice(0, parseInt(bracketsize) / Math.pow(2, layer));
-      console.log('this layer depth is: %d', layer);
-      console.log('this layer is: %s', thisLayer);
-      this.bracket.push(thisLayer)
+      for(let layer = 1; layer <= depthOfBracket; layer++) {
+        let thisLayer = this.depth1 = this.bracketData.splice(0, bracketsize / Math.pow(2, layer));
+        console.log('this layer depth is: %d', layer);
+        console.log('this layer is: %s', thisLayer);
+        this.bracket.push(thisLayer)
+      }
+
     }
 
     console.log(this.bracket);
