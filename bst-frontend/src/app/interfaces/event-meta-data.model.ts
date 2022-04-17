@@ -5,4 +5,5 @@ export interface EventMetaData {
   event_type: string,
   bracket_size: number,
   bracket_level: string,
+  best_of: number
 }

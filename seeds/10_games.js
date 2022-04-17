@@ -20,7 +20,7 @@ exports.seed = function(knex) {
         {game_id: '0215f3d0-144d-4e65-a4b0-7248b91d4643', 
         set_id: '155e4567-e89b-12d3-a456-426614174029', 
         created_timestamp: 1637485200000, 
-        team_1_points: 21, team_2_points: 13,
+        team_1_points: 19, team_2_points: 13,
         game_number: 3,
         completed: true},
       ]);

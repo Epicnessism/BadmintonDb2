@@ -40,7 +40,8 @@ export class BracketViewComponent implements OnInit {
 
   openDialog(setData: Set) {
     console.log(setData);
-    const dialogRef = this.dialog.open(SetDetailsDiaglogComponent, {data: setData});
+    let wrapData = {setData, bracketMetaData: this.bracketMetaData}
+    const dialogRef = this.dialog.open(SetDetailsDiaglogComponent, {data: wrapData });
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
@@ -95,22 +96,23 @@ export class BracketViewComponent implements OnInit {
   templateUrl: 'dialog-overview-example-dialog.html',
 })
 export class SetDetailsDiaglogComponent {
+
   constructor(
     public dialogRef: MatDialogRef<SetDetailsDiaglogComponent>,
     private tournamentDataService: TournamentDataService,
-    @Inject(MAT_DIALOG_DATA) public setData: Set,
+    @Inject(MAT_DIALOG_DATA) public wrapData: any, //TODO look into how to make this not one object...
     private validGameDataService: ValidGameDataService
   ) {}
 
   updateSet(): void {
-    let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.setData.team_1_points, this.setData.team_2_points)
+    let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.wrapData.setData.team_1_points, this.wrapData.setData.team_2_points)
     console.log(`the validity of the set points is: ${isValidPoints}`);
 
     let isValidNumberOfGames = false //todo add this, requires reading metadata
 
     if(isValidPoints) {
-      console.log(this.setData);
-      this.tournamentDataService.postSetData(this.setData).subscribe( result => {
+      console.log(this.wrapData.setData);
+      this.tournamentDataService.postSetData(this.wrapData.setData).subscribe( result => {
         console.log(result);
         if(result != null) {
           this.onNoClick()
@@ -122,14 +124,23 @@ export class SetDetailsDiaglogComponent {
     }
   }
 
-
   completedSet(): void {
     //TODO do logic for setting completed value and winning team value before calling updateSet
-    this.setData.completed = true;
+    this.wrapData.setData.completed = true;
     //TODO replace this with a manaul button override for special cases
-    this.setData.winning_team = 1
+    this.wrapData.setData.winning_team = 1
 
     this.updateSet()
+  }
+
+  addGame(): void {
+    if(this.wrapData.setData.team_1_points.length > this.wrapData.bracketMetaData.best_of - 1) {
+      console.error("Number of games greater than allowed!");
+    } else {
+      this.wrapData.setData.team_1_points.push([this.wrapData.setData.team_1_points.length + 1])
+      this.wrapData.setData.team_2_points.push([this.wrapData.setData.team_2_points.length + 1])
+    }
+
   }
 
   validateInput(setData: Set, gameNumber: number, event: any): boolean {
@@ -138,6 +149,7 @@ export class SetDetailsDiaglogComponent {
   }
 
   onNoClick(): void {
+    //TODO VALIDATE INPUT BEFORE CLOSING.
     this.dialogRef.close()
   }
 }
