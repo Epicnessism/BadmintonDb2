@@ -142,10 +142,10 @@ function validateSetFormatData(set) {
         response.message.push('team_2_id is not a valid uuid')
     }
 
-    //make sure completed and winners are in sync
-    if ((set.completed && set.winning_team == null) || (!set.completed && set.winning_team != null)) {
-        response.message.push('completed and winning_team not in the right state')
-    }
+    // //todo make sure completed and winners are in sync
+    // if ((set.completed && set.winning_team == null) || (!set.completed && set.winning_team != null)) {
+    //     response.message.push('completed and winning_team not in the right state')
+    // }
 
     console.log(response.message);
 

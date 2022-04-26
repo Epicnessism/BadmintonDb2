@@ -108,11 +108,12 @@ export class SetDetailsDiaglogComponent {
     let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.wrapData.setData.team_1_points, this.wrapData.setData.team_2_points)
     console.log(`the validity of the set points is: ${isValidPoints}`);
 
-    let isValidNumberOfGames = false //todo add this, requires reading metadata
+    // let isValidNumberOfGames = false //todo add this, requires reading metadata
+    // let winningTeam = this.automaticallyDetermineWinningTeam();
 
     if(isValidPoints) {
       console.log(this.wrapData.setData);
-      this.tournamentDataService.postSetData(this.wrapData.setData).subscribe( result => {
+      this.tournamentDataService.postUpdateSetData(this.wrapData.setData).subscribe( result => {
         console.log(result);
         if(result != null) {
           this.onNoClick()
@@ -124,11 +125,23 @@ export class SetDetailsDiaglogComponent {
     }
   }
 
+  /**
+   * a completed game for a tournament has:
+   * the right number of won games by a team relative to the best_of value of the event
+   * valid game input
+   * */
+
   completedSet(): void {
     //TODO do logic for setting completed value and winning team value before calling updateSet
-    this.wrapData.setData.completed = true;
+    // this.wrapData.setData.completed = true;
     //TODO replace this with a manaul button override for special cases
-    this.wrapData.setData.winning_team = 1
+    // if(manualWinOverride) {
+    // }
+    // this.wrapData.setData.winning_team = 1
+
+    this.wrapData.setData.winning_team = null
+
+    // let isValidCompleteNumberOfGames = this.automaticallyDetermineWinningTeam()
 
     this.updateSet()
   }
@@ -140,8 +153,12 @@ export class SetDetailsDiaglogComponent {
       this.wrapData.setData.team_1_points.push([this.wrapData.setData.team_1_points.length + 1])
       this.wrapData.setData.team_2_points.push([this.wrapData.setData.team_2_points.length + 1])
     }
-
   }
+
+  // automaticallyDetermineWinningTeam(): number {
+  //   //get for each set, who won
+  //   return 1
+  // }
 
   validateInput(setData: Set, gameNumber: number, event: any): boolean {
     console.log(event)

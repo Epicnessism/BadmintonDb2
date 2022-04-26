@@ -71,5 +71,48 @@ function validateGameInput(game) {
     return response;
 }
 
+function calculateGamesWonForBothTeams(team_1_points, team_2_points) {
+    let teamOneCount = 0
+    let teamTwoCount = 0
 
-module.exports = {insertGames, validateGameInput}
+    for(const [index, game] of Object.entries(team_1_points)) {
+        console.log(game);
+
+        let winByTwo = (game[1] >=  team_2_points[index][1] + 2 ) || (game[1] + 2 <= team_2_points[index][1] )
+        let atLeast21 = game[1] >= 21 || team_2_points[index][1] >= 21
+
+        if(winByTwo && atLeast21) {
+          if(game[1] > team_2_points[index][1]) {
+              teamOneCount++
+          }  else {
+              teamTwoCount++
+          }
+        }
+    }
+    return {teamOne: teamOneCount, teamTwo: teamTwoCount}
+}
+
+function calculateWinningTeam(team_1_points, team_2_points, eventBestOf) {
+    let wonGames = calculateGamesWonForBothTeams(team_1_points, team_2_points)
+    let bestOfWins = Math.floor(eventBestOf/2) + 1
+
+    if(wonGames.teamOne != bestOfWins && wonGames.teamTwo != bestOfWins) {
+        return -1
+    }
+
+    if(wonGames.teamOne > bestOfWins || wonGames.teamTwo > bestOfWins) {
+        return -1
+    }
+
+    let winningTeam = wonGames.teamOne > wonGames.teamTwo ? 1 : 2
+    winningTeam = wonGames.teamOne == wonGames.teamTwo ? -1 : winningTeam
+    
+    return winningTeam
+}
+
+
+module.exports = {
+    insertGames, 
+    validateGameInput,
+    calculateGamesWonForBothTeams, 
+    calculateWinningTeam}

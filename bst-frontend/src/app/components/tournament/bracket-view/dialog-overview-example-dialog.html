@@ -14,7 +14,8 @@
 <div mat-dialog-actions>
   <button mat-button (click)="onNoClick()">Cancel</button>
   <button mat-button (click)="updateSet()">Update</button>
-  <button mat-button (click)="completedSet()">Completed</button>
+  <!-- TODO MANAUL OVERRIDE feature -->
+  <!-- <button mat-button (click)="completedSet()">Completed</button> -->
   <button mat-icon-button aria-label="Add game icon" (click)="addGame()" *ngIf="wrapData.setData.team_1_points.length < wrapData.bracketMetaData.best_of">
     <mat-icon>add</mat-icon>
   </button>

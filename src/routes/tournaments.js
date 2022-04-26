@@ -184,6 +184,17 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
         })
 })
 
+/**
+ * 
+ */
+tournaments.post('/completedSet', async function (req, res, next) {
+    //todo do completed set validation 
+    console.log(req.body);
+    // 1. Get number of sets, auto find winner based on games won
+    //call updateSet functions
+    res.body.winning_team = Games.calculateWinningTeam()
+    res.body.completed = res.body.winning_team != -1 ? true : false
+})
 
 /**
  * inputs the results of a set/game for a tournament and calculates the next seeding/set creation
@@ -194,16 +205,21 @@ tournaments.post('/updateSet', async function (req, res, next) {
     // console.log(req.body);
     let eventDetails = null;
 
+    //* check set format validation
     let validationResponse = Sets.validateSetFormatData(req.body);
+
     if (validationResponse.status == 400) {
         console.log("handleResponse set format error");
         handleResponse(res, validationResponse.status, validationResponse.message)
         return
     }
 
-    /*
-    attempt to find the setId in the events table to see if it exists. If it doesn't exist, throw 404
-    */
+    //* caluclate winning team and completeness automatically
+    req.body.winning_team = Games.calculateWinningTeam(req.body.team_1_points, req.body.team_2_points, 3) //todo ADD BEST OF GRAB LOGIC!
+    req.body.completed = req.body.winning_team != -1 ? true : false
+
+
+    //* attempt to find the setId in the events table to see if it exists. If it doesn't exist, throw 404
     await knex('events')
         .select("*")
         .where('event_id', req.body.event_id)
@@ -293,6 +309,11 @@ tournaments.post('/updateSet', async function (req, res, next) {
     // res.status(nextSetResponse.status).json(nextSetResponse.message) //todo fix this
     return handleResponse(res, nextSetResponse.status, nextSetResponse.message)
 })
+
+
+function validateInput(res) {
+
+}
 
 
 function handleResponse(res, code, message) {

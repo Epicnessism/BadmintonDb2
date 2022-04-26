@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BracketData } from '../interfaces/bracket-data.model';
 import { Set } from '../interfaces/set.model';
-import { TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET } from './../routes.constants';
+import { TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET } from './../routes.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +26,15 @@ export class TournamentDataService {
     return this.http.get<Set[]>(apiURL)
   }
 
-  postSetData(setData: Set): Observable<Set[]> {
+  postUpdateSetData(setData: Set): Observable<Set[]> {
     let apiURL = `${environment.backendURL}${TOURNAMENT_EVENT_UPDATE_SET}`
+    console.log(setData);
+    console.log(apiURL);
+    return this.http.post<any>(apiURL, setData,  {withCredentials: true})
+  }
+
+  postCompletedSetData(setData: Set): Observable<Set[]> {
+    let apiURL = `${environment.backendURL}${TOURNAMENT_EVENT_COMPLETED_SET}`
     console.log(setData);
     console.log(apiURL);
     return this.http.post<any>(apiURL, setData,  {withCredentials: true})
