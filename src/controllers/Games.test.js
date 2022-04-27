@@ -3,13 +3,15 @@ const Games = require('./Games');
 describe('test validate game input', () => {
 
     const arrayOfTestValues = [
-        [{team_1_points: 21, team_2_points: 19}, {status:200, message: 'Good input'}],
-        [{team_1_points: 21, team_2_points: 20}, {status:400, message: 'Score is not win by 2'}],
-        [{team_1_points: 18, team_2_points: 2}, {status:400, message: 'Score is not at least 21 on one side'}]
+        [{team_1_points: 21, team_2_points: 19}, {status:200, message: 'Good input'}, 'Good input 21:19'],
+        [{team_1_points: 21, team_2_points: 11}, {status:200, message: 'Good input'}, 'Good input 21:11'],
+        [{team_1_points: 18, team_2_points: 21}, {status:200, message: 'Good input'}, 'Good input 18:21'],
+        [{team_1_points: 21, team_2_points: 20}, {status:400, message: 'Score is not win by 2'}, 'Bad input 21:20'],
+        [{team_1_points: 18, team_2_points: 2}, {status:400, message: 'Score is not at least 21 on one side'}, 'Bad input 18:2']
     ]
 
     for(let test of arrayOfTestValues) {
-        it("Test valid game input: " + test[1].message, () => {
+        it("" + test[2], () => {
             const result = Games.validateGameInput(test[0])
             expect(result).toHaveProperty('status', test[1].status)
             expect(result).toHaveProperty('message', test[1].message)
