@@ -284,6 +284,11 @@ tournaments.post('/updateSet', async function (req, res, next) {
         return
     }
 
+    //* check if the set was completed or just updated.
+    if(req.body.completed != true && req.body.winning_team == -1) {
+        return res.status(201).json({message: "success partial"})
+    }
+
     console.log(eventDetails);
     //after creating games, check for nextSet logic
     let nextWinnerGameNumber = Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.event_game_number)
@@ -309,11 +314,6 @@ tournaments.post('/updateSet', async function (req, res, next) {
     // res.status(nextSetResponse.status).json(nextSetResponse.message) //todo fix this
     return handleResponse(res, nextSetResponse.status, nextSetResponse.message)
 })
-
-
-function validateInput(res) {
-
-}
 
 
 function handleResponse(res, code, message) {
