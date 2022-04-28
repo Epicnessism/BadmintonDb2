@@ -5,6 +5,9 @@ import { TournamentDataService } from 'src/app/services/tournament-data.service'
 import { BracketData } from 'src/app/interfaces/bracket-data.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ValidGameDataService } from 'src/app/services/valid-game-data.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-bracket-view',
@@ -114,17 +117,20 @@ export class SetDetailsDiaglogComponent {
 
     if(isValidPoints) {
       console.log(this.wrapData.setData);
-      this.tournamentDataService.postUpdateSetData(this.wrapData.setData).subscribe( result => {
-        console.log(result);
-        if(result != null) {
-          this.onNoClick()
-        } else {
-          console.log("Error updating set!");
+      this.tournamentDataService.postUpdateSetData(this.wrapData.setData)
+        .subscribe( result => {
+          console.log(result);
+          if(result != null) {
+            this.onNoClick()
+          } else {
+            console.log("Error updating set!");
 
-        }
-      })
+          }
+        })
     }
   }
+
+
 
   /**
    * a completed game for a tournament has:

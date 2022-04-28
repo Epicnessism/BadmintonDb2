@@ -68,6 +68,11 @@ function validateGameInput(game) {
         console.log("Score is not at least 21 on one side");
         response = {status: 203, message: 'Score is not at least 21 on one side'};
     }
+
+    if ( (game.team_1_points > 21 && game.team_2_points + 2 != game.team_1_points) || (game.team_2_points > 21 && game.team_1_points + 2 != game.team_2_points) ) {
+        response = {status: 400, message: 'Bogus input, score is greater than 21 and not win by 2'}
+    }
+    
     return response;
 }
 

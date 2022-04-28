@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BracketData } from '../interfaces/bracket-data.model';
 import { Set } from '../interfaces/set.model';
@@ -30,7 +30,7 @@ export class TournamentDataService {
     let apiURL = `${environment.backendURL}${TOURNAMENT_EVENT_UPDATE_SET}`
     console.log(setData);
     console.log(apiURL);
-    return this.http.post<any>(apiURL, setData,  {withCredentials: true})
+    return this.http.post<any>(apiURL, setData,  {withCredentials: true}).pipe(catchError(this.errorHandler))
   }
 
   postCompletedSetData(setData: Set): Observable<Set[]> {
@@ -38,6 +38,10 @@ export class TournamentDataService {
     console.log(setData);
     console.log(apiURL);
     return this.http.post<any>(apiURL, setData,  {withCredentials: true})
+  }
+
+  errorHandler(error: HttpErrorResponse) {
+    return throwError( () => new Error(error.message || "server error") )
   }
 
 }

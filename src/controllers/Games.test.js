@@ -6,8 +6,9 @@ describe('test validate game input', () => {
         [{team_1_points: 21, team_2_points: 19}, {status:200, message: 'Good input'}, 'Good input 21:19'],
         [{team_1_points: 21, team_2_points: 11}, {status:200, message: 'Good input'}, 'Good input 21:11'],
         [{team_1_points: 18, team_2_points: 21}, {status:200, message: 'Good input'}, 'Good input 18:21'],
-        [{team_1_points: 21, team_2_points: 20}, {status:400, message: 'Score is not win by 2'}, 'Bad input 21:20'],
-        [{team_1_points: 18, team_2_points: 2}, {status:400, message: 'Score is not at least 21 on one side'}, 'Bad input 18:2']
+        [{team_1_points: 21, team_2_points: 20}, {status:203, message: 'Score is not win by 2'}, 'Bad input 21:20'],
+        [{team_1_points: 18, team_2_points: 2}, {status:203, message: 'Score is not at least 21 on one side'}, 'Bad input 18:2'],
+        [{team_1_points: 111, team_2_points: 2}, {status:400, message: 'Bogus input, score is greater than 21 and not win by 2'}, 'Bogus input 111:2']
     ]
 
     for(let test of arrayOfTestValues) {
