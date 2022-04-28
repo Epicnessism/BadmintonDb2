@@ -1,4 +1,4 @@
-<div mat-dialog-content>
+<div mat-dialog-content *ngIf="wrapData.setData.team_1_points != null">
   <h1 mat-dialog-title>{{wrapData.setData.team_1_names}}</h1>
   <mat-form-field appearance="outline" *ngFor="let game of wrapData.setData.team_1_points; index as ind">
     <mat-label>Game: {{wrapData.setData.team_1_points[ind][0]}}</mat-label>
@@ -16,7 +16,7 @@
   <button mat-button (click)="updateSet()">Update</button>
   <!-- TODO MANAUL OVERRIDE feature -->
   <!-- <button mat-button (click)="completedSet()">Completed</button> -->
-  <button mat-icon-button aria-label="Add game icon" (click)="addGame()" *ngIf="wrapData.setData.team_1_points.length < wrapData.bracketMetaData.best_of">
+  <button mat-icon-button aria-label="Add game icon" (click)="addGame()" *ngIf="wrapData.setData.team_1_points == null || wrapData.setData.team_1_points.length < wrapData.bracketMetaData.best_of">
     <mat-icon>add</mat-icon>
   </button>
   <!-- <button mat-button [mat-dialog-close]="wrapData.setData.animal" cdkFocusInitial>Ok</button> -->

@@ -105,7 +105,8 @@ export class SetDetailsDiaglogComponent {
   ) {}
 
   updateSet(): void {
-    let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.wrapData.setData.team_1_points, this.wrapData.setData.team_2_points)
+    // let isValidPoints = this.validGameDataService.validateGamePointsStrings(this.wrapData.setData.team_1_points, this.wrapData.setData.team_2_points)
+    let isValidPoints = true; //TODO do something about this at some point? revamp loose validitiy
     console.log(`the validity of the set points is: ${isValidPoints}`);
 
     // let isValidNumberOfGames = false //todo add this, requires reading metadata
@@ -147,7 +148,10 @@ export class SetDetailsDiaglogComponent {
   }
 
   addGame(): void {
-    if(this.wrapData.setData.team_1_points.length > this.wrapData.bracketMetaData.best_of - 1) {
+    if(this.wrapData.setData.team_1_points == null) {
+      this.wrapData.setData.team_1_points = [[1]]
+      this.wrapData.setData.team_2_points = [[1]]
+    } else if(this.wrapData.setData.team_1_points.length > this.wrapData.bracketMetaData.best_of - 1) {
       console.error("Number of games greater than allowed!");
     } else {
       this.wrapData.setData.team_1_points.push([this.wrapData.setData.team_1_points.length + 1])

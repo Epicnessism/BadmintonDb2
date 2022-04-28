@@ -21,7 +21,7 @@ async function insertGames(setObject) {
             const gameObject = {"game_id": game[2] , "team_1_points" : game[1], "team_2_points" : setObject.team_2_points[index][1]}
             let validation = validateGameInput(gameObject);
             const completedGame = validation.status == 200
-            if(validation.status != 400) {
+            if( (completedGame && validation.status == 200 ) || ( !completedGame && validation.status == 203) ) {
                 await knex('games')
                     .insert({
                         game_id: gameObject.game_id != null ? gameObject.game_id : uuidv4(),
@@ -62,11 +62,11 @@ function validateGameInput(game) {
     if( (!(game.team_1_points >= game.team_2_points + 2) && game.team_1_points > game.team_2_points) 
     || (!(game.team_2_points >= game.team_1_points + 2) && game.team_2_points > game.team_1_points) ) {
         console.log("Score is not win by 2");
-        response = {status: 400, message: 'Score is not win by 2'};
+        response = {status: 203, message: 'Score is not win by 2'};
     } else if( (!(game.team_1_points >= 21) && game.team_1_points > game.team_2_points) 
     || (!(game.team_2_points >= 21) && game.team_2_points > game.team_1_points) ) {
         console.log("Score is not at least 21 on one side");
-        response = {status: 400, message: 'Score is not at least 21 on one side'};
+        response = {status: 203, message: 'Score is not at least 21 on one side'};
     }
     return response;
 }
