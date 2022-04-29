@@ -33,6 +33,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { LoginComponent } from './components/login/login.component';
 import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
+import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
 
 
@@ -43,7 +44,8 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
     LoginComponent,
     BracketViewComponent,
     PageNotFoundComponent,
-    SetDetailsDiaglogComponent
+    SetDetailsDiaglogComponent,
+    NavBarComponent
   ],
   imports: [
     BrowserModule,
