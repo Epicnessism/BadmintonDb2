@@ -34,6 +34,7 @@ import { LoginComponent } from './components/login/login.component';
 import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { PreviousRouteDirective } from './directives/previous-route.directive';
 
 
 
@@ -45,7 +46,8 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
     BracketViewComponent,
     PageNotFoundComponent,
     SetDetailsDiaglogComponent,
-    NavBarComponent
+    NavBarComponent,
+    PreviousRouteDirective
   ],
   imports: [
     BrowserModule,

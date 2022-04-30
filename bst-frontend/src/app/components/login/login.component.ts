@@ -3,7 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { NavigationService } from 'src/app/services/navigation/navigation.service';
 
 @Component({
   selector: 'app-login',
@@ -28,8 +29,8 @@ export class LoginComponent implements OnInit {
   // subscription: Subscription;
   // previousRoute: string = null;
   constructor(
-    private _formBuilder: FormBuilder,
     private authService: AuthService,
+    private navigationService: NavigationService,
     private router: Router,
     // private subscriptionService: SubscriptionService
   ) {

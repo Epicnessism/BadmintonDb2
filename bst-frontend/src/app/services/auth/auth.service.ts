@@ -3,8 +3,8 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
-import { LoginBody } from '../interfaces/login-body.model';
-import { SignupBody } from '../interfaces/signup-body.model';
+import { LoginBody } from '../../interfaces/login-body.model';
+import { SignupBody } from '../../interfaces/signup-body.model';
 // import { SubscriptionService } from './subscription.service';
 
 @Injectable({
