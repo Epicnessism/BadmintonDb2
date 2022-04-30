@@ -76,6 +76,8 @@ export class BracketViewComponent implements OnInit {
   }
 
   splitBracketData(): void {
+    console.log(`isBracketMetaData not null? ${this.bracketMetaData != null} `);
+
     if(this.bracketMetaData != null) {
       let bracketsize = this.bracketMetaData.bracket_size;
       let depthOfBracket = Math.log2(bracketsize);

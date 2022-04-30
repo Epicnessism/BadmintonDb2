@@ -19,10 +19,16 @@ export class NavigationService {
    back(): void {
      this.history.pop()
      if(this.history.length > 0) {
+       console.log(`history not zero, calling back function`);
        this.location.back()
      } else {
        this.router.navigateByUrl('/')
      }
+   }
+
+   navigateByUrl(url: string): void {
+    console.log(`hitting navigateByUrl in service`);
+     this.router.navigateByUrl(url);
    }
 
 }

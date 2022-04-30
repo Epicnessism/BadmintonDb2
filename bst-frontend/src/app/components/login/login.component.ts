@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
       catchError((err: HttpErrorResponse) => {
         console.log(err);
         this.loginFormGroup.controls['username'].setValue('404 something returned failed')
-        return throwError(err);
+        return throwError(err); //TODO fix this
       }))
     .subscribe( result => {
       console.log(result);
@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
       // } else {
       //   this.router.navigate(['/']);
       // }
-      this.router.navigate(['/']);
+      this.navigationService.navigateByUrl('/bracketView');
     });
   }
 
