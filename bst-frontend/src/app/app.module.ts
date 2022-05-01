@@ -30,6 +30,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatDialogModule} from '@angular/material/dialog';
 // import {MatGridListModule} from '@angular/material/grid-list';
 import { MatBadgeModule } from '@angular/material/badge';
+
 import { LoginComponent } from './components/login/login.component';
 import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
