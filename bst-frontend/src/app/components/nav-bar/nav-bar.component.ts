@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NavigationService } from 'src/app/services/navigation/navigation.service';
 
 @Component({
   selector: 'app-nav-bar',
@@ -7,9 +8,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavBarComponent implements OnInit {
 
-  constructor() { }
+  searchString: string = 'Clear me';
 
-  ngOnInit(): void {
+  constructor(private navigationService: NavigationService) { }
+
+  ngOnInit(): void {}
+
+  goHome(): void {
+    this.navigationService.navigateByUrl('/')
+  }
+
+  searchAndGoToResultsPage(): void {
+    console.log(this.searchString);
+    this.navigationService.navigateByUrl(`search/${this.searchString}`)
+    //*hit api search, if return valid values, navigate to that url
   }
 
 }

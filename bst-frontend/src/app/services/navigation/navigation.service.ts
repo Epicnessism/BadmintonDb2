@@ -26,7 +26,7 @@ export class NavigationService {
      }
    }
 
-   navigateByUrl(url: string): void {
+   navigateByUrl(url: string ): void {
     console.log(`hitting navigateByUrl in service`);
      this.router.navigateByUrl(url);
    }

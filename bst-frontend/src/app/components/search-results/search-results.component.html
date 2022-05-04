@@ -1,0 +1,9 @@
+<div>
+  <mat-form-field class="example-form-field" appearance="outline" color="white">
+    <mat-label>Search</mat-label>
+    <input matInput type="text" [(ngModel)]="searchParam" placeholder="Search">
+    <button *ngIf="searchParam" matSuffix mat-icon-button aria-label="Clear" (click)="searchParam=''">
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>

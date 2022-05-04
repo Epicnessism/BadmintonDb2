@@ -3,13 +3,24 @@
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
       <mat-icon>menu</mat-icon>
     </button>
-    <span>My App</span>
+    <div matRipple>
+      <span (click)="goHome()" class="logoHead">BaddieHub</span>
+    </div>
     <span class="example-spacer"></span>
+
+    <mat-form-field class="example-form-field" appearance="outline" color="white">
+      <mat-label>Search</mat-label>
+      <input matInput type="text" [(ngModel)]="searchString" (keydown.enter)="searchAndGoToResultsPage()" placeholder="Search">
+      <button *ngIf="searchString" matSuffix mat-icon-button aria-label="Clear" (click)="searchString=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
     <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-      <mat-icon>favorite</mat-icon>
+      <mat-icon>person</mat-icon>
     </button>
     <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-      <mat-icon>share</mat-icon>
+      <mat-icon>settings</mat-icon>
     </button>
   </mat-toolbar>
 </div>

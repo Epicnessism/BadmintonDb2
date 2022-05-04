@@ -1,0 +1,13 @@
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+
+.logoHead:hover {
+  cursor: pointer;
+}
+
+.example-form-field {
+  margin-top: 1%;
+  font-size: 14px
+}

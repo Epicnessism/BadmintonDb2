@@ -36,6 +36,7 @@ import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/t
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { PreviousRouteDirective } from './directives/previous-route.directive';
+import { SearchResultsComponent } from './components/search-results/search-results.component';
 
 
 
@@ -48,7 +49,8 @@ import { PreviousRouteDirective } from './directives/previous-route.directive';
     PageNotFoundComponent,
     SetDetailsDiaglogComponent,
     NavBarComponent,
-    PreviousRouteDirective
+    PreviousRouteDirective,
+    SearchResultsComponent
   ],
   imports: [
     BrowserModule,
