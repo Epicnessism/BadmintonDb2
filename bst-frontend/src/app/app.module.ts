@@ -30,6 +30,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatDialogModule} from '@angular/material/dialog';
 // import {MatGridListModule} from '@angular/material/grid-list';
 import { MatBadgeModule } from '@angular/material/badge';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import { LoginComponent } from './components/login/login.component';
 import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
@@ -80,7 +81,8 @@ import { ProfileComponent } from './components/profile/profile.component';
     MatBadgeModule,
     DragDropModule,
     FlexLayoutModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent],

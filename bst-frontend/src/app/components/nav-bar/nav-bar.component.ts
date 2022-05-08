@@ -18,6 +18,10 @@ export class NavBarComponent implements OnInit {
     this.navigationService.navigateByUrl('/')
   }
 
+  goProfile(): void {
+    this.navigationService.navigateByUrl('/profile')
+  }
+
   searchAndGoToResultsPage(): void {
     console.log(this.searchString);
     this.navigationService.navigateByUrl(`search/${this.searchString}`)

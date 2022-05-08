@@ -11,7 +11,14 @@ import { NavigationService } from 'src/app/services/navigation/navigation.servic
 export class SearchResultsComponent implements OnInit {
 
   searchParam: string = '';
-  subscribeSearch: Subscription = new Subscription;
+
+  filters = {
+    sets: false,
+    players: false,
+    tournaments: false,
+    events: false,
+    games: false
+  }
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -28,6 +35,8 @@ export class SearchResultsComponent implements OnInit {
 
   search(): void {
     //* do search to db here...
+    console.log(this.filters);
+
   }
 
 }
