@@ -61,6 +61,7 @@ api.use('/auth', require('./routes/auth').auth);
 api.use('/games', require('./routes/games').games);
 api.use('/sets', require('./routes/sets').sets);
 api.use('/tournaments', require('./routes/tournaments').tournaments);
+api.use('/search', require('./routes/searchResults').searchResults);
 
 
 //Server top-level endpoints

@@ -37,6 +37,7 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { PreviousRouteDirective } from './directives/previous-route.directive';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 
 
@@ -50,7 +51,8 @@ import { SearchResultsComponent } from './components/search-results/search-resul
     SetDetailsDiaglogComponent,
     NavBarComponent,
     PreviousRouteDirective,
-    SearchResultsComponent
+    SearchResultsComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,

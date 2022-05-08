@@ -63,7 +63,7 @@ export class LoginComponent implements OnInit {
       // } else {
       //   this.router.navigate(['/']);
       // }
-      this.navigationService.navigateByUrl('/bracketView');
+      this.navigationService.navigateByUrl('/profile');
     });
   }
 
