@@ -38,7 +38,7 @@ export class SearchResultsComponent implements OnInit {
   search(): void {
     //* do search to db here...
     console.log(this.filters);
-    this.searchService.getSearchResults(this.searchParam, this.filters).subscribe( result => {
+    this.searchService.getSearchResults(this.searchParam, {"filters": this.filters}).subscribe( result => {
       console.log(result);
 
     })

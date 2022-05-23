@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable, catchError, throwError, retry } from 'rxjs';
 import { BASE_SEARCH } from 'src/app/routes.constants';
 import { environment } from 'src/environments/environment';
 
@@ -18,9 +18,12 @@ export class SearchService {
     console.log(searchCriteria);
     console.log(apiURL);
     console.log(filters);
-    return this.http.post<any>(apiURL, filters,  {withCredentials: true}).pipe(catchError(this.errorHandler))  }
+    return this.http.post<any>(apiURL, filters,  {withCredentials: true}).pipe(retry(1), catchError(this.errorHandler))  }
 
-    errorHandler(error: HttpErrorResponse) {
-      return throwError( () => new Error(error.message || "server error") )
+    errorHandler(httpErrorResponse: HttpErrorResponse) {
+      console.log(httpErrorResponse); //TODO remove this after debugging and developing
+      console.log(httpErrorResponse.error.message);
+
+      return throwError( () => new Error(httpErrorResponse.message || "server error") )
     }
 }

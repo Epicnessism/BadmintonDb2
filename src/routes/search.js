@@ -30,6 +30,15 @@ search.post('/:substring', function(req, res, next) {
         }
     }
 
+    if(req.body.filters == null) {
+        console.log("No filter provided");
+        return handleResponse(res, 400, "No filter provided.")
+        
+    } else if(!Object.values(req.body.filters).includes(true)) {
+        console.log("No filter selected");
+        return handleResponse(res, 400, "No filter selected.")
+    }
+
     const filters = req.body.filters
     const searchParam = req.params.substring
     let queryObject = {}
