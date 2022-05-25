@@ -24,12 +24,6 @@ export class BracketViewComponent implements OnInit {
 
   depth1: any[] = []
 
-  depth2: any[] = []
-
-  depth3: any[] = []
-
-  depth4: any[] = []
-
   id: string[] = ['one', 'two', 'three', 'four']
 
   constructor(

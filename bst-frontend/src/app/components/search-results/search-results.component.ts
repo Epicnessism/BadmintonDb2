@@ -12,6 +12,7 @@ import { SearchService } from 'src/app/services/search/search.service';
 export class SearchResultsComponent implements OnInit {
 
   searchParam: string = '';
+  searchResults: any[] = [];
 
   filters = {
     sets: false,
@@ -47,16 +48,13 @@ export class SearchResultsComponent implements OnInit {
     this.searchService.getSearchResults(this.searchParam, {"filters": this.filters}).subscribe( {
       next: this.handleSearchResults.bind(this),
       error: this.handleError.bind(this)
-
     })
   }
 
   handleSearchResults(result: any): void {
     console.log("the result inside handle results: ");
     console.log(result);
-
-    console.log("inside handle results");
-
+    this.searchResults = result
   }
 
   handleError(error: any): void {
@@ -64,6 +62,10 @@ export class SearchResultsComponent implements OnInit {
 
     console.log("inside handle error");
 
+  }
+
+  goToResult(type: string, id: string): void {
+    this.navigationService.navigateByUrl(`${type}/${id}`)
   }
 
 }

@@ -1,16 +1,83 @@
-<div>
-  <mat-form-field class="example-form-field" appearance="outline" color="white">
-    <mat-label>Search</mat-label>
-    <input matInput type="text" [(ngModel)]="searchParam" placeholder="Search" (keydown.enter)="search()">
-    <button *ngIf="searchParam" matSuffix mat-icon-button aria-label="Clear" (click)="searchParam=''">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-  <section class="example-section">
-    <mat-checkbox class="example-margin" [(ngModel)]="filters.sets">Sets</mat-checkbox>
-    <mat-checkbox class="example-margin" [(ngModel)]="filters.players">Players</mat-checkbox>
-    <mat-checkbox class="example-margin" [(ngModel)]="filters.tournaments">Tournaments</mat-checkbox>
-    <mat-checkbox class="example-margin" [(ngModel)]="filters.games">Games</mat-checkbox>
-    <mat-checkbox class="example-margin" [(ngModel)]="filters.events">Events</mat-checkbox>
-  </section>
+<div class="main-div">
+
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-form-field appearance="outline" color="white">
+        <mat-label>Search</mat-label>
+        <input matInput type="text" [(ngModel)]="searchParam" placeholder="Search" (keydown.enter)="search()">
+        <button *ngIf="searchParam" matSuffix mat-icon-button aria-label="Clear" (click)="searchParam=''">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </mat-card-header>
+    <mat-card-content>
+      <section class="example-section">
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.sets">Sets</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.players">Players</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.tournaments">Tournaments</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.games">Games</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.events">Events</mat-checkbox>
+      </section>
+    </mat-card-content>
+  </mat-card>
 </div>
+<!-- TODO MAKE THIS A CHILD COMPONENT AND FIX THIS SHIT? -->
+<!-- display results here -->
+<ng-container *ngIf="searchResults.length > 0">
+  <ng-container *ngIf="filters.sets">
+    <p>test if sets</p>
+    <div >
+      <ul *ngFor="let result of searchResults">
+        <li (click)="goToResult('set', result.set_id)">
+          {{result.set_id}}
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="filters.players">
+    <p>test if sets</p>
+    <div >
+      <ul *ngFor="let result of searchResults">
+        <li>
+          {{result.player_id}}
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="filters.tournaments">
+    <p>test if sets</p>
+    <div >
+      <ul *ngFor="let result of searchResults">
+        <li>
+          {{result.tournament_id}}
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="filters.games">
+    <p>test if sets</p>
+    <div >
+      <ul *ngFor="let result of searchResults">
+        <li>
+          {{result.game_id}}
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="filters.events">
+    <p>test if events</p>
+    <div>
+      <ul *ngFor="let result of searchResults">
+        <li (click)="goToResult('event', result.event_id)">
+          {{result.event_id}}
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+</ng-container>
+
+

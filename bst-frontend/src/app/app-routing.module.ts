@@ -5,13 +5,16 @@ import { PageNotFoundComponent } from './components/page-not-found/page-not-foun
 import { ProfileComponent } from './components/profile/profile.component';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { BracketViewComponent } from './components/tournament/bracket-view/bracket-view.component';
+import { EventViewComponent } from './components/tournament/event-view/event-view.component';
 
 const routes: Routes = [
   {path: '', component: LoginComponent}, //* this is what router-outlet defaults to
   {path: 'bracketView', component: BracketViewComponent},
   {path: 'login', component: LoginComponent},
   {path: 'search/:searchParam', component: SearchResultsComponent},
+  {path: 'search', component: SearchResultsComponent},
   {path: 'profile', component: ProfileComponent},
+  {path: 'event/:eventId', component: EventViewComponent},
 
   { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];

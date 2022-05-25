@@ -13,6 +13,7 @@ exports.seed = function (knex, Promise) {
             // .then(() => knex('tournaments_to_players').del())
             .then(() => knex('games').del())
             .then(() => knex('sets').del())
+            .then(() => knex('bracketes').del())
             .then(() => knex('events').del())
             .then(() => knex('tournaments').del())
             .then(() => knex('teams_to_players').del())

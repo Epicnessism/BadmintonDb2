@@ -8,7 +8,7 @@ import { NavigationService } from 'src/app/services/navigation/navigation.servic
 })
 export class NavBarComponent implements OnInit {
 
-  searchString: string = 'Clear me';
+  searchString: string = '';
 
   constructor(private navigationService: NavigationService) { }
 
