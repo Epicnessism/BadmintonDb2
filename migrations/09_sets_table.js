@@ -2,7 +2,7 @@ exports.up = function(knex) {
     return knex.schema.createTable('sets', table => {
         table.increments('id');
         table.uuid('set_id').notNullable().unique();
-        table.uuid('tournament_id').nullable();
+        // table.uuid('tournament_id').nullable();
         table.uuid('bracket_id').nullable();
         table.integer('event_game_number').nullable(); //game number to track bracket progress
         table.bigInteger('created_timestamp');
@@ -16,7 +16,7 @@ exports.up = function(knex) {
 
         table.foreign('team_1_id').references('teams_to_players.team_id');
         table.foreign('team_2_id').references('teams_to_players.team_id');
-        table.foreign('tournament_id').references('tournaments.tournament_id');
+        // table.foreign('tournament_id').references('tournaments.tournament_id');
         table.foreign('bracket_id').references('brackets.bracket_id');
     })
   };

@@ -12,8 +12,7 @@ async function insertSet(body) {
     await knex('sets')
         .insert({
             set_id: body.set_id,
-            tournament_id: body.tournament_id,
-            event_id: body.event_id,
+            bracket_id: body.bracket_id,
             event_game_number: body.event_game_number,
             team_1_id: body.team_1_id,
             team_2_id: body.team_2_id,
@@ -51,6 +50,7 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
     console.log("inside findInsertNextSet");
     console.log(nextGameNumber);
     console.log(team_id);
+    console.log(eventDetails);
     if (!set.completed) {
         console.log("Set incomplete, not inserting next set");
         return { status: 400, message: 'Set not completed' }
@@ -60,9 +60,8 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
 
     await knex('sets')
         .select('*')
-        .where('event_id', eventDetails.event_id)
-        .andWhere('tournament_id', eventDetails.tournament_id)
-        .andWhere('event_game_number', nextGameNumber)
+        .where('bracket_id', eventDetails.bracket_id)
+        .andWhere('event_game_number', nextGameNumber) //TODO rename this column at some point
         .then(foundNextSet => {
             // let playersToInsert = findWinningTeam(set);
             if (foundNextSet.length == 1) {
@@ -83,10 +82,10 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
                 //create new Set with the new game_number and with this player/players inserted
                 nextSet = {
                     set_id: uuidv4(),
-                    tournament_id: eventDetails.tournament_id,
-                    event_id: eventDetails.event_id,
+                    // tournament_id: eventDetails.tournament_id,
+                    bracket_id: eventDetails.bracket_id,
                     event_game_number: nextGameNumber,
-                    team_1_id: team_id,
+                    team_1_id: team_id, //TODO determine top and bottom team_id to add to
                     team_2_id: null,
                     game_type: set.game_type,
                 }
@@ -174,11 +173,10 @@ async function findNextLoserBracket(eventDetails, setObject) {
         }
         console.log("new bracketLevel");
         console.log(newBracketLevel);
-        await knex('events')
+        await knex('brackets')
             .select('*')
-            .where('tournament_id', setObject.tournament_id)
             .andWhere('bracket_level', newBracketLevel)
-            .andWhere('event_type', eventDetails.event_type) //todo this is a limiting factor, it limits the organizer to 1 type of event per tournament
+            .andWhere('event_id', eventDetails.event_id)
             .then(foundNextBracket => {
                 if (foundNextBracket.length == 1) {
                     //get the set # from that event + set. If set doesn't exist, create and add, otherwise merge

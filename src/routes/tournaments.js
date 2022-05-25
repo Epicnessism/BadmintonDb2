@@ -151,7 +151,6 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
         'sets.winning_team',
         'sets.team_1_id as team_1_id',
         'sets.team_2_id as team_2_id',
-        'sets.tournament_id as tournament_id',
         knex.raw("array_agg(distinct array[cast(games.game_number as text), cast(games.team_1_points as text), cast(games.game_id as text)]) filter (where games.game_number is not null) as team_1_points"),
         knex.raw("array_agg(distinct array[cast(games.game_number as text), cast(games.team_2_points as text), cast(games.game_id as text)]) filter (where games.game_number is not null) as team_2_points"),
         knex.raw("array_agg(distinct concat(users.given_name, ' ', users.family_name) ) filter (where teams_to_players.team_id = sets.team_1_id) as team_1_names"),
@@ -168,7 +167,7 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
         'sets.game_type','sets.event_game_number', 
         'sets.completed', 'sets.winning_team',
         'sets.team_1_id', 'sets.team_2_id',
-        'sets.tournament_id')
+        )
         .orderBy('sets.event_game_number')
         .then(result => {
             console.log(result);
@@ -222,13 +221,13 @@ tournaments.post('/updateSet', async function (req, res, next) {
 
 
     //* attempt to find the setId in the events table to see if it exists. If it doesn't exist, throw 404
-    await knex('events')
+    await knex('brackets')
         .select("*")
-        .where('event_id', req.body.event_id)
+        .where('bracket_id', req.body.bracket_id)
         .then(result => {
             // console.log("RESULTS OF FINDING EVENT_ID: ");
             // console.log(result);
-            if (result.length == 1) {
+            if (result.length == 1) { //TODO move this outside of .then and into function root...
                 eventDetails = result[0];
             } else {
                 handleResponse(res, 400, "Event Not Found")
