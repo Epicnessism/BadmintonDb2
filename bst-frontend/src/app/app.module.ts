@@ -39,6 +39,7 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { PreviousRouteDirective } from './directives/previous-route.directive';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { EventViewComponent } from './components/tournament/event-view/event-view.component';
 
 
 
@@ -53,7 +54,8 @@ import { ProfileComponent } from './components/profile/profile.component';
     NavBarComponent,
     PreviousRouteDirective,
     SearchResultsComponent,
-    ProfileComponent
+    ProfileComponent,
+    EventViewComponent
   ],
   imports: [
     BrowserModule,

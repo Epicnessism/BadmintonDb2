@@ -38,10 +38,31 @@ export class SearchResultsComponent implements OnInit {
   search(): void {
     //* do search to db here...
     console.log(this.filters);
-    this.searchService.getSearchResults(this.searchParam, {"filters": this.filters}).subscribe( result => {
-      console.log(result);
+    // this.searchService.getSearchResults(this.searchParam, {"filters": this.filters}).subscribe( result => {
+    //   console.log("this is inside the subscribe: ");
+    //   console.log(result);
+
+    // })
+
+    this.searchService.getSearchResults(this.searchParam, {"filters": this.filters}).subscribe( {
+      next: this.handleSearchResults.bind(this),
+      error: this.handleError.bind(this)
 
     })
+  }
+
+  handleSearchResults(result: any): void {
+    console.log("the result inside handle results: ");
+    console.log(result);
+
+    console.log("inside handle results");
+
+  }
+
+  handleError(error: any): void {
+    console.log("the error inside handle error: " + error);
+
+    console.log("inside handle error");
 
   }
 

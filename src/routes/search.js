@@ -60,7 +60,7 @@ search.post('/:substring', function(req, res, next) {
         if(result.length == 0) {
             return handleResponse(res, 404, "Did not find any records.")
         }
-        handleResponse(res, 200, result)
+        return res.status(200).json(result)
     })
     .catch( error => {
         console.log(error);
