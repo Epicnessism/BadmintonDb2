@@ -173,13 +173,14 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
         .then(result => {
             console.log(result);
             console.log(result.length);
-            if (result.length >= 1) {
-                res.status(200).json(result)
-            } else {
-                handleResponse(res, 400, "Bad Request")
-            }
+            // if (result.length >= 1) { //TODO plan and design whether checks are needed here
+            //     res.status(200).json(result)
+            // } else {
+            //     handleResponse(res, 400, "Bad Request")
+            // }
+            res.status(200).json(result)
         })
-        .catch(error => {
+        .catch(error => { //TODO OR MAYBE CATCH MORE ERRORS, LIKE IF BRACKET_ID NOT FOUND THEN RETURN A 400 INSTEAD OF 500 CONSIDER USING A LEFTJOIN ON THE BRACKETS TABLE, WOULD THIS ALSO RETURN NOTHING?
             console.log(error.message);
             handleResponse(res, 500, 'Something went wrong on our end')
         })
