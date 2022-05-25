@@ -126,24 +126,25 @@ tournaments.get('/getAllPlayers/:tournamentId', function (req, res, next) {
 
 tournaments.get('/getEventMetaData/:event_id', async function (req, res, next) {
     console.log(req.params);
-    await knex('events')
-        .select()
-        .from('events')
-        .where('event_id', req.params.event_id)
+    await knex('events as e')
+        .leftJoin('brackets as b', 'e.event_id', 'b.event_id')
+        .select('e.event_id', 'e.tournament_id', 'e.event_type', 'e.best_of', 'b.bracket_id', 'b.bracket_level', 'b.bracket_size')
+        .where('e.event_id', req.params.event_id)
+        .orderBy('b.bracket_level')
         .then( result => {
-            if(result.length != 1) {
-                return handleResponse(res, 500, 'Too many records')
-            }
+            // if(result.length != 1) {
+            //     return handleResponse(res, 500, 'Too many records')
+            // }
             console.log('result of getMetaData: %s', result)
             return res.status(200).json(result)
         })
 })
 
-tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) {
+tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next) {
     console.log(req.params);
     await knex('sets').select(
         'sets.set_id',
-        'sets.event_id',
+        'sets.bracket_id',
         'sets.game_type',
         'sets.event_game_number',
         'sets.completed', 
@@ -162,8 +163,8 @@ tournaments.get('/getBracketSetData/:event_id', async function (req, res, next) 
         .joinRaw(knex.raw('left join games on sets.set_id = games.set_id'))
         .joinRaw(knex.raw('left join teams_to_players on teams_to_players.team_id = any (array[sets.team_1_id, sets.team_2_id])'))
         .joinRaw(knex.raw('left join users on users.user_id = any (array[teams_to_players.player_id_1, teams_to_players.player_id_2])'))
-        .where('sets.event_id', req.params.event_id)
-        .groupBy('sets.set_id','sets.event_id',
+        .where('sets.bracket_id', req.params.bracket_id)
+        .groupBy('sets.set_id','sets.bracket_id',
         'sets.game_type','sets.event_game_number', 
         'sets.completed', 'sets.winning_team',
         'sets.team_1_id', 'sets.team_2_id',

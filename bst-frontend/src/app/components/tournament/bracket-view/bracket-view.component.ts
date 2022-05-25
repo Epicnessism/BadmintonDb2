@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Inject, Input } from '@angular/core';
 import { Set } from 'src/app/interfaces/set.model';
 import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
@@ -17,7 +17,8 @@ import { Observable } from 'rxjs';
 })
 export class BracketViewComponent implements OnInit {
 
-  eventId: string = 'edde8206-78cb-4c59-8125-dc8ca3c8fe97'
+  @Input() inputEventMetaData: any = '';
+
   bracketMetaData: EventMetaData | undefined
   bracket: any[][] = []
   bracketData: Set[] = []
@@ -32,12 +33,14 @@ export class BracketViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.inputEventMetaData);
+
     this.getData()
   }
 
   openDialog(setData: Set) {
     console.log(setData);
-    let wrapData = {setData, bracketMetaData: this.bracketMetaData}
+    let wrapData = {setData, bracketMetaData: this.inputEventMetaData}
     const dialogRef = this.dialog.open(SetDetailsDiaglogComponent, {data: wrapData });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -46,20 +49,11 @@ export class BracketViewComponent implements OnInit {
   }
 
   async getData() {
-    await this.getEventMetaData(this.eventId);
-    await this.getBracketData(this.eventId);
+    await this.getBracketData(this.inputEventMetaData.bracket_id);
   }
 
-
-  async getEventMetaData(eventId: string) {
-    this.tournamentDataService.getEventMetaData(eventId).subscribe(result => {
-      console.log(result);
-      this.bracketMetaData = result[0]
-    });
-  }
-
-  async getBracketData(eventId: string) {
-    this.tournamentDataService.getBracketData(eventId).subscribe(result => {
+  async getBracketData(bracketId: string) {
+    this.tournamentDataService.getBracketData(bracketId).subscribe(result => {
       console.log(result);
       this.bracketData = result;
       console.log(this.bracketData);
@@ -70,10 +64,10 @@ export class BracketViewComponent implements OnInit {
   }
 
   splitBracketData(): void {
-    console.log(`isBracketMetaData not null? ${this.bracketMetaData != null} `);
+    console.log(`isBracketMetaData not null? ${this.inputEventMetaData != null} `);
 
-    if(this.bracketMetaData != null) {
-      let bracketsize = this.bracketMetaData.bracket_size;
+    if(this.inputEventMetaData != null) {
+      let bracketsize = this.inputEventMetaData.bracket_size;
       let depthOfBracket = Math.log2(bracketsize);
 
       for(let layer = 1; layer <= depthOfBracket; layer++) {

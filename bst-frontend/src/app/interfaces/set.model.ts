@@ -1,7 +1,7 @@
 export interface Set {
   completed: boolean,
   eventGameNumber: number,
-  eventId: string,
+  bracketId: string,
   gameType: string,
   setId: string,
   team_1_names: string[],

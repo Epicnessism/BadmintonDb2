@@ -3,8 +3,8 @@ exports.up = function(knex) {
         table.increments('id');
         table.uuid('game_id').notNullable().unique();
         table.uuid('set_id').nullable();
-        table.integer('team_1_points');
-        table.integer('team_2_points');
+        table.integer('team_1_points').defaultsTo(0);
+        table.integer('team_2_points').defaultsTo(0);
         table.boolean('completed').defaultsTo(false);
         table.bigInteger('created_timestamp');
         table.integer('game_number');
