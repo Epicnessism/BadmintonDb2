@@ -143,12 +143,12 @@ tournaments.get('/getEventMetaData/:event_id', async function (req, res, next) {
 tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next) {
     console.log(req.params);
     await knex('sets').select(
-        'sets.set_id',
-        'sets.bracket_id',
-        'sets.game_type',
-        'sets.event_game_number',
-        'sets.completed', 
-        'sets.winning_team',
+        'sets.set_id as setId',
+        'sets.bracket_id as bracketId',
+        'sets.game_type as gameType',
+        'sets.event_game_number as eventGameNumber',
+        'sets.completed as completed', 
+        'sets.winning_team as winningTeam',
         'sets.team_1_id as team_1_id',
         'sets.team_2_id as team_2_id',
         knex.raw("array_agg(distinct array[cast(games.game_number as text), cast(games.team_1_points as text), cast(games.game_id as text)]) filter (where games.game_number is not null) as team_1_points"),
@@ -203,7 +203,7 @@ tournaments.post('/completedSet', async function (req, res, next) {
  * should also handle bracket dropdowns accordingly
  */
 tournaments.post('/updateSet', async function (req, res, next) {
-    // console.log(req.body);
+    console.log(req.body);
     let eventDetails = null;
 
     //* check set format validation
@@ -216,14 +216,15 @@ tournaments.post('/updateSet', async function (req, res, next) {
     }
 
     //* caluclate winning team and completeness automatically
-    req.body.winning_team = Games.calculateWinningTeam(req.body.team_1_points, req.body.team_2_points, 3) //todo ADD BEST OF GRAB LOGIC!
-    req.body.completed = req.body.winning_team != -1 ? true : false
+    req.body.winningTeam = Games.calculateWinningTeam(req.body.team_1_points, req.body.team_2_points, 3) //todo ADD BEST OF GRAB LOGIC!
+    req.body.completed = req.body.winningTeam != -1 ? true : false
+    console.log(`winningTeam and completed: ${req.body.winningTeam}:${req.body.completed}`);
 
 
     //* attempt to find the setId in the events table to see if it exists. If it doesn't exist, throw 404
     await knex('brackets')
         .select("*")
-        .where('bracket_id', req.body.bracket_id)
+        .where('bracket_id', req.body.bracketId)
         .then(result => {
             // console.log("RESULTS OF FINDING EVENT_ID: ");
             // console.log(result);
@@ -247,7 +248,7 @@ tournaments.post('/updateSet', async function (req, res, next) {
     //todo get setData from db based on setId?
     await knex('sets')
         .select("*")
-        .where('set_id', req.body.set_id)
+        .where('set_id', req.body.setId)
         .andWhere('team_1_id', req.body.team_1_id)
         .andWhere('team_2_id', req.body.team_2_id)
         .then(result => { //TODO consider creating a function to check that results exists...
@@ -270,7 +271,7 @@ tournaments.post('/updateSet', async function (req, res, next) {
     const response = await Sets.insertSet(req.body) //TODO this should be just a completed/winning patch...
     console.log(response)
 
-    if (response.status != 200) {
+    if (response.status != 201) {
         console.log("handleResponse failure not 200 insertSet")
         handleResponse(res, response.status, response.message)
         return
@@ -286,21 +287,20 @@ tournaments.post('/updateSet', async function (req, res, next) {
     }
 
     //* check if the set was completed or just updated.
-    if(req.body.completed != true && req.body.winning_team == -1) {
+    if(!req.body.completed && req.body.winningTeam == -1) {
         return res.status(201).json({message: "success partial"})
     }
 
     console.log(eventDetails);
     //after creating games, check for nextSet logic
-    let nextWinnerGameNumber = Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.event_game_number)
-    let nextLoserGameNumber = Sets.calculateNextLoserGameNumber(req.body.event_game_number)
-
+    let nextWinnerGameNumber = Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.eventGameNumber)
+    let nextLoserGameNumber = Sets.calculateNextLoserGameNumber(eventDetails.bracket_size, req.body.eventGameNumber)
     console.log(nextWinnerGameNumber + " : " + nextLoserGameNumber);
 
     let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextWinnerGameNumber, Sets.findWinningTeam(req.body))
 
     console.log(nextSetResponse);
-    console.log("after net set response ---------------------");
+    console.log("after next set response ---------------------");
     let nextLoserEvent = await Sets.findNextLoserBracket(eventDetails, req.body)
     let nextLoserSetResponse = null;
     console.log("after next loser event");

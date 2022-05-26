@@ -25,7 +25,7 @@ async function insertGames(setObject) {
                 await knex('games')
                     .insert({
                         game_id: gameObject.game_id != null ? gameObject.game_id : uuidv4(),
-                        set_id: setObject.set_id,
+                        set_id: setObject.setId,
                         team_1_points: gameObject.team_1_points,
                         team_2_points: gameObject.team_2_points,
                         completed: completedGame,
@@ -76,7 +76,15 @@ function validateGameInput(game) {
     return response;
 }
 
+function convertPointStringsToNumbers(teamPoints) {
+    // [[1,21,'someId'], [2,21,'someId']]
+    teamPoints.forEach(gamePoints => gamePoints[1] = parseInt(gamePoints[1]))
+}
+
 function calculateGamesWonForBothTeams(team_1_points, team_2_points) {
+    convertPointStringsToNumbers(team_1_points)
+    convertPointStringsToNumbers(team_2_points)
+    
     let teamOneCount = 0
     let teamTwoCount = 0
 
@@ -111,7 +119,7 @@ function calculateWinningTeam(team_1_points, team_2_points, eventBestOf) {
 
     let winningTeam = wonGames.teamOne > wonGames.teamTwo ? 1 : 2
     winningTeam = wonGames.teamOne == wonGames.teamTwo ? -1 : winningTeam
-    
+    console.log(`winningTeam calculation??? ${winningTeam}`);
     return winningTeam
 }
 

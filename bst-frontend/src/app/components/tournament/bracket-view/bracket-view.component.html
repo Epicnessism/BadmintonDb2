@@ -1,7 +1,7 @@
 <div fxLayout="col" fxLayoutAlign="start">
   <mat-selection-list [multiple]="false" *ngFor="let depth of bracket" fxLayout="column" fxLayoutAlign="space-evenly" fxFlex>
     <mat-list-option *ngFor="let tile of depth; let i = index" [value]="tile.db_set_id" class="tile_width tile_border_bottom" [ngClass]="i % 2 == 1 ? 'tile_border_right' : ''" (click)="openDialog(tile)">
-      <{{i+1}}>  {{tile.team_1_names}} |  {{tile.team_2_names}}
+      <{{tile.eventGameNumber}}>  {{tile.team_1_names}} |  {{tile.team_2_names}}
       <span class="score_list" *ngFor="let point of tile.team_1_points; index as ind"> {{point[1]}}:{{tile.team_2_points[ind][1]}}<span class="score_list" *ngIf="ind < tile.team_1_points.length-1">,</span> </span>
       <!-- TODO why do spans not in-line automatically????????? investigate in the future -->
       <!-- <button mat-button (click)="openDialog()">Open dialog</button> -->

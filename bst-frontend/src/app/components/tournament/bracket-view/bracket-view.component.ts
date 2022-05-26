@@ -21,6 +21,7 @@ export class BracketViewComponent implements OnInit {
 
   bracketMetaData: EventMetaData | undefined
   bracket: any[][] = []
+
   bracketData: Set[] = []
 
   depth1: any[] = []
@@ -57,24 +58,70 @@ export class BracketViewComponent implements OnInit {
       console.log(result);
       this.bracketData = result;
       console.log(this.bracketData);
-      console.log(this.bracketData[0]);
-      console.log(this.bracketData.length);
-      this.splitBracketData();
+      this.generateBracketSkeleton();
+      // this.splitBracketData();
+      this.mapBracketDataToSkeleton();
     });
+  }
+
+  generateBracketSkeleton(): void {
+    console.log(`attempting to generate full skeleton bracket for bracketLevel: ${this.inputEventMetaData.bracket_level} with bracketsize: ${this.inputEventMetaData.bracket_size}`);
+    let bracketSize = this.inputEventMetaData.bracket_size;
+    let depthOfBracket = Math.log2(bracketSize);
+
+    let startingGameNumber = 1
+    for(let layer = 1; layer <= depthOfBracket; layer++) {
+      let numGamesInThisLayer = bracketSize / Math.pow(2, layer)
+
+      let thisLayer = Array.from({ length: numGamesInThisLayer }).map((u, i) => {return {"eventGameNumber" : startingGameNumber++}})
+      this.bracket.push(thisLayer)
+    }
+    console.log(this.bracket);
+
+  }
+
+  mapBracketDataToSkeleton(): void {
+    console.log(this.bracket);
+
+    for(let depth of this.bracket) {
+      for(let tile = 0; tile < depth.length; tile++) {
+        let bracketDataIndex = this.bracketData.findIndex(game => game.eventGameNumber == depth[tile].eventGameNumber)
+        if(bracketDataIndex != -1) {
+          let setData = this.bracketData.splice(bracketDataIndex, 1)
+          depth[tile] = setData[0]
+        }
+
+      }
+    }
   }
 
   splitBracketData(): void {
     console.log(`isBracketMetaData not null? ${this.inputEventMetaData != null} `);
 
     if(this.inputEventMetaData != null) {
-      let bracketsize = this.inputEventMetaData.bracket_size;
-      let depthOfBracket = Math.log2(bracketsize);
+      let bracketSize = this.inputEventMetaData.bracket_size;
+      let depthOfBracket = Math.log2(bracketSize);
 
       for(let layer = 1; layer <= depthOfBracket; layer++) {
-        let thisLayer = this.depth1 = this.bracketData.splice(0, bracketsize / Math.pow(2, layer));
+        let thisLayer: any = this.bracketData.splice(0, bracketSize / Math.pow(2, layer));
+
+        if(thisLayer.length > 0) {
+          console.log(`this layer length: ${thisLayer.length}`);
+          console.log(thisLayer);
+
+
+          for(let game of thisLayer) {
+            let gameIndex = this.bracket[layer-1].findIndex( tile => tile.eventGameNumber == game.eventGameNumber);
+            console.log(`game index found is: ${gameIndex}`);
+
+            this.bracket[layer-1][gameIndex] = game
+          }
+          console.log(this.bracket);
+
+        }
+
         console.log('this layer depth is: %d', layer);
         console.log('this layer is: %s', thisLayer);
-        this.bracket.push(thisLayer)
       }
 
     }

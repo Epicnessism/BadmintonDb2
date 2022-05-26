@@ -43,6 +43,8 @@ describe('test counting number of won games for each team', () => {
 describe('test finding winning team automatically', () => {
     const arrayOfTestValues = [
         [[[1, 21, ''], [2, 21, '']], [[1, 19, ''], [2, 13, '']], 3, 'best of 3 valid, 2 straight games', 1],
+        [[[1, 21, ''], [2, 21, '']], [[1, 19, ''], [2, '13', '']], 3, 'best of 3 valid, 2 straight games WITH TEXT/NUMBER INPUT', 1],
+        [[[1, '21', ''], [2, '21', '']], [[1, '19', ''], [2, '13', '']], 3, 'best of 3 valid, 2 straight games WITH TEXT INPUT', 1],
         [[[1, 11, '']], [[1, 21, '']], 1, 'best of 1 valid', 2],
         [[[1, 11, '']], [[1, 19, '']], 1, 'best of 1 invalid', -1],
         [[[1, 21, ''], [2, 19, ''], [3, 11, '']], [[1, 11, ''], [2, 19, ''], [3, 11, '']], 3, 'best of 3 invalid', -1],

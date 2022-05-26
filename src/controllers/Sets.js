@@ -9,16 +9,18 @@ const Brackets = require('./Brackets');
  */
 async function insertSet(body) {
     let response = null;
+    console.log(`body of insert: ${body}`);
+    console.log(body);
     await knex('sets')
         .insert({
-            set_id: body.set_id,
-            bracket_id: body.bracket_id,
-            event_game_number: body.event_game_number,
+            set_id: body.setId,
+            bracket_id: body.bracketId,
+            event_game_number: body.eventGameNumber,
             team_1_id: body.team_1_id,
             team_2_id: body.team_2_id,
-            game_type: body.game_type,
+            game_type: body.gameType,
             completed: body.completed,
-            winning_team: body.winning_team
+            winning_team: body.winningTeam
         })
         .onConflict(['set_id'])
         .merge()
@@ -26,10 +28,10 @@ async function insertSet(body) {
         .then(resultInsert => {
             console.log("results Set_id inserted");
             console.log(resultInsert);
-            response = { status: 200, message: "Successfully inserted set" }
+            response = { status: 201, message: "Successfully inserted set" }
         })
         .catch(err => {
-            console.log("error inserting set: ");
+            console.log("Sets.js::34 error inserting set: ");
             console.log(err);
             if (err.code == '23503') {
                 response = { status: 400, message: "One or more player_ids do not exist" };
@@ -38,6 +40,13 @@ async function insertSet(body) {
             }
         });
     return response;
+}
+
+async function updateSetTeam(setId, teamIdMapList) {
+    let response = null;
+    console.log(`setId: ${setId}:${teamIdMapList}`);
+    await knex('sets').where('set_id', setId).update(teamIdMapList[0].columnName, teamIdMapList[0].value)
+    return { status: 201, message: "Successfully updated set"}
 }
 
 /**
@@ -63,39 +72,56 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
         .where('bracket_id', eventDetails.bracket_id)
         .andWhere('event_game_number', nextGameNumber) //TODO rename this column at some point
         .then(foundNextSet => {
-            // let playersToInsert = findWinningTeam(set);
-            if (foundNextSet.length == 1) {
-                nextSet = foundNextSet[0];
-                console.log("next set????");
-                console.log(nextSet);
-                if (!doPlayersExistInSet(nextSet, team_id)) {
-                    //players do not exist in the already existing set, so find empty spots and add them
-                    if (nextSet.team_1_id == null) {
-                        //add to team 1
-                        nextSet.team_1_id = team_id;
-                    } else {
-                        //add to team 2
-                        nextSet.team_2_id = team_id;
-                    }
-                }
-            } else {
-                //create new Set with the new game_number and with this player/players inserted
-                nextSet = {
-                    set_id: uuidv4(),
-                    // tournament_id: eventDetails.tournament_id,
-                    bracket_id: eventDetails.bracket_id,
-                    event_game_number: nextGameNumber,
-                    team_1_id: team_id, //TODO determine top and bottom team_id to add to
-                    team_2_id: null,
-                    game_type: set.game_type,
-                }
-            }
+            nextSet = foundNextSet
         })
-    console.log("reaching insertSet of NextSet: ");
-    console.log(nextSet);
-    let resultsInsertNextSet = await insertSet(nextSet)
-    console.log("reaching resultsInsertNextSet: ");
-    console.log(resultsInsertNextSet);
+
+    // let playersToInsert = findWinningTeam(set);
+    console.log(`found next set: ${nextSet.length}`);
+    let resultsInsertNextSet = null
+
+    if (nextSet.length == 1) {
+        nextSet = nextSet[0];
+
+        console.log("next set????");
+        console.log(nextSet);
+        let team = ''
+        if (!doPlayersExistInSet(nextSet, team_id)) {
+            //players do not exist in the already existing set, so find empty spots and add them
+            if (nextSet.team_1_id == null) {
+                //add to team 1
+                // nextSet.team_1_id = team_id;
+                team = 'team_1_id'
+            } else {
+                //add to team 2
+                // nextSet.team_2_id = team_id;
+                team = 'team_2_id'
+            }
+            let teamIdMap = [{
+                columnName: team,
+                value: team_id
+            }]
+            console.log(teamIdMap);
+            resultsInsertNextSet = await updateSetTeam(nextSet.set_id, teamIdMap)
+            
+        }
+    } else {
+        //create new Set with the new game_number and with this player/players inserted
+        nextSet = {
+            setId: uuidv4(),
+            // tournament_id: eventDetails.tournament_id,
+            bracketId: eventDetails.bracket_id,
+            eventGameNumber: nextGameNumber,
+            team_1_id: team_id, //TODO determine top and bottom team_id to add to
+            team_2_id: null,
+            gameType: set.gameType,
+        }
+        resultsInsertNextSet = await insertSet(nextSet)
+    }
+    
+    // console.log("reaching insertSet of NextSet: ");
+    // console.log(nextSet);
+    // console.log("reaching resultsInsertNextSet: ");
+    // console.log(resultsInsertNextSet);
     return resultsInsertNextSet;
 }
 
@@ -107,12 +133,12 @@ async function findOrInsertNextSet(eventDetails, set, nextGameNumber, team_id) {
  */
 function findWinningTeam(setObject) {
     console.log('inside find winning team: %s', setObject);
-    return setObject.winning_team == 1 ? setObject.team_1_id : setObject.team_2_id
+    return setObject.winningTeam == 1 ? setObject.team_1_id : setObject.team_2_id
 }
 
 
 function findLosingTeam(setObject) {
-    return setObject.winning_team == 1 ? setObject.team_2_id : setObject.team_1_id
+    return setObject.winningTeam == 1 ? setObject.team_2_id : setObject.team_1_id
 }
 
 
@@ -158,12 +184,12 @@ async function findNextLoserBracket(eventDetails, setObject) {
     let response = null;
     console.log("inside findLoserBracket");
     //first if bracket is A or C, and game is less than 3s/4 find next bracket to dropdown into.
-    if ((eventDetails.bracket_level == 'A' || eventDetails.bracket_level == 'C') && setObject.event_game_number <= (3 * eventDetails.bracket_size / 4)) {
+    if ((eventDetails.bracket_level == 'A' || eventDetails.bracket_level == 'C') && setObject.eventGameNumber <= (3 * eventDetails.bracket_size / 4)) {
         //then find event_id of next bracket
         console.log(eventDetails.bracket_level);
-        console.log(setObject.event_game_number);
+        console.log(setObject.eventGameNumber);
         let newBracketLevel = null;
-        if (eventDetails.bracket_level == 'A' && setObject.event_game_number <= eventDetails.bracket_size / 2) {
+        if (eventDetails.bracket_level == 'A' && setObject.eventGameNumber <= eventDetails.bracket_size / 2) {
             //first round dropdowns, so go from A to C
             console.log(Brackets.toLevel(Brackets.toValue(eventDetails.bracket_level) - 2));
             newBracketLevel = Brackets.toLevel(Brackets.toValue(eventDetails.bracket_level) - 2)
@@ -222,7 +248,7 @@ function calculateNextWinnerGameNumber(s, currentGameNumber) {
         if (currentGameNumber == s - 1) {
             //return null/0/na something to denote no more games to play
             console.log("return null/0/na something to denote no more games to play");
-            return null;
+            return null; //TODOD RETURN -1 AND HANDLE THAT AS A SUCCESS
         }
         let g = Math.ceil(currentGameNumber / 2)
         if (g == startingGame[i]) {
@@ -236,9 +262,38 @@ function calculateNextWinnerGameNumber(s, currentGameNumber) {
     return g2;
 }
 
-function calculateNextLoserGameNumber(gameNumber) {
+function generateBracketSkeleton(bracketSize) {
+    let depthOfBracket = Math.log2(bracketSize);
+    let bracket = []
+
+    let startingGameNumber = 1
+    for(let layer = 1; layer <= depthOfBracket; layer++) {
+      let numGamesInThisLayer = bracketSize / Math.pow(2, layer)
+
+      let thisLayer = Array.from({ length: numGamesInThisLayer }).map((u, i) => {return {"eventGameNumber" : startingGameNumber++}})
+      bracket.push(thisLayer)
+    }
+    console.log(bracket);
+    return bracket;
+
+  }
+
+
+function calculateNextLoserGameNumber(bracketSize, gameNumber) {
+    let workingGameNumber = gameNumber; //11
+    let emptyBracket = generateBracketSkeleton(bracketSize)
     // if(dropdown) //todo implement types of tournaments later
-    return Math.ceil(gameNumber / 2)
+    for( let depth of emptyBracket) {
+        console.log(depth);
+        console.log(!depth.some( tile => tile.eventGameNumber == gameNumber));
+        if(!depth.some( tile => tile.eventGameNumber == gameNumber)) {
+            workingGameNumber -= depth.length
+        } else {
+            break
+        }
+    }
+    
+    return Math.ceil(workingGameNumber / 2)
 }
 
 module.exports = {
