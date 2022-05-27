@@ -31,6 +31,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 // import {MatGridListModule} from '@angular/material/grid-list';
 import { MatBadgeModule } from '@angular/material/badge';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatSelectModule} from '@angular/material/select';
 
 import { LoginComponent } from './components/login/login.component';
 import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
@@ -40,6 +41,7 @@ import { PreviousRouteDirective } from './directives/previous-route.directive';
 import { SearchResultsComponent } from './components/search-results/search-results.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { EventViewComponent } from './components/tournament/event-view/event-view.component';
+import { CreateViewComponent } from './components/tournament/create-view/create-view.component';
 
 
 
@@ -55,7 +57,8 @@ import { EventViewComponent } from './components/tournament/event-view/event-vie
     PreviousRouteDirective,
     SearchResultsComponent,
     ProfileComponent,
-    EventViewComponent
+    EventViewComponent,
+    CreateViewComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +87,8 @@ import { EventViewComponent } from './components/tournament/event-view/event-vie
     DragDropModule,
     FlexLayoutModule,
     MatDialogModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent],

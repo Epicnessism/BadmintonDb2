@@ -1,0 +1,56 @@
+<div class="main-div">
+
+  <mat-card class="main-card">
+    <mat-card-header>
+      <h1>Create Tournament</h1>
+    </mat-card-header>
+    <div class="create-form-container" [formGroup]="tournamentForm">
+      <mat-form-field appearance="fill">
+        <mat-label>Tournament Name</mat-label>
+        <input matInput #input formControlName="tournamentName">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Select Tournament Type</mat-label>
+        <mat-select formControlName="tournamentType">
+          <mat-option value="ABCD">ABCD Dropdown</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <ng-container formArrayName="eventsArray">
+        <h2>Events</h2>
+        <button mat-raised-button color="primary" aria-label="Add event icon" (click)="addEvent()" >
+          Add Event
+        </button>
+
+        <ng-container *ngFor="let eventForm of eventsArray.controls; let i=index" >
+
+          <div formGroupName="{{i}}">
+            <mat-form-field appearance="fill">
+              <mat-label>Event Name</mat-label>
+              <input matInput #input formControlName="eventName">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+              <mat-label>Event Type</mat-label>
+              <mat-select formControlName="eventType">
+                <mat-option value="MS">MS</mat-option>
+                <mat-option value="WS">WS</mat-option>
+                <mat-option value="MD">MD</mat-option>
+                <mat-option value="WD">WD</mat-option>
+                <mat-option value="XD">XD</mat-option>
+                <mat-option value="SS">Genderless Singles</mat-option>
+                <mat-option value="DD">Genderless Doubles</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button  mat-icon-button color="warn" aria-label="remove selected event icon" (click)="removeEvent(i)" >
+              <mat-icon >cancel</mat-icon>
+            </button>
+          </div>
+
+        </ng-container>
+
+      </ng-container>
+
+    </div>
+  </mat-card>
+</div>
