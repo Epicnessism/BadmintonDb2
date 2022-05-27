@@ -4,7 +4,7 @@
     <mat-card-header>
       <h1>Create Tournament</h1>
     </mat-card-header>
-    <div class="create-form-container" [formGroup]="tournamentForm">
+    <div class="create-form-container" [formGroup]="tournamentForm" (ngSubmit)="onSubmit()">
       <mat-form-field appearance="fill">
         <mat-label>Tournament Name</mat-label>
         <input matInput #input formControlName="tournamentName">
@@ -30,6 +30,7 @@
               <mat-label>Event Name</mat-label>
               <input matInput #input formControlName="eventName">
             </mat-form-field>
+
             <mat-form-field appearance="fill">
               <mat-label>Event Type</mat-label>
               <mat-select formControlName="eventType">
@@ -42,6 +43,13 @@
                 <mat-option value="DD">Genderless Doubles</mat-option>
               </mat-select>
             </mat-form-field>
+
+            <mat-form-field appearance="fill">
+              <mat-label>Event Size</mat-label>
+              <input matInput #input type="number" formControlName="eventSize">
+            </mat-form-field>
+
+
             <button  mat-icon-button color="warn" aria-label="remove selected event icon" (click)="removeEvent(i)" >
               <mat-icon >cancel</mat-icon>
             </button>
@@ -50,7 +58,9 @@
         </ng-container>
 
       </ng-container>
-
+      <button mat-raised-button color="primary" aria-label="submit form" type="submit" [disabled]="!tournamentForm.valid">
+        Create Tournament
+      </button>
     </div>
   </mat-card>
 </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
 import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { TournamentDataService } from 'src/app/services/tournament-data.service';
 
 @Component({
   selector: 'app-create-view',
@@ -12,7 +13,7 @@ export class CreateViewComponent implements OnInit {
   tournamentForm = this.fb.group({
     tournamentName: ['', Validators.required],
     tournamentType: ['', Validators.required],
-    eventDates: ['', Validators.required],
+    // eventDates: ['', Validators.required], //TODO add this back later after implementing
     eventsArray: this.fb.array([])
   })
 
@@ -35,10 +36,15 @@ export class CreateViewComponent implements OnInit {
 
   constructor(
     private navigationService: NavigationService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private tournamentDataService: TournamentDataService
   ) { }
 
   ngOnInit(): void {
+  }
+
+  onSubmit(): void {
+    this.createTournament()
   }
 
   createTournament(): void {
