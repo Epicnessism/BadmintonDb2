@@ -17,6 +17,8 @@ export class CreateViewComponent implements OnInit {
     eventsArray: this.fb.array([])
   })
 
+  tournamentId: string = ''; //TODO import UUID type later
+
   get eventsArray(): FormArray {
     return this.tournamentForm.get('eventsArray') as FormArray;
   }
@@ -43,21 +45,22 @@ export class CreateViewComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSubmit(): void {
+  async onSubmit() {
     console.log('onsubmit');
 
-    let response = this.createTournament()
+    let response = await this.createTournamentAndRedirect()
+
     // this.navigationService.navigateByUrl(`tournament/${response.tournamentId}`)
   }
 
-  async createTournament() {
-    let response = await this.tournamentDataService.postTournamentMetaData(this.tournamentForm.value).subscribe( result => {
+  async createTournamentAndRedirect() {
+    this.tournamentDataService.postTournamentMetaData(this.tournamentForm.value).subscribe(result => {
       console.log(result);
-
+      this.tournamentId = result.tournamentId;
+      console.log(`navigating to this tournamentId: ${this.tournamentId}`);
+      this.navigationService.navigateByUrl(`tournaments/${this.tournamentId}`);
     });
-    console.log(response);
 
-    return  response
   }
 
 
