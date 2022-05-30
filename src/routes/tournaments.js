@@ -109,7 +109,7 @@ tournaments.post('/', async function (req, res, next) {
         console.log(result);
     })
 
-    res.status(201).json({"success":"success?"})
+    res.status(201).json({tournamentId:tournamentDetails.tournament_id})
 
 })
 
