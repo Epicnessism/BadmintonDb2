@@ -15,6 +15,10 @@ tournaments.post('/', async function (req, res, next) {
     // await knex.transaction( async (trx) => { //todo implement transcations for tournaments
     //     const [tournament, events]
     // })
+
+    //TODO validate input before inserting, espcially tournamentType
+
+
     let tournamentDetails = {};
 
     //* CREATE TOURNAMENT
@@ -56,6 +60,54 @@ tournaments.post('/', async function (req, res, next) {
     })
 
     //* CREATE BRACKETS......... SHIT
+    let bracketsToCreate = []
+    if( tournamentDetails.tournament_type == 'ABCD') { //TODO use enum?
+        for(let event of eventsToInsert) {
+            let eventSize = event.event_size
+
+            let bracketsForThisEvent = []
+
+            console.log();
+            for(let i = 0; i < 4; i++) {
+                let bracketLevel = ''
+                let bracketSize = 0
+                switch(i) { 
+                    case 0:
+                        bracketLevel = 'A'
+                        bracketSize = eventSize
+                        break;
+                    case 1:
+                        bracketLevel = 'B'
+                        bracketSize = eventSize / 4
+                        break;
+                    case 2:
+                        bracketLevel = 'C'
+                        bracketSize = eventSize / 2
+                        break;
+                    case 3:
+                        bracketLevel = 'D'
+                        bracketSize = eventSize / 4
+                        break;
+                }
+
+                console.log("before bracket concat");
+                bracketsForThisEvent = bracketsForThisEvent.concat([
+                    {bracket_id: uuidv4(), bracket_size: bracketSize, event_id: event.event_id, bracket_level: bracketLevel}
+                ])
+                console.log(bracketsForThisEvent);
+            }
+            
+            
+            bracketsToCreate = bracketsToCreate.concat(bracketsForThisEvent) //* sonar fix later?
+        }
+    }
+    console.log(bracketsToCreate);
+    await knex('brackets')
+    .returning('*')
+    .insert(bracketsToCreate)
+    .then( result => {
+        console.log(result);
+    })
 
     res.status(201).json({"success":"success?"})
 
