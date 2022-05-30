@@ -6,14 +6,8 @@ exports.up = function(knex) {
         table.string('location');
         table.string('institution_hosting');
         table.bigInteger('hosting_date');
-        table.string('state').defaultTo('Not Started');
-
-        //todo not used at the moment. decide if we need this data or if we can use events table
-        table.boolean('mens_singles').defaultTo(false).nullable();
-        table.boolean('womens_singles').defaultTo(false).nullable();
-        table.boolean('mens_doubles').defaultTo(false).nullable();
-        table.boolean('womens_doubles').defaultTo(false).nullable();
-        table.boolean('mixed_doubles').defaultTo(false).nullable();
+        table.string('tournament_type'); //* ABCD Dropdown - etc etc
+        table.string('state').defaultTo('Not Started'); //* NOT STARTED, IN PROGRESS, FINISHED
         
         table.unique('tournament_id');
     })

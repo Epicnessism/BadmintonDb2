@@ -58,7 +58,7 @@
         </ng-container>
 
       </ng-container>
-      <button mat-raised-button color="primary" aria-label="submit form" type="submit" [disabled]="!tournamentForm.valid">
+      <button mat-raised-button color="primary" aria-label="submit form" type="submit" [disabled]="!tournamentForm.valid" (click)="onSubmit()">
         Create Tournament
       </button>
     </div>

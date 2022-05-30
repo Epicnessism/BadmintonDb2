@@ -8,36 +8,60 @@ const Games = require('../controllers/Games');
 
 //grab players by substring or all
 // router.get('/create', authHelpers.loginRequired, function(req, res, next) {
-tournaments.post('/create', function (req, res, next) {
+tournaments.post('/', async function (req, res, next) {
     console.log(req.body);
-    console.log(moment(req.body.hosting_date).valueOf());
-    knex('tournaments')
+    // console.log(moment(req.body.hosting_date).valueOf());
+
+    // await knex.transaction( async (trx) => { //todo implement transcations for tournaments
+    //     const [tournament, events]
+    // })
+    let tournamentDetails = {};
+
+    //* CREATE TOURNAMENT
+    await knex('tournaments')
+        .returning("*")
         .insert({
             tournament_id: uuidv4(),
-            location: req.body.location,
-            institution_hosting: req.body.institution_hosting,
-            tournament_name: req.body.tournament_name,
+            location: req.body.location != null ? req.body.location : null,
+            institution_hosting: req.body.institution_hosting != null ? req.body.institution_hosting : null,
+            tournament_name: req.body.tournamentName,
+            tournament_type: req.body.tournamentType != null ? req.body.tournamentType : null,
             hosting_date: moment(req.body.hosting_date).valueOf(),
-            mens_singles: req.body.mens_single_size != null ? true : false,
-            womens_singles: req.body.womens_singles_size != null ? true : false,
-            mens_doubles: req.body.mens_doubles_size != null ? true : false,
-            womens_doubles: req.body.womens_doubles_size != null ? true : false,
-            mixed_doubles: req.body.mixed_doubles_size != null ? true : false,
-            mens_singles_size: req.body.mens_single_size,
-            womens_singles_size: req.body.womens_singles_size,
-            mens_doubles_size: req.body.mens_doubles_size,
-            womens_doubles_size: req.body.womens_doubles_size,
-            mixed_doubles_size: req.body.mixed_doubles_size,
         })
         .then(result => {
             console.log(result);
-            res.status(200).json(result);
+            tournamentDetails = result[0]
+            // res.status(201).json(result);
         })
         .catch(err => {
             console.log(err);
             handleResponse(res, 500, err);
         });
+    
+    //* CREATE EVENTS
+    const eventsToInsert = req.body.eventsArray.map(event => {
+        return {
+            event_id: uuidv4(), 
+            tournament_id: tournamentDetails.tournament_id, 
+            event_type: event.eventType, 
+            event_name: event.eventName,
+            event_size: event.eventSize,
+            best_of: event.bestOf
+        }
+    })
+    await knex('events').insert(eventsToInsert)
+    .returning('*')
+    .then(result => {
+        console.log(result);
+    })
+
+    //* CREATE BRACKETS......... SHIT
+
+    res.status(201).json({"success":"success?"})
+
 })
+
+
 
 //return any number of tournaments with the same substring name
 tournaments.get('/:tournamentNameSubstring', function (req, res, next) {

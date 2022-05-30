@@ -44,11 +44,20 @@ export class CreateViewComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.createTournament()
+    console.log('onsubmit');
+
+    let response = this.createTournament()
+    // this.navigationService.navigateByUrl(`tournament/${response.tournamentId}`)
   }
 
-  createTournament(): void {
+  async createTournament() {
+    let response = await this.tournamentDataService.postTournamentMetaData(this.tournamentForm.value).subscribe( result => {
+      console.log(result);
 
+    });
+    console.log(response);
+
+    return  response
   }
 
 

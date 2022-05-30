@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BracketData } from '../interfaces/bracket-data.model';
 import { Set } from '../interfaces/set.model';
-import { TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA } from './../routes.constants';
+import { TOURNAMENTS, TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA } from './../routes.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +48,12 @@ export class TournamentDataService {
     let apiURL = `${environment.backendURL}${TOURNAMENT_META_DATA}${tournamentId}`
     console.log(apiURL);
     return this.http.get<any>(apiURL)
+  }
+
+  postTournamentMetaData(tournamentData: any): Observable<any> {
+    let apiURL = `${environment.backendURL}${TOURNAMENTS}`
+    console.log(apiURL);
+    return this.http.post<any>(apiURL, tournamentData,  {withCredentials: true})
   }
 
 }
