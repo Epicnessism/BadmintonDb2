@@ -1,6 +1,6 @@
 <div class="main-div">
 
-  <mat-card class="main-card">
+  <mat-card class="main-card" *ngIf="!loading">
     <mat-card-header>
       <h1>Create Tournament</h1>
     </mat-card-header>
@@ -62,5 +62,8 @@
         Create Tournament
       </button>
     </div>
+  </mat-card>
+  <mat-card class="main-card" *ngIf="loading">
+    <mat-spinner></mat-spinner>
   </mat-card>
 </div>

@@ -18,6 +18,8 @@ export class CreateViewComponent implements OnInit {
   })
 
   tournamentId: string = ''; //TODO import UUID type later
+  loading: boolean = false;
+
 
   get eventsArray(): FormArray {
     return this.tournamentForm.get('eventsArray') as FormArray;
@@ -46,7 +48,7 @@ export class CreateViewComponent implements OnInit {
   }
 
   async onSubmit() {
-    console.log('onsubmit');
+    this.loading = true;
 
     let response = await this.createTournamentAndRedirect()
 
@@ -57,6 +59,7 @@ export class CreateViewComponent implements OnInit {
     this.tournamentDataService.postTournamentMetaData(this.tournamentForm.value).subscribe(result => {
       console.log(result);
       this.tournamentId = result.tournamentId;
+      this.loading = false;
       console.log(`navigating to this tournamentId: ${this.tournamentId}`);
       this.navigationService.navigateByUrl(`tournaments/${this.tournamentId}`);
     });
