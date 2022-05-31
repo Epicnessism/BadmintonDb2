@@ -44,7 +44,7 @@ export class TournamentDataService {
     return throwError( () => new Error(error.message || "server error") )
   }
 
-  getTournamentData(tournamentId: string): Observable<any> {
+  getTournamentMetaData(tournamentId: string): Observable<any> {
     let apiURL = `${environment.backendURL}${TOURNAMENT_META_DATA}${tournamentId}`
     console.log(apiURL);
     return this.http.get<any>(apiURL)

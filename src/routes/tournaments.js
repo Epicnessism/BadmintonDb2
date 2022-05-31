@@ -6,8 +6,19 @@ var moment = require('moment');
 const Sets = require('../controllers/Sets');
 const Games = require('../controllers/Games');
 
-//grab players by substring or all
-// router.get('/create', authHelpers.loginRequired, function(req, res, next) {
+
+
+tournaments.get('/:tournamentId', async function (req, res, next) {
+    console.log(req.params.tournamentId);
+    await knex('tournaments')
+    .select('*')
+    .leftJoin('events', 'tournaments.tournament_id', 'events.tournament_id')
+    .where('tournaments.tournament_id', req.params.tournamentId)
+    .then( result => {
+        console.log(result);
+        return res.status(200).json(result)
+    })
+})
 tournaments.post('/', async function (req, res, next) {
     console.log(req.body);
     // console.log(moment(req.body.hosting_date).valueOf());

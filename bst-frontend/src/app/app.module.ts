@@ -42,6 +42,7 @@ import { SearchResultsComponent } from './components/search-results/search-resul
 import { ProfileComponent } from './components/profile/profile.component';
 import { EventViewComponent } from './components/tournament/event-view/event-view.component';
 import { CreateViewComponent } from './components/tournament/create-view/create-view.component';
+import { TournamentViewComponent } from './components/tournament/tournament-view/tournament-view.component';
 
 
 
@@ -58,7 +59,8 @@ import { CreateViewComponent } from './components/tournament/create-view/create-
     SearchResultsComponent,
     ProfileComponent,
     EventViewComponent,
-    CreateViewComponent
+    CreateViewComponent,
+    TournamentViewComponent
   ],
   imports: [
     BrowserModule,

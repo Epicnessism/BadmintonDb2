@@ -7,6 +7,7 @@ import { SearchResultsComponent } from './components/search-results/search-resul
 import { BracketViewComponent } from './components/tournament/bracket-view/bracket-view.component';
 import { CreateViewComponent } from './components/tournament/create-view/create-view.component';
 import { EventViewComponent } from './components/tournament/event-view/event-view.component';
+import { TournamentViewComponent } from './components/tournament/tournament-view/tournament-view.component';
 
 const routes: Routes = [
   {path: '', component: LoginComponent}, //* this is what router-outlet defaults to
@@ -16,7 +17,9 @@ const routes: Routes = [
   {path: 'search', component: SearchResultsComponent},
   {path: 'profile', component: ProfileComponent},
   {path: 'event/:eventId', component: EventViewComponent},
-  {path: 'tournament/create', component: CreateViewComponent},
+  {path: 'tournaments/create', component: CreateViewComponent},
+  {path: 'tournaments/:tournamentId', component: TournamentViewComponent},
+
 
   { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page
 ];
