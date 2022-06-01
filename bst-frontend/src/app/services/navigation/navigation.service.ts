@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -27,8 +27,11 @@ export class NavigationService {
    }
 
    navigateByUrl(url: string ): void {
-    console.log(`hitting navigateByUrl in service`);
      this.router.navigateByUrl(url);
+   }
+
+   navigateByRelativePath(url: string, activatedRoute: ActivatedRoute): void {
+     this.router.navigate([url], {relativeTo: activatedRoute});
    }
 
 }

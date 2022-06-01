@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { TournamentMetaData } from 'src/app/interfaces/tournament-meta-data.model';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
 
@@ -11,7 +12,7 @@ import { TournamentDataService } from 'src/app/services/tournament-data.service'
 export class TournamentViewComponent implements OnInit {
 
   tournamentId: string = ''
-  tournamentData: any = {}
+  tournamentData: TournamentMetaData[] = []
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -40,6 +41,10 @@ export class TournamentViewComponent implements OnInit {
       console.log(result);
       this.tournamentData = result
     });
+  }
+
+  goToEvent(eventId: string): void {
+    this.navigationService.navigateByRelativePath(`events/${eventId}`, this._activatedRoute)
   }
 
 }

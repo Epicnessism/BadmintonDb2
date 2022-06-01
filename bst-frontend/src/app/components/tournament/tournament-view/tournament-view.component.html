@@ -1,12 +1,10 @@
 <div>
-  <mat-card *ngIf="">
+  <mat-card>
 
-    <mat-card-title>{{tournamentData.tournamentName}}</mat-card-title>
-    <mat-tab-group animationDuration="0ms">
-
-      <mat-tab *ngFor="let event of tournamentData" label="{{event.eventName}}">
-        <app-event-view></app-event-view>
-      </mat-tab>
-    </mat-tab-group>
+    <mat-card-title *ngIf="tournamentData[0] != undefined">{{tournamentData[0].tournamentName}}</mat-card-title>
+    <mat-card *ngFor="let event of tournamentData" (click)="goToEvent(event.eventId)">
+      <mat-card-title>{{event.eventName}}</mat-card-title>
+    </mat-card>
   </mat-card>
 </div>
+<!-- <app-event-view></app-event-view> -->

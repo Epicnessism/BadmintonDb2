@@ -11,7 +11,18 @@ const Games = require('../controllers/Games');
 tournaments.get('/:tournamentId', async function (req, res, next) {
     console.log(req.params.tournamentId);
     await knex('tournaments')
-    .select('*')
+    .select(
+    'tournament_name as tournamentName',
+    'location as location',
+    'institution_hosting as institutionHosting',
+    'hosting_date as hostingDate',
+    'tournament_type as tournamentType',
+    'state as state',
+    'event_id as eventId',
+    'event_type as eventType',
+    'best_of as bestOf',
+    'event_size as eventSize',
+    'event_name as eventName')
     .leftJoin('events', 'tournaments.tournament_id', 'events.tournament_id')
     .where('tournaments.tournament_id', req.params.tournamentId)
     .then( result => {
@@ -215,7 +226,7 @@ tournaments.get('/getEventMetaData/:event_id', async function (req, res, next) {
     console.log(req.params);
     await knex('events as e')
         .leftJoin('brackets as b', 'e.event_id', 'b.event_id')
-        .select('e.event_id', 'e.tournament_id', 'e.event_type', 'e.best_of', 'b.bracket_id', 'b.bracket_level', 'b.bracket_size')
+        .select('e.event_id', 'e.event_name', 'e.tournament_id', 'e.event_type', 'e.best_of', 'b.bracket_id', 'b.bracket_level', 'b.bracket_size')
         .where('e.event_id', req.params.event_id)
         .orderBy('b.bracket_level')
         .then( result => {

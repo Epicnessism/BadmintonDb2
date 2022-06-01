@@ -1,7 +1,7 @@
 <div>
   <mat-card *ngIf="eventData.length > 0">
 
-    <mat-card-title>[Insert Tournament Name Here] {{eventData[0].event_type}}</mat-card-title>
+    <mat-card-title>[Insert Tournament Name Here] {{eventData[0].event_name}}</mat-card-title>
     <mat-tab-group animationDuration="0ms">
 
       <mat-tab *ngFor="let bracket of eventData" label="{{bracket.bracket_level}}">

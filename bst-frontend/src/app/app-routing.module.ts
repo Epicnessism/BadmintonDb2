@@ -16,7 +16,7 @@ const routes: Routes = [
   {path: 'search/:searchParam', component: SearchResultsComponent},
   {path: 'search', component: SearchResultsComponent},
   {path: 'profile', component: ProfileComponent},
-  {path: 'event/:eventId', component: EventViewComponent},
+  {path: 'tournaments/:tournamentId/events/:eventId', component: EventViewComponent},
   {path: 'tournaments/create', component: CreateViewComponent},
   {path: 'tournaments/:tournamentId', component: TournamentViewComponent},
 
