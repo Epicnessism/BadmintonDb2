@@ -13,6 +13,7 @@ export class TournamentViewComponent implements OnInit {
 
   tournamentId: string = ''
   tournamentData: TournamentMetaData[] = []
+  eventsToRegister: any[] = []
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -45,6 +46,14 @@ export class TournamentViewComponent implements OnInit {
 
   goToEvent(eventId: string): void {
     this.navigationService.navigateByRelativePath(`events/${eventId}`, this._activatedRoute)
+  }
+
+  addToSignUp(eventId: string): void {
+
+  }
+
+  signUp(): void {
+
   }
 
 }
