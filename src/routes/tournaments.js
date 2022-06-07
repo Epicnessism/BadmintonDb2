@@ -30,6 +30,8 @@ tournaments.get('/:tournamentId', async function (req, res, next) {
         return res.status(200).json(result)
     })
 })
+
+
 tournaments.post('/', async function (req, res, next) {
     console.log(req.body);
     // console.log(moment(req.body.hosting_date).valueOf());
@@ -147,6 +149,71 @@ tournaments.patch('/editMetaData', function (req, res, next) {
     console.log(req.body);
 })
 
+
+/**
+     * {
+     *  tournamentId = xxx,
+     *  playerId = yyy,
+     *  events = [
+     *      {
+     *          eventId = eeee,
+     *          partnerId
+     *      }
+     *  ]
+     * }
+     */
+//* tournaments.post('/signup???')
+
+
+// tournaments.get('/teamIds')
+
+
+tournaments.post('/updateTeamsToEvents', async (req, res, next) => {
+    console.log(req.body);
+    /**
+     * team_id: "ooo",
+     * player_1_id: "xxx",
+     * player_2_id: "yyy"
+     */
+
+    await knex('teams_to_players')
+})
+
+
+tournaments.post('/addPlayersToEvents', async (req, res, next) => {
+    console.log(req.body)
+    /**
+     * events: [
+     *      { eventId: xxx,
+     *        playersToAdd: [playerId, playerId]
+     *      }
+     * ]
+     */
+
+    let playersToInsert = []
+    for(let event of req.body.events) {
+        playersToInsert = event.playersToAdd.map(playerId => {
+            return {
+                tournament_id: req.body.tournamentId,
+                event_id: event.eventId,
+                player_id: playerId
+            }
+        })
+    }
+
+    await knex('events_to_players')
+    .returning("*")
+    .insert(playersToInsert)
+    .then(result => {
+        console.log(result)
+        res.status(201).json(result)
+    })
+    .catch(err => {
+        console.log(err)
+        handleResponse(res, 500, err)
+    });
+
+})
 
 //adds a list of players to the tournament
 tournaments.post('/addPlayers', async function (req, res, next) {

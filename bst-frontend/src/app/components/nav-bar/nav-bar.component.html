@@ -27,7 +27,6 @@
   <mat-sidenav-container class="sidenav-container">
 
     <mat-sidenav #snav class="sidenav" [mode]="'over'">
-      <p>test side name</p>
       <mat-nav-list>
         <a mat-list-item routerLink="{{option.path}}" *ngFor="let option of sideNavOptions" (click)="snav.close()">{{option.name}}</a>
       </mat-nav-list>
