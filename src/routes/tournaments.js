@@ -166,25 +166,125 @@ tournaments.patch('/editMetaData', function (req, res, next) {
 
 
 // tournaments.get('/teamIds')
-
-
-tournaments.post('/updateTeamsToEvents', async (req, res, next) => {
-    console.log(req.body);
-    /**
-     * team_id: "ooo",
-     * player_1_id: "xxx",
-     * player_2_id: "yyy"
+/**
+     * mappings : [
+        * {
+            * event_id: "zzz"
+            * team_id: "ooo",
+            * seeding: 12345,
+            * fully_registered
+        * }
+    * ]
      */
 
-    await knex('teams_to_players')
+
+
+
+
+
+/**
+ * * This method updates the events_to_players table for one team and one event
+ */
+tournaments.post('/updateEventToTeam', async (req, res, next) => {
+    console.log(req.body);
+    /**
+        * {
+            * event_id: "zzz"
+            * team_id: "ooo",
+            * player_id_1: "someUUID"
+            * player_id_2: "someUUID"
+            * seeding: 12345,
+            * fully_registered: boolean
+        * }
+     */
+
+    //* step 3: validate if both players exist in events_to_players, 
+    //* if so, set fully_registered to true
+
+    //* check fully registered by getting player_ids from team_id
+    let teamsFound = await knex('teams_to_players')
+    .where('team_id', req.body.team_id)
+    .then( result => {
+        return result
+    })
+
+    //* CREATE NEW TEAM IF DOES NOT EXIST
+    // let newlyCreatedTeam = []
+    if(teamsFound.length > 1 || teamsFound.length == 0) {
+        await knex('teams_to_players')
+        .insert({
+            team_id: uuidv4(),
+            player_id_1: req.body.player_id_1,
+            player_id_2: req.body.player_id_2
+        })
+        .returning("*")
+        .then( result => {
+            console.log(result);
+            req.body.team_id = result[0].team_id
+            return result
+        })
+    }
+
+
+    // * search if expected number of players are "signed up" in the events_to_players table
+    let playersFound = await knex('teams_to_players as ttp')
+    .leftJoin('events_to_players as etp', function() {
+        this.on('ttp.player_id_1', '=', 'etp.player_id')
+        .orOn('ttp.player_id_2', '=', 'etp.player_id')
+    } )
+    .where('ttp.team_id', req.body.team_id)
+    .andWhere('etp.event_id', req.body.event_id)
+    .then( result => {
+        console.log(result);
+        return result
+    })
+
+    if(playersFound[0].player_id_2 == null) {
+        //* singles, so auto-set to fully registered
+        console.log("singles game found");
+        req.body.fully_registered = true
+    } else if (playersFound[0].player_id_2 != null) {
+        //* doubles and so check for fully registered
+        if(playersFound.length != 2) {
+            console.log(`something wrong, not fully registered, length was ${playersFound.length}`);
+            req.body.fully_registered = false
+        } else {
+            req.body.fully_registered = true
+        }
+    }
+
+    //* insert into events_to_teams table
+    let insertBody = {//todo add data models man
+        event_id: req.body.event_id,
+        team_id: req.body.team_id,
+        seeding: req.body.seeding,
+        fully_registered: req.body.fully_registered
+    }
+    await knex('events_to_teams')
+    .returning("*")
+    .insert(insertBody)
+    .onConflict(['event_id', 'team_id'])
+    .merge() //todo look into upserting?
+    .then(result => {
+        console.log(result)
+        res.status(201).json(result)
+    })
+    .catch(err => {
+        console.log(err)
+        handleResponse(res, 500, err)
+    });
 })
 
 
+/**
+ * todo think about making this handle team fully registered logic?
+ */
 tournaments.post('/addPlayersToEvents', async (req, res, next) => {
     console.log(req.body)
     /**
      * events: [
-     *      { eventId: xxx,
+     *      { 
+     *        eventId: xxx,
      *        playersToAdd: [playerId, playerId]
      *      }
      * ]
@@ -215,6 +315,7 @@ tournaments.post('/addPlayersToEvents', async (req, res, next) => {
 
 })
 
+//! todo fix this or create a new endpoint for this
 //adds a list of players to the tournament
 tournaments.post('/addPlayers', async function (req, res, next) {
     console.log(req.body);

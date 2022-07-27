@@ -4,6 +4,7 @@ exports.up = function(knex) {
         table.uuid('event_id').notNullable();
         table.uuid('team_id').notNullable();
         table.integer('seeding').defaultTo(-1);
+        table.boolean('fully_registered').defaultTo(false);
 
         table.foreign('event_id').references('events.event_id');
         table.foreign('team_id').references('teams_to_players.team_id');
