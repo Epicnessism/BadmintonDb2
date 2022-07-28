@@ -7,11 +7,11 @@
       <!-- <button mat-button (click)="addToSignUp(event.eventId)">
         Sign Up
       </button> -->
-      <mat-checkbox class="" [(ngModel)]="eventsToRegister[i]">Checked</mat-checkbox>
+      <!-- <mat-checkbox class="" [(ngModel)]="eventsToRegister[i].isChecked">Sign Up</mat-checkbox> -->
     </mat-card>
 
-    <button mat-button (click)="signUp()">
-      Confirm Sign Up Selection
+    <button mat-button (click)="openSignUpDialog()">
+      Sign up for events
     </button>
   </mat-card>
 </div>

@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BracketData } from '../interfaces/bracket-data.model';
 import { Set } from '../interfaces/set.model';
-import { TOURNAMENTS, TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA } from './../routes.constants';
+import { ADDPLAYERSTOEVENTS, TOURNAMENTS, TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA, UPDATEEVENTSTOPLAYERS } from './../routes.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -54,6 +54,19 @@ export class TournamentDataService {
     let apiURL = `${environment.backendURL}${TOURNAMENTS}`
     console.log(apiURL);
     return this.http.post<any>(apiURL, tournamentData,  {withCredentials: true})
+  }
+
+  postAddPlayersToEvents(data: any): Observable<any> {
+    let apiUrl = `${environment.backendURL}${TOURNAMENTS}/${ADDPLAYERSTOEVENTS}`
+    console.log(apiUrl);
+    return this.http.post<any>(apiUrl, data, {withCredentials: true})
+
+  }
+
+  postUpdateEventsToPlayers(data: any): Observable<any> {
+    let apiUrl = `${environment.backendURL}${TOURNAMENTS}/${UPDATEEVENTSTOPLAYERS}`
+    console.log(apiUrl);
+    return this.http.post<any>(apiUrl, data, {withCredentials: true})
   }
 
 }
