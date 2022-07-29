@@ -5,8 +5,8 @@ exports.up = function(knex) {
         table.uuid('player_id_1').notNullable();
         table.uuid('player_id_2');
         table.bigInteger('created_timestamp');
-        table.foreign('player_id_1').references('users.user_id');
-        table.foreign('player_id_2').references('users.user_id');
+        table.foreign('player_id_1').references('players.player_id');
+        table.foreign('player_id_2').references('players.player_id');
     })
   };
   

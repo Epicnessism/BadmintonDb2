@@ -28,7 +28,7 @@
     <p>test if sets</p>
     <div >
       <ul *ngFor="let result of searchResults">
-        <li (click)="goToResult('set', result.set_id)">
+        <li class="clickable" (click)="goToResult('set', result.set_id)">
           {{result.set_id}}
         </li>
       </ul>
@@ -39,7 +39,7 @@
     <p>test if sets</p>
     <div >
       <ul *ngFor="let result of searchResults">
-        <li>
+        <li class="clickable">
           {{result.player_id}}
         </li>
       </ul>
@@ -50,7 +50,7 @@
     <p>test if sets</p>
     <div >
       <ul *ngFor="let result of searchResults">
-        <li>
+        <li class="clickable" (click)="goToResult('tournaments', result.tournament_id)">
           {{result.tournament_id}}
         </li>
       </ul>
@@ -61,7 +61,7 @@
     <p>test if sets</p>
     <div >
       <ul *ngFor="let result of searchResults">
-        <li>
+        <li class="clickable">
           {{result.game_id}}
         </li>
       </ul>
@@ -72,7 +72,7 @@
     <p>test if events</p>
     <div>
       <ul *ngFor="let result of searchResults">
-        <li (click)="goToResult('event', result.event_id)">
+        <li class="clickable" (click)="goToResult('event', result.event_id)">
           {{result.event_id}}
         </li>
       </ul>

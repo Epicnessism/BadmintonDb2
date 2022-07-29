@@ -12,4 +12,9 @@ export interface TournamentMetaData {
   eventName: string,
   eventSize: number,
   eventType: string
+  eventIsDoubles: boolean
+
+  /* // TODO revamp this object, need to create a new object that tracks user-specific tournament
+        TODO meta data like is this person signed up for this event, is this person eligible for said event, etc.
+  */
 }

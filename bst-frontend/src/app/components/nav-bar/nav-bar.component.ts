@@ -9,6 +9,7 @@ import { NavigationService } from 'src/app/services/navigation/navigation.servic
 export class NavBarComponent implements OnInit {
 
   searchString: string = '';
+  sideNavOptions = [{name:"Create a tournament", path: "tournaments/create"}]
 
   constructor(private navigationService: NavigationService) { }
 

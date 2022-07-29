@@ -131,6 +131,9 @@ export class BracketViewComponent implements OnInit {
 
 }
 
+
+
+
 @Component({
   selector: 'dialog-overview-example-dialog',
   templateUrl: 'dialog-overview-example-dialog.html',

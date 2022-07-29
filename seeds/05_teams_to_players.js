@@ -21,6 +21,8 @@ exports.seed = function(knex) {
         {id: 14, team_id: 'a44268c3-7ae9-4a80-86a3-44480cc89a02', player_id_1: 'bbb6e8bf-cb18-49a4-aee4-65ad6950f759', player_id_2: null},
         {id: 15, team_id: '03b8d7a8-9a50-4df5-82a6-163280aed500', player_id_1: 'b4a5e5e7-d955-4200-a41c-d22211827e75', player_id_2: null},
         {id: 16, team_id: '38760432-cfd4-43d1-8a5e-7a2208e398be', player_id_1: '6f7303e7-fb96-49fa-9fcd-4b1d880e3591', player_id_2: null},
+
+        {id: 17, team_id: '1bf6a4da-f11d-4fd6-864a-c5be1137c0e7', player_id_1: '123e4567-e89b-12d3-a456-426614174000', player_id_2: '101e4567-e89b-12d3-a456-426614174111'},
       ]);
     });
 };

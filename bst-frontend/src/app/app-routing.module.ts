@@ -7,6 +7,7 @@ import { SearchResultsComponent } from './components/search-results/search-resul
 import { BracketViewComponent } from './components/tournament/bracket-view/bracket-view.component';
 import { CreateViewComponent } from './components/tournament/create-view/create-view.component';
 import { EventViewComponent } from './components/tournament/event-view/event-view.component';
+import { SignUpViewComponent } from './components/tournament/sign-up-view/sign-up-view.component';
 import { TournamentViewComponent } from './components/tournament/tournament-view/tournament-view.component';
 
 const routes: Routes = [
@@ -19,6 +20,7 @@ const routes: Routes = [
   {path: 'tournaments/:tournamentId/events/:eventId', component: EventViewComponent},
   {path: 'tournaments/create', component: CreateViewComponent},
   {path: 'tournaments/:tournamentId', component: TournamentViewComponent},
+  {path: 'tournaments/:tournamentId/signUp', component: SignUpViewComponent},
 
 
   { path: '**', component: PageNotFoundComponent },  // Wildcard route for a 404 page

@@ -21,6 +21,7 @@ tournaments.get('/:tournamentId', async function (req, res, next) {
     'event_id as eventId',
     'event_type as eventType',
     'best_of as bestOf',
+    'is_doubles as eventIsDoubles',
     'event_size as eventSize',
     'event_name as eventName')
     .leftJoin('events', 'tournaments.tournament_id', 'events.tournament_id')
@@ -30,6 +31,8 @@ tournaments.get('/:tournamentId', async function (req, res, next) {
         return res.status(200).json(result)
     })
 })
+
+
 tournaments.post('/', async function (req, res, next) {
     console.log(req.body);
     // console.log(moment(req.body.hosting_date).valueOf());
@@ -63,13 +66,13 @@ tournaments.post('/', async function (req, res, next) {
             console.log(err);
             handleResponse(res, 500, err);
         });
-    
+
     //* CREATE EVENTS
     const eventsToInsert = req.body.eventsArray.map(event => {
         return {
-            event_id: uuidv4(), 
-            tournament_id: tournamentDetails.tournament_id, 
-            event_type: event.eventType, 
+            event_id: uuidv4(),
+            tournament_id: tournamentDetails.tournament_id,
+            event_type: event.eventType,
             event_name: event.eventName,
             event_size: event.eventSize,
             best_of: event.bestOf
@@ -93,7 +96,7 @@ tournaments.post('/', async function (req, res, next) {
             for(let i = 0; i < 4; i++) {
                 let bracketLevel = ''
                 let bracketSize = 0
-                switch(i) { 
+                switch(i) {
                     case 0:
                         bracketLevel = 'A'
                         bracketSize = eventSize
@@ -118,8 +121,8 @@ tournaments.post('/', async function (req, res, next) {
                 ])
                 console.log(bracketsForThisEvent);
             }
-            
-            
+
+
             bracketsToCreate = bracketsToCreate.concat(bracketsForThisEvent) //* sonar fix later?
         }
     }
@@ -148,6 +151,172 @@ tournaments.patch('/editMetaData', function (req, res, next) {
 })
 
 
+/**
+     * {
+     *  tournamentId = xxx,
+     *  playerId = yyy,
+     *  events = [
+     *      {
+     *          eventId = eeee,
+     *          partnerId
+     *      }
+     *  ]
+     * }
+     */
+//* tournaments.post('/signup???')
+
+
+// tournaments.get('/teamIds')
+/**
+     * mappings : [
+        * {
+            * event_id: "zzz"
+            * team_id: "ooo",
+            * seeding: 12345,
+            * fully_registered
+        * }
+    * ]
+     */
+
+
+
+
+
+
+/**
+ * * This method updates the events_to_players table for one team and one event
+ */
+tournaments.post('/updateEventToTeam', async (req, res, next) => {
+    console.log(req.body);
+    /**
+        * {
+            * event_id: "zzz"
+            * team_id: "ooo",
+            * player_id_1: "someUUID"
+            * player_id_2: "someUUID"
+            * seeding: 12345,
+            * fully_registered: boolean
+        * }
+     */
+
+    //* step 3: validate if both players exist in events_to_players,
+    //* if so, set fully_registered to true
+
+    //* check fully registered by getting player_ids from team_id
+    let teamsFound = await knex('teams_to_players')
+    .where('team_id', req.body.team_id)
+    .then( result => {
+        return result
+    })
+
+    //* CREATE NEW TEAM IF DOES NOT EXIST
+    // let newlyCreatedTeam = []
+    if(teamsFound.length > 1 || teamsFound.length == 0) {
+        await knex('teams_to_players')
+        .insert({
+            team_id: uuidv4(),
+            player_id_1: req.body.player_id_1,
+            player_id_2: req.body.player_id_2
+        })
+        .returning("*")
+        .then( result => {
+            console.log(result);
+            req.body.team_id = result[0].team_id
+            return result
+        })
+    }
+
+
+    // * search if expected number of players are "signed up" in the events_to_players table
+    let playersFound = await knex('teams_to_players as ttp')
+    .leftJoin('events_to_players as etp', function() {
+        this.on('ttp.player_id_1', '=', 'etp.player_id')
+        .orOn('ttp.player_id_2', '=', 'etp.player_id')
+    } )
+    .where('ttp.team_id', req.body.team_id)
+    .andWhere('etp.event_id', req.body.event_id)
+    .then( result => {
+        console.log(result);
+        return result
+    })
+
+    if(playersFound[0].player_id_2 == null) {
+        //* singles, so auto-set to fully registered
+        console.log("singles game found");
+        req.body.fully_registered = true
+    } else if (playersFound[0].player_id_2 != null) {
+        //* doubles and so check for fully registered
+        if(playersFound.length != 2) {
+            console.log(`something wrong, not fully registered, length was ${playersFound.length}`);
+            req.body.fully_registered = false
+        } else {
+            req.body.fully_registered = true
+        }
+    }
+
+    //* insert into events_to_teams table
+    let insertBody = {//todo add data models man
+        event_id: req.body.event_id,
+        team_id: req.body.team_id,
+        seeding: req.body.seeding,
+        fully_registered: req.body.fully_registered
+    }
+    await knex('events_to_teams')
+    .returning("*")
+    .insert(insertBody)
+    .onConflict(['event_id', 'team_id'])
+    .merge() //todo look into upserting?
+    .then(result => {
+        console.log(result)
+        res.status(201).json(result)
+    })
+    .catch(err => {
+        console.log(err)
+        handleResponse(res, 500, err)
+    });
+})
+
+
+/**
+ * todo think about making this handle team fully registered logic?
+ */
+tournaments.post('/addPlayersToEvents', async (req, res, next) => {
+    console.log(req.body)
+    /**
+     * events: [
+     *      {
+     *        eventId: xxx,
+     *        playersToAdd: [playerId, playerId]
+     *      }
+     * ]
+     */
+
+    let playersToInsert = []
+    for(let event of req.body.events) {
+        playersToInsert = event.playersToAdd.map(playerId => {
+            return {
+                tournament_id: req.body.tournamentId,
+                event_id: event.eventId,
+                player_id: playerId
+            }
+        })
+    }
+
+    await knex('events_to_players')
+    .returning("*")
+    .insert(playersToInsert)
+    .then(result => {
+        console.log(result)
+        res.status(201).json(result)
+    })
+    .catch(err => {
+        console.log(err)
+        handleResponse(res, 500, err)
+    });
+
+})
+
+//! todo fix this or create a new endpoint for this
 //adds a list of players to the tournament
 tournaments.post('/addPlayers', async function (req, res, next) {
     console.log(req.body);
@@ -226,7 +395,15 @@ tournaments.get('/getEventMetaData/:event_id', async function (req, res, next) {
     console.log(req.params);
     await knex('events as e')
         .leftJoin('brackets as b', 'e.event_id', 'b.event_id')
-        .select('e.event_id', 'e.event_name', 'e.tournament_id', 'e.event_type', 'e.best_of', 'b.bracket_id', 'b.bracket_level', 'b.bracket_size')
+        .select('e.event_id',
+        'e.event_name',
+        'e.tournament_id',
+        'e.event_type',
+        'e.best_of',
+        'e.is_doubles',
+        'b.bracket_id',
+        'b.bracket_level',
+        'b.bracket_size')
         .where('e.event_id', req.params.event_id)
         .orderBy('b.bracket_level')
         .then( result => {
@@ -245,7 +422,7 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
         'sets.bracket_id as bracketId',
         'sets.game_type as gameType',
         'sets.event_game_number as eventGameNumber',
-        'sets.completed as completed', 
+        'sets.completed as completed',
         'sets.winning_team as winningTeam',
         'sets.team_1_id as team_1_id',
         'sets.team_2_id as team_2_id',
@@ -262,7 +439,7 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
         .joinRaw(knex.raw('left join users on users.user_id = any (array[teams_to_players.player_id_1, teams_to_players.player_id_2])'))
         .where('sets.bracket_id', req.params.bracket_id)
         .groupBy('sets.set_id','sets.bracket_id',
-        'sets.game_type','sets.event_game_number', 
+        'sets.game_type','sets.event_game_number',
         'sets.completed', 'sets.winning_team',
         'sets.team_1_id', 'sets.team_2_id',
         )
@@ -284,10 +461,10 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
 })
 
 /**
- * 
+ *
  */
 tournaments.post('/completedSet', async function (req, res, next) {
-    //todo do completed set validation 
+    //todo do completed set validation
     console.log(req.body);
     // 1. Get number of sets, auto find winner based on games won
     //call updateSet functions
@@ -342,7 +519,7 @@ tournaments.post('/updateSet', async function (req, res, next) {
     console.log("RESULTS OF FINDING EVENT_ID: ")
     console.log(eventDetails)
 
-    // how to validate if team_ids exist? 
+    // how to validate if team_ids exist?
     //todo get setData from db based on setId?
     await knex('sets')
         .select("*")
@@ -364,7 +541,7 @@ tournaments.post('/updateSet', async function (req, res, next) {
             handleResponse(res, 500, err)
             return
         });
-    
+
     //insert set
     const response = await Sets.insertSet(req.body) //TODO this should be just a completed/winning patch...
     console.log(response)

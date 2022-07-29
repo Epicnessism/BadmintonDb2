@@ -56,6 +56,7 @@ export class CreateViewComponent implements OnInit {
   }
 
   async createTournamentAndRedirect() {
+    console.log(this.tournamentForm.value);
     this.tournamentDataService.postTournamentMetaData(this.tournamentForm.value).subscribe(result => {
       console.log(result);
       this.tournamentId = result.tournamentId;
@@ -63,7 +64,6 @@ export class CreateViewComponent implements OnInit {
       console.log(`navigating to this tournamentId: ${this.tournamentId}`);
       this.navigationService.navigateByUrl(`tournaments/${this.tournamentId}`);
     });
-
   }
 
 
