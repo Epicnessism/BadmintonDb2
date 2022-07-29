@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PLAYERS } from 'src/app/routes.constants';
+import { PLAYERS_AUTOCOMPLETE } from 'src/app/routes.constants';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -11,8 +11,8 @@ export class PlayersDataService {
 
   constructor(private http: HttpClient) { }
 
-  getPlayersData(playerName: string): Observable<any> {
-    let apiURL = `${environment.backendURL}${PLAYERS}${playerName}`
+  getPlayersAutocomplete(playerIdentifier: string): Observable<any> {
+    let apiURL = `${environment.backendURL}${PLAYERS_AUTOCOMPLETE}/${playerIdentifier}`
     console.log(apiURL)
     return this.http.get<any>(apiURL)
   }

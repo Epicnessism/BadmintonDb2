@@ -9,3 +9,4 @@ export const ADDPLAYERSTOEVENTS = 'addPlayersToEvents'
 export const UPDATEEVENTSTOPLAYERS = 'updateEventToTeam'
 
 export const PLAYERS = 'players'
+export const PLAYERS_AUTOCOMPLETE = 'players/autocomplete'
