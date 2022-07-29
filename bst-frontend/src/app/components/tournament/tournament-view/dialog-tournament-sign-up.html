@@ -18,7 +18,7 @@
           <ng-container formGroupName="{{i}}">
             <mat-form-field *ngIf="eventObj.eventIsDoubles" appearance="fill">
               <mat-label>Partner's Name</mat-label>
-              <input matInput #input formControlName="partnerName" [matAutocomplete]="auto" (keyup)="calculateAutocomplete($event, i)">
+              <input matInput #input formControlName="partnerName" autoActiveFirstOption [matAutocomplete]="auto" (keyup)="calculateAutocomplete($event, i)">
               <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let option of autoCompleteOptions" [value]="option.fullName">
                   {{option.fullName}}

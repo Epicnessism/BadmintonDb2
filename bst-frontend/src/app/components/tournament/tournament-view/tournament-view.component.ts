@@ -110,7 +110,7 @@ export class TournamentSignUpDialogComponent {
     }
   }
 
-  step = 0;
+  step = -1;
   tournamentData: TournamentMetaData[] = []
   autoCompleteOptions: PlayerAutocompleteData[] = [];
 
