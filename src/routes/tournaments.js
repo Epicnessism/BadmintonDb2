@@ -75,6 +75,7 @@ tournaments.post('/', async function (req, res, next) {
             event_type: event.eventType,
             event_name: event.eventName,
             event_size: event.eventSize,
+            is_doubles: event.eventType != 'WS' && event.eventType != 'MS' ? true : false,
             best_of: event.bestOf
         }
     })
