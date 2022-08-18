@@ -323,6 +323,10 @@ tournaments.post('/addPlayersToEvents', async (req, res, next) => {
     })
     .catch(err => {
         console.log(err)
+        if(err.code === "23505") { //already exists
+            handleResponse(res, 400, "user is already signed up for one or more of selected events")
+            return
+        }
         handleResponse(res, 500, err)
     });
 
