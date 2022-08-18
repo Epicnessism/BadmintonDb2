@@ -13,6 +13,7 @@ tournaments.get('/:tournamentId', async function (req, res, next) {
     await knex('tournaments')
     .select(
     'tournament_name as tournamentName',
+    'tournaments.tournament_id as tournamentId',
     'location as location',
     'institution_hosting as institutionHosting',
     'hosting_date as hostingDate',
@@ -136,13 +137,6 @@ tournaments.post('/', async function (req, res, next) {
     })
 
     res.status(201).json({tournamentId:tournamentDetails.tournament_id})
-
-})
-
-
-
-//return any number of tournaments with the same substring name
-tournaments.get('/:tournamentNameSubstring', function (req, res, next) {
 
 })
 
@@ -284,6 +278,7 @@ tournaments.post('/updateEventToTeam', async (req, res, next) => {
 tournaments.post('/addPlayersToEvents', async (req, res, next) => {
     console.log(req.body)
     /**
+     * "tournamentId": "9fc06fa2-053d-45e9-8078-ee0c36d44b3d",
      * events: [
      *      {
      *        eventId: xxx,
@@ -293,16 +288,32 @@ tournaments.post('/addPlayersToEvents', async (req, res, next) => {
      */
 
     let playersToInsert = []
-    for(let event of req.body.events) {
-        playersToInsert = event.playersToAdd.map(playerId => {
-            return {
-                tournament_id: req.body.tournamentId,
-                event_id: event.eventId,
-                player_id: playerId
-            }
-        })
+
+    if(req.body.events != null) {
+        for(let event of req.body.events) {
+            playersToInsert.push(...event.playersToAdd.map(playerId => {
+                return {
+                    tournament_id: req.body.tournamentId,
+                    event_id: event.eventId,
+                    player_id: playerId
+                }
+            }))
+        }
     }
 
+    if (req.body.players != null) {
+        for(let event of req.body.players) {
+            playersToInsert.push(...event.eventsToAdd.map(eventId => {
+                return {
+                    tournament_id: req.body.tournamentId,
+                    event_id: eventId,
+                    player_id: event.playerId
+                }
+            }))
+        }
+    }
+
+    //TODO ADD TOURNAMENT-EVENT MAPPING VALIDATION BEFORE INSERTION, CONSIDER TRANSACTION??
     await knex('events_to_players')
     .returning("*")
     .insert(playersToInsert)

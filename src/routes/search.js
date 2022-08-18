@@ -10,30 +10,35 @@ search.post('/:substring', function(req, res, next) {
     const queryable = {
         sets: {
             tableName: "sets",
-            idName: "set_id"
+            idName: "set_id",
+            humanReadableName: ""
         },
         players: {
             tableName: "players",
-            idName: "player_id"
+            idName: "player_id",
+            humanReadableName: ""
         },
         tournaments: {
             tableName: "tournaments",
-            idName: "tournament_id"
+            idName: "tournament_id",
+            humanReadableName: "tournament_name"
         },
         events: {
             tableName: "events",
-            idName: "event_id"
+            idName: "event_id",
+            humanReadableName: ""
         },
         games: {
             tableName: "games",
-            idName: "game_id"
+            idName: "game_id",
+            humanReadableName: ""
         }
     }
 
     if(req.body.filters == null) {
         console.log("No filter provided");
         return handleResponse(res, 400, "No filter provided.")
-        
+
     } else if(!Object.values(req.body.filters).includes(true)) {
         console.log("No filter selected");
         return handleResponse(res, 400, "No filter selected.")
@@ -54,12 +59,13 @@ search.post('/:substring', function(req, res, next) {
 
     knex(queryObject.tableName)
     .select("*")
-    .where(queryObject.idName, searchParam)
+    .where(queryObject.humanReadableName, 'ilike', `%${searchParam}%`)
+    // .orWhere(queryObject.idName, 'ilike', `%${searchParam}%`)
     .then( result => {
         console.log(result);
-        if(result.length == 0) {
-            return handleResponse(res, 404, "Did not find any records.")
-        }
+        // if(result.length == 0) {
+        //     return handleResponse(res, 404, "Did not find any records.")
+        // }
         return res.status(200).json(result)
     })
     .catch( error => {

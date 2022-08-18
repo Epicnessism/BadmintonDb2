@@ -40,7 +40,7 @@
     <div >
       <ul *ngFor="let result of searchResults">
         <li class="clickable">
-          {{result.player_id}}
+          {{result.given_name}} {{result.family_name}}
         </li>
       </ul>
     </div>
@@ -51,7 +51,7 @@
     <div >
       <ul *ngFor="let result of searchResults">
         <li class="clickable" (click)="goToResult('tournaments', result.tournament_id)">
-          {{result.tournament_id}}
+          {{result.tournament_name}} -- {{result.tournament_id}}
         </li>
       </ul>
     </div>
@@ -73,7 +73,7 @@
     <div>
       <ul *ngFor="let result of searchResults">
         <li class="clickable" (click)="goToResult('event', result.event_id)">
-          {{result.event_id}}
+          {{result.event_name}} -- {{result.event_id}}
         </li>
       </ul>
     </div>

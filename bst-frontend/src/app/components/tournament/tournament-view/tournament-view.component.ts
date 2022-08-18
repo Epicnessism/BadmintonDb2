@@ -77,6 +77,10 @@ export class TournamentViewComponent implements OnInit {
 
 }
 
+
+//DIALOG COMPONENT ------------------------------------------------------------------------------------
+
+
 @Component({
   selector: 'dialog-tournament-sign-up',
   templateUrl: 'dialog-tournament-sign-up.html',
@@ -136,12 +140,46 @@ export class TournamentSignUpDialogComponent {
     await this.updateEventsToPlayers()
   }
 
+//   {
+//     "tournamentId": "9fc06fa2-053d-45e9-8078-ee0c36d44b3d",
+//     "events": [
+//         {
+//             "eventId": "28a7873c-7940-42c4-b271-a27b6d899e4d",
+//             "playersToAdd": [
+//                 "123e4567-e89b-12d3-a456-426614174000",
+//                 "101e4567-e89b-12d3-a456-426614174111"
+//             ]
+//         }
+//     ],
+//
+// }
   async addPlayerToEvents(): Promise<void> {
+    //* create the data object to send to the backend
+    let eventsOfPlayersToAdd: any[] = []
+    console.log(this.tournamentData);
 
+
+    let listOfEventIds = this.tournamentData.map( eventData =>  eventData.eventId)
+
+    let payload = {
+      tournamentId: this.tournamentData[0].tournamentId,
+      players: [
+        {
+          "playerId": localStorage.getItem('userId'),
+          "eventsToAdd": listOfEventIds
+        }
+      ]
+    }
+
+    console.log(payload);
+
+    this.tournamentDataService.postAddPlayersToEvents(payload).subscribe(result => {
+      console.log(result);
+    });
   }
 
   async updateEventsToPlayers(): Promise<void> {
-
+    // return this.tournamentDataService.postUpdateEventsToPlayers();
   }
 
 

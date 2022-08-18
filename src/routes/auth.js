@@ -11,7 +11,7 @@ const saltRounds = 7;
 
 auth.post('/login', async (req, res, next) => {
     console.log("req.body: ", req.body);
-    let foundUser = await knex('users').select('username','password').where({username: req.body.username})
+    let foundUser = await knex('users').select('username','password', 'user_id').where({username: req.body.username})
         .then( result => {
             console.log("result: ", result);
             return result
@@ -19,17 +19,23 @@ auth.post('/login', async (req, res, next) => {
             console.log(err);
             handleResponse(res, 500, err);
         })
-    
+
     if(foundUser.length != 1) {
         handleResponse(res, 400, "Invalid Credentials")
         return
     }
-    
+
     await bcrypt.compare(req.body.password, foundUser[0].password, function(err, result) {
         if(err) {
             handleResponse(res, 500, {message: "bcrypt failure"})
         } else if(result) {
-            handleResponse(res, 200, {message: "successfully logged in"})
+            // console.log(result);
+            req.session.username = req.body.username
+            console.log(foundUser);
+            handleResponse(res, 200, {
+                message: "successful login",
+                userId: foundUser[0].user_id
+            })
         } else {
             handleResponse(res, 401, {message: "authentication failed"})
         }
@@ -42,7 +48,7 @@ auth.post('/signUp', async (req,res,next) => {
     //     console.log("show results: ", result);
     // })
     // console.log("after select await");
-    
+
     if(req.body.username == null || req.body.username == "") {
         handleResponse(res, 400, 'Bad Request')
     }
@@ -54,26 +60,30 @@ auth.post('/signUp', async (req,res,next) => {
                 password: hashedPassword,
                 email: req.body.username + "@gmail.com"
             })
+            .returning("*")
             .then(result => {
                 console.log(result);
                 console.log("User signup: " + req.body.username)
                 req.session.username = req.body.username
-                handleResponse(res, 200, "User succesfully created")
+                handleResponse(res, 200, {
+                    message: "successful sign up",
+                    userId: result[0].user_id
+                })
             })
             .catch( (err) => {
                 console.log("catching error: ", err);
                 if (err.constraint == 'users_username_unique') {
-                    handleResponse(res, 400, 'Username already exists');     
+                    handleResponse(res, 400, 'Username already exists');
                 } else {
                     console.log(err);
-                    handleResponse(res, 500, err); 
+                    handleResponse(res, 500, err);
                 }
             })
 })
 
 
-function handleResponse(res, code, message) {
-    res.status(code).json({message: message});
+function handleResponse(res, code, message, otherParameters = []) {
+    res.status(code).json(message);
   }
 
 module.exports.auth = auth;
