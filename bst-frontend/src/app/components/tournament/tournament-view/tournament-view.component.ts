@@ -23,6 +23,8 @@ export class TournamentViewComponent implements OnInit {
   eventsToRegister: EventSignUpMetaData[] = []
   isSignUp: boolean = false
   activePlayerId: string | undefined;
+  playerTournamentSignUpForm: PlayerTournamentSignUp[] = []
+
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -38,7 +40,7 @@ export class TournamentViewComponent implements OnInit {
   }
 
   openSignUpDialog() {
-    let wrapData = this.tournamentData
+    let wrapData = {tournamentData: this.tournamentData, playerTournamentSignUpForm: this.playerTournamentSignUpForm}
     const dialogRef = this.dialog.open(TournamentSignUpDialogComponent, {data: wrapData });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -67,7 +69,44 @@ export class TournamentViewComponent implements OnInit {
 
   async getPlayerSignUpData(tournamentId: string, activePlayerId?: string) {
     if(activePlayerId) {
+      this.tournamentDataService.getPlayerSignUpData(tournamentId, activePlayerId).subscribe(results => {
+        console.log(results);
 
+        for(let temp of this.tournamentData) {
+
+          let playerSignUpEvent: PlayerTournamentSignUp = {
+            eventId: temp.eventId,
+            tournamentId: temp.tournamentId,
+            playerId: localStorage.getItem('userId') || '',
+            isSignUp: false
+          }
+
+          //if this event is signed up for, populate that data
+          if(results.some((someEvent: { eventId: string; }) => someEvent.eventId == temp.eventId)) {
+            let event = results.find((element: { eventId: string; }) => element.eventId == temp.eventId)
+            let partnerName = event.playerId =! event.player_1_id ? `${event.player_1_given_name} ${event.player_1_family_name}` :  `${event.player_2_given_name} ${event.player_2_family_name}`
+            // let playerName = event.playerId == event.player_1_id ? `${event.player_1_given_name} ${event.player_1_family_name}` :  `${event.player_2_given_name} ${event.player_2_family_name}`
+
+            playerSignUpEvent = {
+              eventId: event.eventId,
+              tournamentId: event.tournamentId,
+              playerId: event.playerId,
+              teamId: event.teamId,
+              partnerId: event.partnerId,
+              partnerName: partnerName,
+              isSignUp: true,
+              fullyRegistered: event.fully_registered,
+            }
+          }
+
+          //! MAYBE BETTER TO KEEP SIGN_UP_FORM AND SIGNED_UP_METADATA SEPARATE TO KEEP STATES SEPARATE
+
+          this.playerTournamentSignUpForm.push(playerSignUpEvent);
+        }
+        console.log(this.playerTournamentSignUpForm);
+
+
+      })
     }
   }
 
@@ -107,18 +146,12 @@ export class TournamentSignUpDialogComponent {
     private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public wrapData: any, //TODO look into how to make this not one object...
   ) {
-    this.tournamentData = wrapData;
+    this.tournamentData = wrapData.tournamentData
+    this.playerTournamentSignUpForm = wrapData.playerTournamentSignUpForm
     console.log(this.tournamentData);
+    console.log(this.playerTournamentSignUpForm);
 
-    for(let temp of this.tournamentData) {
-      let playerSignUpEvent: PlayerTournamentSignUp = {
-        eventId: temp.eventId,
-        tournamentId: temp.tournamentId,
-        playerId: localStorage.getItem('userId') || '',
-        isSignUp: false
-      }
-      this.playerTournamentSignUpForm.push(playerSignUpEvent);
-    }
+
 
   }
 

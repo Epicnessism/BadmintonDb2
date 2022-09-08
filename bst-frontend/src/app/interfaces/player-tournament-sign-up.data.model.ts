@@ -6,7 +6,9 @@ export interface PlayerTournamentSignUp {
   playerId: string;
   partnerName?: string;
   partnerId?: string;
+  teamId?: string;
   partnerAutoCompleteResults?: PlayerAutocompleteData[];
   isSignUp: boolean;
+  fullyRegistered?: boolean;
 
 }
