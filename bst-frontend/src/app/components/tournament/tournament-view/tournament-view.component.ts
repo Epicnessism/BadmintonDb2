@@ -138,6 +138,8 @@ export class TournamentSignUpDialogComponent {
     await this.addPlayerToEvents()
 
     await this.updateEventsToPlayers()
+    console.log("----------------THIS LOG SHOULD COME AFTER ALL ACTIONS ARE COMPLETE----------------");
+
   }
 
 //   {
@@ -156,17 +158,23 @@ export class TournamentSignUpDialogComponent {
   async addPlayerToEvents(): Promise<void> {
     //* create the data object to send to the backend
     let eventsOfPlayersToAdd: any[] = []
-    console.log(this.tournamentData);
 
+    console.log(this.signUpForm.value);
+    // let eventSignUpMap = new Map(this.signUpFormForm.value.map(key => [key.]))
 
-    let listOfEventIds = this.tournamentData.map( eventData =>  eventData.eventId)
+    let listOfEventIdsSignedUp = this.tournamentData.map( eventData => {
+
+      //todo what did i do here?
+      // if( eventData.eventId == )
+      return eventData.eventId
+    } )
 
     let payload = {
       tournamentId: this.tournamentData[0].tournamentId,
       players: [
         {
           "playerId": localStorage.getItem('userId'),
-          "eventsToAdd": listOfEventIds
+          "eventsToAdd": listOfEventIdsSignedUp
         }
       ]
     }
@@ -176,10 +184,40 @@ export class TournamentSignUpDialogComponent {
     this.tournamentDataService.postAddPlayersToEvents(payload).subscribe(result => {
       console.log(result);
     });
+
+    //? maybe do a return here to force sequenctialness
+
+
   }
 
   async updateEventsToPlayers(): Promise<void> {
-    // return this.tournamentDataService.postUpdateEventsToPlayers();
+
+    console.log(this.tournamentData);
+
+
+
+
+    for(let event of this.tournamentData) {
+      console.log(event);
+      // let entry = {
+      //   event_id: event.eventId
+      // }
+
+    }
+
+
+    let payload = {
+      //TODO create the payload NEXT STEP 9/7/22
+      // event_id: this.tournamentData.eventId,
+
+    }
+
+    console.log(payload);
+
+
+    this.tournamentDataService.postUpdateEventsToPlayers(payload).subscribe( result => {
+      console.log(result);
+    })
   }
 
 

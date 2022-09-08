@@ -175,7 +175,10 @@ tournaments.patch('/editMetaData', function (req, res, next) {
 
 
 
+tournaments.post('/updateTeamsToEvents', async (req, res, next) => {
+    console.log(req.body);
 
+})
 
 
 /**
