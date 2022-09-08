@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/internal/Observable';
 import { EventSignUpMetaData } from 'src/app/interfaces/event-sign-up-meta-data.model';
 import { PlayerAutocompleteData } from 'src/app/interfaces/player-autocomplete-data.model';
+import { PlayerTournamentSignUp } from 'src/app/interfaces/player-tournament-sign-up.data.model';
 import { TournamentMetaData } from 'src/app/interfaces/tournament-meta-data.model';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
 import { PlayersDataService } from 'src/app/services/players/players-data.service';
@@ -88,12 +89,7 @@ export class TournamentViewComponent implements OnInit {
 })
 export class TournamentSignUpDialogComponent {
 
-  signUpForm = this.fb.group({
-    eventFormArray: this.fb.array([])
-  });
-  public get eventFormArray() {
-    return this.signUpForm.get('eventFormArray') as FormArray;
-  }
+  playerTournamentSignUpForm: PlayerTournamentSignUp[] = []
 
   constructor(
     public dialogRef: MatDialogRef<TournamentSignUpDialogComponent>,
@@ -105,13 +101,16 @@ export class TournamentSignUpDialogComponent {
     this.tournamentData = wrapData;
     console.log(this.tournamentData);
 
-    for (let _temp in this.tournamentData) {
-      let eventForm = this.fb.group({
-        partnerName : new FormControl(''),
-        isSignUp : false,
-      })
-      this.eventFormArray.push(eventForm);
+    for(let temp of this.tournamentData) {
+      let playerSignUpEvent: PlayerTournamentSignUp = {
+        eventId: temp.eventId,
+        tournamentId: temp.tournamentId,
+        playerId: localStorage.getItem('userId') || '',
+        isSignUp: false
+      }
+      this.playerTournamentSignUpForm.push(playerSignUpEvent);
     }
+
   }
 
   step = -1;
@@ -135,11 +134,21 @@ export class TournamentSignUpDialogComponent {
   }
 
   async confirmSignUp(): Promise<void> {
-    await this.addPlayerToEvents()
+    let listOfEventIdsSignedUp = this.playerTournamentSignUpForm.filter( playerEventData => playerEventData.isSignUp )
+    await this.addPlayerToEvents(listOfEventIdsSignedUp)
 
-    await this.updateEventsToPlayers()
+    await this.updateEventsToPlayers(listOfEventIdsSignedUp)
     console.log("----------------THIS LOG SHOULD COME AFTER ALL ACTIONS ARE COMPLETE----------------");
 
+  }
+
+  displayPartnerName(option: PlayerAutocompleteData): string {
+    return option == null ? '' : option.fullName
+  }
+
+  //! testing, delete not for prod
+  logNewSignUpForm(): void {
+    console.log(this.playerTournamentSignUpForm);
   }
 
 //   {
@@ -155,26 +164,20 @@ export class TournamentSignUpDialogComponent {
 //     ],
 //
 // }
-  async addPlayerToEvents(): Promise<void> {
+  async addPlayerToEvents(listOfEventsSignedUp: PlayerTournamentSignUp[]): Promise<void> {
     //* create the data object to send to the backend
     let eventsOfPlayersToAdd: any[] = []
 
-    console.log(this.signUpForm.value);
+    console.log(this.playerTournamentSignUpForm);
     // let eventSignUpMap = new Map(this.signUpFormForm.value.map(key => [key.]))
 
-    let listOfEventIdsSignedUp = this.tournamentData.map( eventData => {
-
-      //todo what did i do here?
-      // if( eventData.eventId == )
-      return eventData.eventId
-    } )
-
+    //* this is the ADDPLAYERS (BY PLAYERS) ROUTE
     let payload = {
       tournamentId: this.tournamentData[0].tournamentId,
       players: [
         {
           "playerId": localStorage.getItem('userId'),
-          "eventsToAdd": listOfEventIdsSignedUp
+          "eventsToAdd": listOfEventsSignedUp.map(events => events.eventId)
         }
       ]
     }
@@ -187,42 +190,44 @@ export class TournamentSignUpDialogComponent {
 
     //? maybe do a return here to force sequenctialness
 
-
   }
 
-  async updateEventsToPlayers(): Promise<void> {
-
-    console.log(this.tournamentData);
+  async updateEventsToPlayers(listOfEventsSignedUp: PlayerTournamentSignUp[]): Promise<void> {
 
 
-
-
-    for(let event of this.tournamentData) {
+    for(let event of listOfEventsSignedUp) {
       console.log(event);
-      // let entry = {
-      //   event_id: event.eventId
-      // }
+      let entry = {
+        event_id: event.eventId,
+        playerId: localStorage.getItem('userId'),
+        partnerId: event.partnerAutoCompleteResults?.filter(partner => partner.fullName == event.partnerName)[0].userId,
+        seeding: -1,
+        fully_registered: false
+      }
+      console.log(entry);
 
+      this.tournamentDataService.postUpdateEventsToPlayers(entry).subscribe( result => {
+        console.log(result);
+      })
     }
 
 
-    let payload = {
-      //TODO create the payload NEXT STEP 9/7/22
-      // event_id: this.tournamentData.eventId,
+    // let payload = {
+    //   //TODO create the payload NEXT STEP 9/7/22
+    //   // event_id: this.tournamentData.eventId,
 
-    }
+    // }
 
-    console.log(payload);
+    // console.log(payload);
 
 
-    this.tournamentDataService.postUpdateEventsToPlayers(payload).subscribe( result => {
-      console.log(result);
-    })
+    // this.tournamentDataService.postUpdateEventsToPlayers(payload).subscribe( result => {
+    //   console.log(result);
+    // })
   }
 
 
   calculateAutocomplete(keyboardEvent: KeyboardEvent, formControlIndex: number): void {
-    console.log(this.signUpForm.value);
     console.log(keyboardEvent);
     console.log(formControlIndex);
 
@@ -235,7 +240,7 @@ export class TournamentSignUpDialogComponent {
       return
     }
 
-    let searchParam = this.eventFormArray.controls[formControlIndex].value['partnerName']
+    let searchParam = this.playerTournamentSignUpForm[formControlIndex].partnerName || ''
     console.log(searchParam);
 
     if(searchParam.length >= 3) {
@@ -243,7 +248,8 @@ export class TournamentSignUpDialogComponent {
       this.playersDataService.getPlayersAutocomplete(searchParam)
       .subscribe( result => {
         console.log(result);
-        this.autoCompleteOptions = result
+        // this.autoCompleteOptions = result
+        this.playerTournamentSignUpForm[formControlIndex].partnerAutoCompleteResults = result
       })
     } else {
       console.log("less than 3, do nothing");

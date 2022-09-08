@@ -1,6 +1,6 @@
 <div mat-dialog-content>
   <mat-accordion class="example-headers-align">
-    <div [formGroup]="signUpForm">
+    <div>
       <mat-expansion-panel *ngFor="let eventObj of tournamentData; let i = index" [expanded]="step === i"
         (opened)="setStep(i)" hideToggle>
         <mat-expansion-panel-header>
@@ -13,23 +13,23 @@
           </mat-panel-description>
         </mat-expansion-panel-header>
 
+        <mat-form-field *ngIf="eventObj.eventIsDoubles" appearance="fill">
+          <mat-label>Partner's Name</mat-label>
 
-        <ng-container formArrayName="eventFormArray">
-          <ng-container formGroupName="{{i}}">
-            <mat-form-field *ngIf="eventObj.eventIsDoubles" appearance="fill">
-              <mat-label>Partner's Name</mat-label>
-              <input matInput #input formControlName="partnerName" autoActiveFirstOption [matAutocomplete]="auto" (keyup)="calculateAutocomplete($event, i)">
-              <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let option of autoCompleteOptions" [value]="option.fullName">
-                  {{option.fullName}}
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-            <mat-checkbox class="example-margin" formControlName="isSignUp">
-              Sign up
-            </mat-checkbox>
-          </ng-container>
-        </ng-container>
+          <input matInput #input [(ngModel)]="playerTournamentSignUpForm[i].partnerName" autoActiveFirstOption
+            [matAutocomplete]="auto" (keyup)="calculateAutocomplete($event, i)">
+
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option *ngFor="let option of playerTournamentSignUpForm[i].partnerAutoCompleteResults" [value]="option.fullName">
+              {{option.fullName}}
+            </mat-option>
+          </mat-autocomplete>
+
+        </mat-form-field>
+
+        <mat-checkbox class="example-margin" [(ngModel)]="playerTournamentSignUpForm[i].isSignUp">
+          Sign up
+        </mat-checkbox>
 
 
         <mat-action-row>
@@ -37,6 +37,7 @@
             (click)="prevStep()">Previous</button>
           <button mat-button color="primary" *ngIf="i != tournamentData.length - 1" (click)="nextStep()">Next</button>
         </mat-action-row>
+
       </mat-expansion-panel>
     </div>
 
@@ -81,6 +82,8 @@
 
   </mat-accordion>
   <button mat-button color="primary" (click)="confirmSignUp()">Confirm</button>
+
+  <button mat-button color="danger" (click)="logNewSignUpForm()">Log Sign Up Form</button>
 
   <!-- <button mat-button [mat-dialog-close]="wrapData.setData.animal" cdkFocusInitial>Ok</button> -->
 </div>

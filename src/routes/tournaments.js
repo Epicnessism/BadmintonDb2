@@ -201,26 +201,51 @@ tournaments.post('/updateEventToTeam', async (req, res, next) => {
     //* if so, set fully_registered to true
 
     //* check fully registered by getting player_ids from team_id
-    let teamsFound = await knex('teams_to_players')
-    .where('team_id', req.body.team_id)
-    .then( result => {
-        return result
-    })
+    let teamsFound = []
+    let partnerId = req.body.partnerId == undefined ? null : req.body.partnerId
+    console.log("partnerId: ", partnerId);
 
-    //* CREATE NEW TEAM IF DOES NOT EXIST
+    if(req.body.team_id != undefined) {
+        teamsFound = await knex('teams_to_players')
+        .where('team_id', req.body.team_id)
+        .then( result => {
+            return result
+        })
+    } else {
+        teamsFound = await knex('teams_to_players')
+        .where(q => q.where('player_id_1', req.body.playerId).andWhere('player_id_2', partnerId))
+        .where(q => q.where('player_id_1', partnerId).andWhere('player_id_2', req.body.playerId))
+        .then( result => {
+            console.log("results of finding teamsToPlayers by players: ---->>>");
+            console.log(result);
+            return result
+        })
+    }
+
+    // console.log("teamsFound: --->>>");
+    // console.log(teamsFound);
+
+    //* CREATE NEW TEAM IF IT DOES NOT EXIST
     // let newlyCreatedTeam = []
-    if(teamsFound.length > 1 || teamsFound.length == 0) {
+    if(teamsFound.length == 0) {
+        let teamId = uuidv4()
+        console.log("teamId: ", teamId);
         await knex('teams_to_players')
         .insert({
-            team_id: uuidv4(),
-            player_id_1: req.body.player_id_1,
-            player_id_2: req.body.player_id_2
+            team_id: teamId,
+            player_id_1: req.body.playerId,
+            player_id_2: partnerId
         })
         .returning("*")
         .then( result => {
+            console.log("result of creating new team to players: ");
             console.log(result);
             req.body.team_id = result[0].team_id
             return result
+        })
+        .catch( error => {
+            console.log(error);
+            handleResponse(res, 500, error)
         })
     }
 

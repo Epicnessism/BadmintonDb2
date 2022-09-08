@@ -54,21 +54,34 @@ auth.post('/signUp', async (req,res,next) => {
     }
     const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
     await knex('users')
+            .returning("*")
             .insert({
                 user_id: uuidv4(), // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
                 username: req.body.username,
                 password: hashedPassword,
                 email: req.body.username + "@gmail.com"
             })
-            .returning("*")
-            .then(result => {
-                console.log(result);
+            .then(resultUser => {
+                console.log(resultUser);
                 console.log("User signup: " + req.body.username)
                 req.session.username = req.body.username
-                handleResponse(res, 200, {
-                    message: "successful sign up",
-                    userId: result[0].user_id
-                })
+                //! TEMPORARILY DO THIS, MOVE THIS OUT OR SOMETHING LATER OR DO SOMETHING ABOUT THIS HOLY SHIT
+                //! INSERTING USER INTO PLAYERS TABLE AS WELL TO MAKE SIGN UP WORK
+                let player = knex('players')
+                                    .returning("*")
+                                    .insert({
+                                        player_id: resultUser[0].user_id
+                                    })
+                                    .then(result => {
+                                        console.log("created Player of User: ");
+                                        console.log(result);
+
+                                        handleResponse(res, 200, {
+                                            message: "successful sign up",
+                                            userId: resultUser[0].user_id
+                                        })
+                                    })
+
             })
             .catch( (err) => {
                 console.log("catching error: ", err);

@@ -1,4 +1,4 @@
-export interface SignupBody {
+export interface UserSignupBody {
   username: string,
   password: string,
   confirmPassword: string
