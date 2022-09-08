@@ -8,9 +8,12 @@ exports.up = function(knex) {
       table.foreign('player_id_1').references('players.player_id');
       table.foreign('player_id_2').references('players.player_id');
 
-      table.unique(['player_id_1', 'player_id_2']);
+      // table.unique(['player_id_1', 'player_id_2']);
   })
+
 };
+
+
 
 exports.down = function(knex) {
   return knex.schema.dropTable('teams_to_players');

@@ -413,9 +413,54 @@ tournaments.post('/addPlayers', async function (req, res, next) {
     }
 })
 
+/**
+ * Gets sign up data for a player for a tournament
+ */
+tournaments.get('/:tournamentId/signUpMetaData/:activePlayerId', async function(req, res, next) {
+    console.log(`${req.params.tournamentId} and ${req.params.activePlayerId}`);
+
+    await knex('events_to_players as etp')
+        .leftJoin('events_to_teams as ett', 'ett.event_id', 'etp.event_id')
+        .leftJoin('teams_to_players as ttp', (b1) =>
+            b1.on('ttp.team_id', '=', 'ett.team_id')
+            .andOn( (b2) =>
+                b2.on('ttp.player_id_1', '=', 'etp.player_id')
+                .orOn('ttp.player_id_2', '=', 'etp.player_id')
+            )
+
+        )
+        .leftJoin('users as u1', 'player_id_1', 'u1.user_id')
+        .leftJoin('users as u2', 'player_id_2', 'u2.user_id')
+        .select(
+            'etp.tournament_id',
+            'etp.player_id',
+            'etp.event_id',
+            'ttp.team_id',
+            'ttp.player_id_1',
+            'ttp.player_id_2',
+            'ett.seeding',
+            'ett.fully_registered',
+            'u1.given_name as player_1_given_name',
+            'u1.family_name as player_1_family_name',
+            'u2.given_name as player_2_given_name',
+            'u2.family_name as player_2_family_name'
+            )
+        .where('etp.player_id', req.params.activePlayerId)
+        .andWhere('etp.tournament_id', req.params.tournamentId)
+        .then(results => {
+            console.log(results);
+            res.status(200).json(results)
+        })
+        .catch(error => {
+            console.log(error);
+            handleResponse(res, 500, error)
+        })
+
+})
+
 
 // router.get('/autoComplete/:substring', authHelpers.loginRequired, function(req, res, next) {
-tournaments.get('/getAllPlayers/:tournamentId', function (req, res, next) {
+tournaments.get('/getAllPlayers/:tournamentId', async function (req, res, next) {
     console.log(req.params.tournamentId);
     knex('tournaments_to_players')
         .select("*")

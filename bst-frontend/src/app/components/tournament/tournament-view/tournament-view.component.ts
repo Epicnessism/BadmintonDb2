@@ -22,6 +22,7 @@ export class TournamentViewComponent implements OnInit {
   tournamentData: TournamentMetaData[] = []
   eventsToRegister: EventSignUpMetaData[] = []
   isSignUp: boolean = false
+  activePlayerId: string | undefined;
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -31,6 +32,7 @@ export class TournamentViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.activePlayerId = localStorage.getItem('userId') || undefined //? should this be empty string or undefined???
     this.getPathParam()
     this.getData()
   }
@@ -53,6 +55,7 @@ export class TournamentViewComponent implements OnInit {
 
   async getData() {
     await this.getTournamentMetaData(this.tournamentId);
+    await this.getPlayerSignUpData(this.tournamentId, this.activePlayerId)
   }
 
   async getTournamentMetaData(tournamentId: string) {
@@ -60,6 +63,12 @@ export class TournamentViewComponent implements OnInit {
       console.log(result);
       this.tournamentData = result
     });
+  }
+
+  async getPlayerSignUpData(tournamentId: string, activePlayerId?: string) {
+    if(activePlayerId) {
+
+    }
   }
 
   goToEvent(eventId: string): void {
@@ -79,7 +88,7 @@ export class TournamentViewComponent implements OnInit {
 }
 
 
-//DIALOG COMPONENT ------------------------------------------------------------------------------------
+//*** */ DIALOG COMPONENT ------------------------------------------------------------------------------------
 
 
 @Component({
@@ -169,7 +178,6 @@ export class TournamentSignUpDialogComponent {
     let eventsOfPlayersToAdd: any[] = []
 
     console.log(this.playerTournamentSignUpForm);
-    // let eventSignUpMap = new Map(this.signUpFormForm.value.map(key => [key.]))
 
     //* this is the ADDPLAYERS (BY PLAYERS) ROUTE
     let payload = {
@@ -206,24 +214,11 @@ export class TournamentSignUpDialogComponent {
       }
       console.log(entry);
 
+      //TODO optimize this into an array instead of separate calls in the future.
       this.tournamentDataService.postUpdateEventsToPlayers(entry).subscribe( result => {
         console.log(result);
       })
     }
-
-
-    // let payload = {
-    //   //TODO create the payload NEXT STEP 9/7/22
-    //   // event_id: this.tournamentData.eventId,
-
-    // }
-
-    // console.log(payload);
-
-
-    // this.tournamentDataService.postUpdateEventsToPlayers(payload).subscribe( result => {
-    //   console.log(result);
-    // })
   }
 
 
