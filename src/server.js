@@ -50,7 +50,8 @@ api.use(bodyParser.json());
 
 api.use(CookieSession({
     name: 'session',
-    keys: ['key1', 'key2']
+    keys: ['userId', 'username'],
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 
 
@@ -61,6 +62,7 @@ api.use('/auth', require('./routes/auth').auth);
 api.use('/games', require('./routes/games').games);
 api.use('/sets', require('./routes/sets').sets);
 api.use('/tournaments', require('./routes/tournaments').tournaments);
+api.use('/events', require('./routes/events').events);
 api.use('/search', require('./routes/search').search);
 
 

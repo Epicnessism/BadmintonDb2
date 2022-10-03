@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginFormGroup.value).pipe(
       catchError((err: HttpErrorResponse) => {
         console.log(err);
-        this.loginFormGroup.controls['username'].setValue('404 something returned failed')
+        // this.loginFormGroup.controls['username'].setValue('404 something returned failed')
         return throwError(err); //TODO fix this
       }))
     .subscribe( result => {
@@ -83,6 +83,7 @@ export class LoginComponent implements OnInit {
         console.log(localStorage);
         console.log("Inside Local Storage");
         localStorage.setItem('userId', result.userId)
+        console.log(localStorage);
       })
     } else {
       console.log(this.signUpFormGroup.controls['password'].value);

@@ -10,8 +10,12 @@ import { TournamentDataService } from 'src/app/services/tournament-data.service'
 })
 export class EventViewComponent implements OnInit {
 
-  eventId: string = '';
+  eventId: string = ''
   eventData: any[] = []
+
+  eventNotStarted: boolean = true
+  isManagingTournament: boolean = true
+  isTournamentAdmin: boolean = true
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -41,6 +45,12 @@ export class EventViewComponent implements OnInit {
       console.log(result);
       this.eventData = result
     });
+  }
+
+  toggleManageTournament(): void {
+    this.isManagingTournament = !this.isManagingTournament
+    console.log(this.isManagingTournament)
+
   }
 
 

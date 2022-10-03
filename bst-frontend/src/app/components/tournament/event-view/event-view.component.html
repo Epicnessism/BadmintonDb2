@@ -2,6 +2,18 @@
   <mat-card *ngIf="eventData.length > 0">
 
     <mat-card-title>[Insert Tournament Name Here] {{eventData[0].event_name}}</mat-card-title>
+
+    <button
+    mat-raised-button
+    color="primary"
+    *ngIf="isTournamentAdmin"
+    (click)="toggleManageTournament()"
+    >
+      {{isManagingTournament ? "Finish Editing" : "Manage Event"}}
+    </button>
+
+    <app-event-seed-view *ngIf="eventNotStarted && isManagingTournament && isTournamentAdmin" [eventId]="eventId"></app-event-seed-view>
+
     <mat-tab-group animationDuration="0ms">
 
       <mat-tab *ngFor="let bracket of eventData" label="{{bracket.bracket_level}}">

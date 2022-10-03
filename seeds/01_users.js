@@ -6,9 +6,9 @@ exports.seed = function(knex) {
         return knex('users').insert([
           // {user_id: "12345678-e89b-12d3-a456-426614174000", username: "test", password: "test", given_name: 'testName', family_name: 'testSurname', birthday: '06/20/1997', email: "testemail1@gmail.com"},
           {user_id: "123e4567-e89b-12d3-a456-426614174000", username: "epicnessism", password: "testpwd", given_name: 'Tony', family_name: 'Wang', birthday: '06/20/1997', email: "testemail1@gmail.com"},
-          {user_id: "101e4567-e89b-12d3-a456-426614174111", username: "test2", password: "testpwd", given_name: 'Gus', family_name: 'Walzer', birthday: '01/01/1987', email: "testemail2@gmail.com"},
-          {user_id: "143e4567-e89b-12d3-a456-426614174033", username: "test3", password: "testpwd", given_name: 'Zoe', family_name: 'Xu', birthday: '06/20/1996', email: "testemail3@gmail.com"},
-          {user_id: "144e4567-e89b-12d3-a456-426614174001", username: "test5", password: "testpwd", given_name: 'Pralfah', family_name: 'Ratchatavitayakul', birthday: '06/20/1996', email: "testemail4@gmail.com"},
+          {user_id: "101e4567-e89b-12d3-a456-426614174111", username: "test21213", password: "testpwd", given_name: 'Gus', family_name: 'Walzer', birthday: '01/01/1987', email: "testemail2@gmail.com"},
+          {user_id: "143e4567-e89b-12d3-a456-426614174033", username: "test33333", password: "testpwd", given_name: 'Zoe', family_name: 'Xu', birthday: '06/20/1996', email: "testemail3@gmail.com"},
+          {user_id: "144e4567-e89b-12d3-a456-426614174001", username: "test54322", password: "testpwd", given_name: 'Pralfah', family_name: 'Ratchatavitayakul', birthday: '06/20/1996', email: "testemail4@gmail.com"},
           {user_id: "155e4567-e89b-12d3-a456-426614174009", username: "test111", password: "testpwd", given_name: 'Kyle', family_name: 'Lin', birthday: '01/20/1994', email: "testemail5@gmail.com"},
           {user_id: "15703364-b3fc-4e82-9752-32c187c2b254", username: "test1234", password: "testpwd", given_name: 'Alex', family_name: 'Kang', birthday: '01/20/1994', email: "testemail7@gmail.com"},
           {user_id: "cf9bdd43-baf2-4d63-a5fc-163e01cf429c", username: "test12345", password: "testpwd", given_name: 'Alan', family_name: 'Lin', birthday: '01/20/1994', email: "testemail8@gmail.com"},

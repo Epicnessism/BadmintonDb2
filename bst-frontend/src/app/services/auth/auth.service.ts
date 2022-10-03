@@ -22,17 +22,17 @@ export class AuthService {
   authenticate(): Observable<any> { // todo add return type
     console.log(environment.backendURL + `auth/authenticate`);
     // return this.http.get<any>(environment.backendURL + `auth/authenticate`, {withCredentials: true});
-    return this.http.get<any>(environment.backendURL + `auth/authenticate`);
+    return this.http.get<any>(environment.backendURL + `auth/authenticate`, {withCredentials: true});
   }
 
   login(body: LoginBody): Observable<any> { // todo add return type
     // return this.http.post<any>(environment.backendURL + `auth/login`, body,  {withCredentials: true});
-    return this.http.post<any>(environment.backendURL + `auth/login`, body);
+    return this.http.post<any>(environment.backendURL + `auth/login`, body, {withCredentials: true});
   }
 
   signOut() {
     // this.http.get<any>(environment.backendURL + `auth/logout`, {withCredentials: true}).subscribe( result => {
-    this.http.get<any>(environment.backendURL + `auth/logout`).subscribe( result => {
+    this.http.get<any>(environment.backendURL + `auth/logout`, {withCredentials: true}).subscribe( result => {
       console.log(result);
       this.router.navigate(['']);
     })
@@ -40,7 +40,7 @@ export class AuthService {
 
   signUp(body: UserSignupBody): Observable<any> { // todo add return type
     // return this.http.post<any>(environment.backendURL + `auth/register`, body, {withCredentials: true});
-    return this.http.post<any>(environment.backendURL + `auth/signUp`, body);
+    return this.http.post<any>(environment.backendURL + `auth/signUp`, body, {withCredentials: true});
   }
 
   routeTo(route: string) {
