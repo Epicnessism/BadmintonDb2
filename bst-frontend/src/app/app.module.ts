@@ -32,6 +32,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { MatBadgeModule } from '@angular/material/badge';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import { LoginComponent } from './components/login/login.component';
 import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
@@ -42,7 +43,8 @@ import { SearchResultsComponent } from './components/search-results/search-resul
 import { ProfileComponent } from './components/profile/profile.component';
 import { EventViewComponent } from './components/tournament/event-view/event-view.component';
 import { CreateViewComponent } from './components/tournament/create-view/create-view.component';
-import { TournamentViewComponent } from './components/tournament/tournament-view/tournament-view.component';
+import { TournamentViewComponent, TournamentSignUpDialogComponent } from './components/tournament/tournament-view/tournament-view.component';
+
 
 
 
@@ -60,7 +62,8 @@ import { TournamentViewComponent } from './components/tournament/tournament-view
     ProfileComponent,
     EventViewComponent,
     CreateViewComponent,
-    TournamentViewComponent
+    TournamentViewComponent,
+    TournamentSignUpDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -90,7 +93,8 @@ import { TournamentViewComponent } from './components/tournament/tournament-view
     FlexLayoutModule,
     MatDialogModule,
     MatCheckboxModule,
-    MatSelectModule
+    MatSelectModule,
+    MatExpansionModule
   ],
   providers: [],
   bootstrap: [AppComponent],

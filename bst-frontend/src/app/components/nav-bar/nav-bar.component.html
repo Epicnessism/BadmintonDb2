@@ -1,6 +1,6 @@
-<div class="nav-container" >
+<div class="nav-container">
   <mat-toolbar color="primary">
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
+    <button mat-icon-button class="example-icon" (click)="snav.toggle()" aria-label="Example icon-button with menu icon">
       <mat-icon>menu</mat-icon>
     </button>
     <div matRipple>
@@ -23,4 +23,21 @@
       <mat-icon>settings</mat-icon>
     </button>
   </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container">
+
+    <mat-sidenav #snav class="sidenav" [mode]="'over'">
+      <mat-nav-list>
+        <a mat-list-item routerLink="{{option.path}}" *ngFor="let option of sideNavOptions" (click)="snav.close()">{{option.name}}</a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+
+      <router-outlet></router-outlet>
+
+    </mat-sidenav-content>
+
+  </mat-sidenav-container>
 </div>
+

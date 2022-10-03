@@ -53,8 +53,11 @@ export class LoginComponent implements OnInit {
         return throwError(err); //TODO fix this
       }))
     .subscribe( result => {
-      console.log(result);
+      // console.log(result);
       console.log("successful login");
+      localStorage.setItem('userId', result.userId)
+
+
       // console.log(this.previousRoute);
 
       //*
@@ -77,7 +80,9 @@ export class LoginComponent implements OnInit {
     if(this.signUpFormGroup.controls['password'].value == this.signUpFormGroup.controls['confirmPassword'].value) {
       this.authService.signUp(this.signUpFormGroup.value).subscribe(result => {
         console.log(result);
-
+        console.log(localStorage);
+        console.log("Inside Local Storage");
+        localStorage.setItem('userId', result.userId)
       })
     } else {
       console.log(this.signUpFormGroup.controls['password'].value);

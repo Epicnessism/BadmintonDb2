@@ -7,11 +7,12 @@ exports.up = function(knex) {
         table.integer('best_of').defaultTo(3)
         table.integer('event_size').notNullable()
         table.string('event_name').defaultTo('')
-        
+        table.boolean('is_doubles').notNullable()
+
         table.foreign('tournament_id').references('tournaments.tournament_id');
     })
   };
-  
+
   exports.down = function(knex) {
     return knex.schema.dropTable('events');
   };

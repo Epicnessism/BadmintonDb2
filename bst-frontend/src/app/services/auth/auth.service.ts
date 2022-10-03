@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { LoginBody } from '../../interfaces/login-body.model';
-import { SignupBody } from '../../interfaces/signup-body.model';
+import { UserSignupBody } from '../../interfaces/user-signup-body.model';
 // import { SubscriptionService } from './subscription.service';
 
 @Injectable({
@@ -38,7 +38,7 @@ export class AuthService {
     })
   }
 
-  signUp(body: SignupBody): Observable<any> { // todo add return type
+  signUp(body: UserSignupBody): Observable<any> { // todo add return type
     // return this.http.post<any>(environment.backendURL + `auth/register`, body, {withCredentials: true});
     return this.http.post<any>(environment.backendURL + `auth/signUp`, body);
   }
