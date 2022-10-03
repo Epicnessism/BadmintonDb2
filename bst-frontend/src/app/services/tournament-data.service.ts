@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { BracketData } from '../interfaces/bracket-data.model';
 import { Set } from '../interfaces/set.model';
-import { ADDPLAYERSTOEVENTS, SIGN_UP_META_DATA, TOURNAMENTS, TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA, UPDATEEVENTSTOPLAYERS } from './../routes.constants';
+import { ADDPLAYERSTOEVENTS, EVENT, SEEDING, SIGN_UP_META_DATA, TOURNAMENTS, TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA, UPDATEEVENTSTOPLAYERS } from './../routes.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +60,22 @@ export class TournamentDataService {
     let apiURL = `${environment.backendURL}${TOURNAMENTS}`
     console.log(apiURL);
     return this.http.post<any>(apiURL, tournamentData, { withCredentials: true })
+  }
+
+  //todo possibly split this out into its own service?
+  getSeedings(eventId: string) {
+    let apiURL = `${environment.backendURL}${EVENT}${eventId}/${SEEDING}`
+    console.log(apiURL);
+    return this.http.get<any>(apiURL, {withCredentials: true})
+
+  }
+
+  saveSeedings(eventId: string, seedings: object) {
+    let apiURL = `${environment.backendURL}${EVENT}${eventId}/${SEEDING}`
+    console.log(apiURL);
+    console.log(seedings);
+
+    return this.http.post<any>(apiURL, seedings, {withCredentials: true})
   }
 
 

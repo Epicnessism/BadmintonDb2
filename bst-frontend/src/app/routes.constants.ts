@@ -8,6 +8,8 @@ export const SIGN_UP_META_DATA = 'signUpMetaData/'
 export const TOURNAMENTS = 'tournaments'
 export const ADDPLAYERSTOEVENTS = 'addPlayersToEvents'
 export const UPDATEEVENTSTOPLAYERS = 'updateEventToTeam'
+export const EVENT = 'events/'
+export const SEEDING = 'seeding'
 
 export const PLAYERS = 'players'
 export const PLAYERS_AUTOCOMPLETE = 'players/autocomplete'
