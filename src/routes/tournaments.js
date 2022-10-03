@@ -42,6 +42,8 @@ tournaments.post('/', async function (req, res, next) {
     //     const [tournament, events]
     // })
 
+
+
     //TODO validate input before inserting, espcially tournamentType
 
 
@@ -67,6 +69,18 @@ tournaments.post('/', async function (req, res, next) {
             console.log(err);
             handleResponse(res, 500, err);
         });
+
+
+    //* ADD USER SESSIONID TO TOURNAMENT_ADMINS
+    await knex('tournament_admins')
+        .returning("*")
+        .insert({
+            tournament_id : tournamentDetails.tournament_id,
+            user_id : req.session.userId
+        })
+        .then( result => {
+            console.log(result);
+        })
 
     //* CREATE EVENTS
     const eventsToInsert = req.body.eventsArray.map(event => {
@@ -214,7 +228,7 @@ tournaments.post('/updateEventToTeam', async (req, res, next) => {
     } else {
         teamsFound = await knex('teams_to_players')
         .where(q => q.where('player_id_1', req.body.playerId).andWhere('player_id_2', partnerId))
-        .where(q => q.where('player_id_1', partnerId).andWhere('player_id_2', req.body.playerId))
+        .orWhere(q => q.where('player_id_1', partnerId).andWhere('player_id_2', req.body.playerId))
         .then( result => {
             console.log("results of finding teamsToPlayers by players: ---->>>");
             console.log(result);
@@ -345,6 +359,8 @@ tournaments.post('/addPlayersToEvents', async (req, res, next) => {
     await knex('events_to_players')
     .returning("*")
     .insert(playersToInsert)
+    .onConflict(['tournament_id', 'event_id', 'player_id'])
+    .ignore()
     .then(result => {
         console.log(result)
         res.status(201).json(result)

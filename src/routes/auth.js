@@ -31,6 +31,8 @@ auth.post('/login', async (req, res, next) => {
         } else if(result) {
             // console.log(result);
             req.session.username = req.body.username
+            req.session.userId = foundUser[0].user_id
+
             console.log(foundUser);
             handleResponse(res, 200, {
                 message: "successful login",
@@ -65,23 +67,24 @@ auth.post('/signUp', async (req,res,next) => {
                 console.log(resultUser);
                 console.log("User signup: " + req.body.username)
                 req.session.username = req.body.username
+                req.session.userId = resultUser[0].user_id
+
                 //! TEMPORARILY DO THIS, MOVE THIS OUT OR SOMETHING LATER OR DO SOMETHING ABOUT THIS HOLY SHIT
                 //! INSERTING USER INTO PLAYERS TABLE AS WELL TO MAKE SIGN UP WORK
                 let player = knex('players')
-                                    .returning("*")
-                                    .insert({
-                                        player_id: resultUser[0].user_id
-                                    })
-                                    .then(result => {
-                                        console.log("created Player of User: ");
-                                        console.log(result);
+                    .returning("*")
+                    .insert({
+                        player_id: resultUser[0].user_id
+                    })
+                    .then(result => {
+                        console.log("created Player of User: ");
+                        console.log(result);
 
-                                        handleResponse(res, 200, {
-                                            message: "successful sign up",
-                                            userId: resultUser[0].user_id
-                                        })
-                                    })
-
+                        handleResponse(res, 200, {
+                            message: "successful sign up",
+                            userId: resultUser[0].user_id
+                        })
+                    })
             })
             .catch( (err) => {
                 console.log("catching error: ", err);
@@ -92,6 +95,12 @@ auth.post('/signUp', async (req,res,next) => {
                     handleResponse(res, 500, err);
                 }
             })
+})
+
+auth.post('/signout', (req, res, next) => {
+    console.log(req.body)
+    req.logout()
+    req.session.destroy
 })
 
 
