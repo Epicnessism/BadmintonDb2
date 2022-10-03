@@ -14,7 +14,7 @@ export class PlayersDataService {
   getPlayersAutocomplete(playerIdentifier: string): Observable<any> {
     let apiURL = `${environment.backendURL}${PLAYERS_AUTOCOMPLETE}/${playerIdentifier}`
     console.log(apiURL)
-    return this.http.get<any>(apiURL)
+    return this.http.get<any>(apiURL, {withCredentials: true})
   }
 
 }

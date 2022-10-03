@@ -30,8 +30,17 @@ auth.post('/login', async (req, res, next) => {
             handleResponse(res, 500, {message: "bcrypt failure"})
         } else if(result) {
             // console.log(result);
+
+            console.log(req.session.username);
+            console.log(req.session.userId);
+            // console.log(req.session);
+
             req.session.username = req.body.username
             req.session.userId = foundUser[0].user_id
+            // req.session.save()
+
+            console.log(req.session.username);
+            console.log(req.session.userId);
 
             console.log(foundUser);
             handleResponse(res, 200, {
@@ -44,8 +53,16 @@ auth.post('/login', async (req, res, next) => {
     });
 });
 
+auth.get('/currentUser', (req, res) => {
+    console.log("current user check: " + req.session.userId)
+    res.status(200).json({
+        currentUser: req.session.userId
+    });
+});
+
 auth.post('/signUp', async (req,res,next) => {
     console.log("req.body: ", req.body);
+    console.log(req.session);
     // await knex('users').select('user_id').then(result => {
     //     console.log("show results: ", result);
     // })
@@ -68,6 +85,9 @@ auth.post('/signUp', async (req,res,next) => {
                 console.log("User signup: " + req.body.username)
                 req.session.username = req.body.username
                 req.session.userId = resultUser[0].user_id
+                // req.session.save()
+                console.log(req.session.username);
+                console.log(req.session.userId);
 
                 //! TEMPORARILY DO THIS, MOVE THIS OUT OR SOMETHING LATER OR DO SOMETHING ABOUT THIS HOLY SHIT
                 //! INSERTING USER INTO PLAYERS TABLE AS WELL TO MAKE SIGN UP WORK
@@ -99,8 +119,8 @@ auth.post('/signUp', async (req,res,next) => {
 
 auth.post('/signout', (req, res, next) => {
     console.log(req.body)
-    req.logout()
-    req.session.destroy
+    // req.session.destroy()
+    req.session = null
 })
 
 

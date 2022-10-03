@@ -72,6 +72,11 @@ tournaments.post('/', async function (req, res, next) {
 
 
     //* ADD USER SESSIONID TO TOURNAMENT_ADMINS
+    console.log(req.session);
+    console.log(req.session.user_id);
+    console.log(req.session.userId);
+    console.log(req.session.isPopulated);
+
     await knex('tournament_admins')
         .returning("*")
         .insert({
