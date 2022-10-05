@@ -66,16 +66,23 @@ const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
         return handleResponse(res, 500, err)
     })
 
-
-    //write to sets table logical
-    let arrayOfSetsToWrite = []
-    let eventDetails = null;
-
     let temp = []
     for(let i = 0; i < req.body.event_size / 2; i++) {
-        let eventGameNumber = i+1
-        let pairedTeam = req.body.event_size + 1 - eventGameNumber
-        console.log(pairedTeam);
+
+        let eventGameNumber = -1
+        let pairedTeam = -1
+        //* if seed is even number, find reverse game number for bottom of bracket
+        if((i + 1) % 2 === 0) {
+            eventGameNumber = (req.body.event_size - i + 1) / 2
+            pairedTeam = req.body.event_size + 1 - i - 1
+            console.log("eventGameNumber evens: " + eventGameNumber)
+            console.log("pairdTeam evens: " + pairedTeam)
+        } else {
+            eventGameNumber = i + 1
+            pairedTeam = req.body.event_size + 1 - eventGameNumber
+            console.log("eventGameNumber odds: " + eventGameNumber)
+            console.log("pairdTeam odds: " + pairedTeam)
+        }
 
         if(seedings[i] == undefined) {
             break
