@@ -72,53 +72,36 @@ const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
     let eventDetails = null;
 
     let temp = []
-    for(let i = 0; i < seedings.length / 2; i++) {
+    for(let i = 0; i < req.body.event_size / 2; i++) {
         let eventGameNumber = i+1
+        let pairedTeam = req.body.event_size + 1 - eventGameNumber
+        console.log(pairedTeam);
+
+        if(seedings[i] == undefined) {
+            break
+        }
 
         let set = {
             set_id : uuidv4(),
-            event_id : req.body.event_id,
-            tournament_id : req.body.tournament_id,
+            bracket_id : req.body.bracket_id,
             event_game_number : eventGameNumber,
             game_type: req.body.is_doubles ? "doubles" : "singles",
             team_1_id : seedings[i].team_id,
-            team_2_id : seedings[eventSize + 1 - i].team_id,
-            created_timestamp : moment(setObject.created_timestamp).valueOf(),
+            team_2_id : seedings[pairedTeam]?.team_id ?? null,
+            created_timestamp : moment(Date.now()).valueOf(),
             completed : false,
-            winning_team : 1
+            winning_team : null
         }
 
         temp.push(set)
+
+
     }
 
     console.log(temp);
 
-    // seedings.forEach( seed => {
-    //     console.log(seed);
 
-
-
-    //     //* calculate pairing team by default
-    //     let other_team = eventSize + 1 - seed.seeding //get seeding of this team
-
-    //     arrayOfSetsToWrite.push(
-    //         {
-    //             "set_id": uuid.v4(),
-    //             "event_id": seed.event_id,
-    //             "tournament_id": tournament_id,
-    //             "team_1_id": team_id,
-    //             "team_2_id": team_2_id,
-    //             "created_timestamp": ,
-    //             "game_type": ,
-    //             "event_game_number": 1,
-    //             "completed": false,
-    //             "winning_team": -1
-    //         }
-    //     )
-    // })
-
-
-    // //* check set format validation
+    // // //* check set format validation
     // let validationResponse = Sets.validateSetFormatData(req.body);
 
     // if (validationResponse.status == 400) {
@@ -129,21 +112,11 @@ const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
 
 
 
-
-    // //* caluclate winning team and completeness automatically
-    // req.body.winningTeam = Games.calculateWinningTeam(req.body.team_1_points, req.body.team_2_points, 3) //todo ADD BEST OF GRAB LOGIC!
-    // req.body.completed = req.body.winningTeam != -1 ? true : false
-    // console.log(`winningTeam and completed: ${req.body.winningTeam}:${req.body.completed}`);
+    const insertion = await populateSeedToSetsTable(temp)
+    console.log(insertion);
 
 
-
-
-
-
-    // await populateSeedToSetsTable(req.body.seedData, req.body.placementStrategy)
-
-
-    return res.status(201).json(seedResult)
+    return res.status(201).json(insertion)
 })
 
 
@@ -151,13 +124,23 @@ const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
 // events.post('/:eventId/updateBracketSeeding', async (req, res, next) => {}
 
 //todo will need to calculate the two fighting teams....lmao
-async function populateSeedToSetsTable(seedData, placementStrategy) {
+async function populateSeedToSetsTable(seedData) {
     console.log(seedData);
 
-    await knex("sets")
-        .insert()
-
-
+    const insertion = await knex("sets")
+    .insert(seedData)
+    .onConflict(['bracket_id', 'event_game_number'])
+    .merge()
+    .then(result => {
+        console.log(result)
+        return true
+    })
+    .catch(err => {
+        console.log(err)
+        return false
+    })
+    console.log(insertion)
+    return insertion
 
 }
 

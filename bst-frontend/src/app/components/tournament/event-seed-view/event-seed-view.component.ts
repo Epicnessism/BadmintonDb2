@@ -1,5 +1,6 @@
 import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, Output } from '@angular/core';
+import { EventBracketMetaData } from 'src/app/interfaces/event-brackets-meta-data.model';
 import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
 
@@ -12,7 +13,7 @@ export class EventSeedViewComponent implements OnInit {
 
 
   eventId: string = ''
-  // tournamentId: string = ''
+  @Input() eventBracketMetaData: EventBracketMetaData | undefined
   @Input() eventMetaData: EventMetaData | undefined
   seedList: any[] = []
 
@@ -42,10 +43,9 @@ export class EventSeedViewComponent implements OnInit {
 
   pushNewSeedings(): void {
     const seedings: object = {
-      "event_id" : this.eventId,
-      "tournament_id" : this.eventMetaData?.tournament_id ?? '',
+      "bracket_id" : this.eventBracketMetaData?.bracket_id ?? '',
       "is_doubles" : this.eventMetaData?.is_doubles ?? '',
-      "event_size": this.eventMetaData?.bracket_size ?? '',
+      "event_size": this.eventMetaData?.event_size ?? '',
       "seedings" : this.constructNewSeedingsPayload()
     }
     this.tournamentDataService.saveSeedings(this.eventId, seedings).subscribe( result => {

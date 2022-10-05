@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, Inject, Input } from '@angular/core';
 import { Set } from 'src/app/interfaces/set.model';
-import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
+import { EventBracketMetaData } from 'src/app/interfaces/event-brackets-meta-data.model';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
 import { BracketData } from 'src/app/interfaces/bracket-data.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -19,7 +19,7 @@ export class BracketViewComponent implements OnInit {
 
   @Input() inputEventMetaData: any = '';
 
-  bracketMetaData: EventMetaData | undefined
+  bracketMetaData: EventBracketMetaData | undefined
   bracket: any[][] = []
 
   bracketData: Set[] = []

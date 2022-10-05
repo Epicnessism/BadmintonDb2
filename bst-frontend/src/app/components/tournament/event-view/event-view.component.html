@@ -15,6 +15,7 @@
     <app-event-seed-view
     *ngIf="eventNotStarted && isManagingTournament && isTournamentAdmin"
     [eventMetaData]="eventMetaData"
+    [eventBracketMetaData]="eventData[0]"
     >
     </app-event-seed-view>
 
