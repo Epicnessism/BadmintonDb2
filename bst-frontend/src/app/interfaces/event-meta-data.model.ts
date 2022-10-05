@@ -5,5 +5,6 @@ export interface EventMetaData {
   event_type: string,
   bracket_size: number,
   bracket_level: string,
-  best_of: number
+  best_of: number,
+  is_doubles: boolean
 }

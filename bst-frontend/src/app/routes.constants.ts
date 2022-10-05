@@ -1,4 +1,4 @@
-export const TOURNAMENT_EVENT_META_DATA = "tournaments/getEventMetaData/"
+export const TOURNAMENT_EVENT_META_DATA = "tournaments/getEventBracketsData/"
 export const TOURNAMENT_EVENT_BRACKET_DATA = "tournaments/getBracketSetData/"
 export const TOURNAMENT_EVENT_UPDATE_SET = "tournaments/updateSet"
 export const TOURNAMENT_EVENT_COMPLETED_SET = "tournaments/completedSet"
@@ -10,6 +10,7 @@ export const ADDPLAYERSTOEVENTS = 'addPlayersToEvents'
 export const UPDATEEVENTSTOPLAYERS = 'updateEventToTeam'
 export const EVENT = 'events/'
 export const SEEDING = 'seeding'
+export const GET_EVENT_METADATA = 'getEventMetadata/'
 
 export const PLAYERS = 'players'
 export const PLAYERS_AUTOCOMPLETE = 'players/autocomplete'

@@ -1,0 +1,20 @@
+
+<div class="main-div">
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="pushNewSeedings()"
+    >
+      Save Seeding
+    </button>
+
+  <div cdkDropList class="example-list"
+   (cdkDropListDropped)="drop($event)"
+   >
+    <div class="example-box"
+    *ngFor="let entry of seedList"
+    cdkDrag>
+      <{{entry.seeding}}> {{entry.player_1_name}} | {{entry.player_2_name}}
+    </div>
+  </div>
+</div>

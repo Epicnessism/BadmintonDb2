@@ -500,8 +500,8 @@ tournaments.get('/getAllPlayers/:tournamentId', async function (req, res, next) 
         });
 });
 
-
-tournaments.get('/getEventMetaData/:event_id', async function (req, res, next) {
+//TODO FIX THIS, THIS SHOULD BE GETEVENTBRACKETSDATA
+tournaments.get('/getEventBracketsData/:event_id', async function (req, res, next) {
     console.log(req.params);
     await knex('events as e')
         .leftJoin('brackets as b', 'e.event_id', 'b.event_id')
@@ -588,6 +588,7 @@ tournaments.post('/completedSet', async function (req, res, next) {
  * should also handle bracket dropdowns accordingly
  */
 tournaments.post('/updateSet', async function (req, res, next) {
+
     console.log(req.body);
     let eventDetails = null;
 
