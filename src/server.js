@@ -39,7 +39,7 @@ api.options('*', cors());
 
 
 // api.use('/', Express.static(path.join(__dirname, '../badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend')))
-api.use('/', Express.static(process.cwd() + "/badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend/"))
+api.use('/', Express.static(process.cwd() + "/bst-frontend/dist/bst-frontend/"))
 // ---- SERVE STATIC FILES ---- //
 // api.server.get('*.*', express.static('../badminton-stat-tracker-frontend/dist/badminton-stat-tracker-frontend', {maxAge: '1y'}));
 
