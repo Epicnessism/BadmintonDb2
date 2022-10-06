@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
@@ -20,18 +19,11 @@ export class LoginComponent implements OnInit {
     password: new FormControl(undefined || '', [Validators.required])
   })
 
-  signUpFormGroup: FormGroup = new FormGroup({
-    username: new FormControl(undefined || '', [Validators.required]),
-    password: new FormControl(undefined || '', [Validators.required]),
-    confirmPassword: new FormControl(undefined || '', [Validators.required])
-  })
-
   // subscription: Subscription;
   // previousRoute: string = null;
   constructor(
     private authService: AuthService,
     private navigationService: NavigationService,
-    private router: Router,
     // private subscriptionService: SubscriptionService
   ) {
     //*
@@ -73,30 +65,5 @@ export class LoginComponent implements OnInit {
   toggleIsLogin(): void {
     this.isLogin = !this.isLogin;
   }
-
-  createAccount(): void {
-    //check if pwd inputs are the same
-    console.log(this.signUpFormGroup.value);
-    if(this.signUpFormGroup.controls['password'].value == this.signUpFormGroup.controls['confirmPassword'].value) {
-      this.authService.signUp(this.signUpFormGroup.value).subscribe(result => {
-        console.log(result);
-        console.log(localStorage);
-        console.log("Inside Local Storage");
-        localStorage.setItem('userId', result.userId)
-        console.log(localStorage);
-      })
-    } else {
-      console.log(this.signUpFormGroup.controls['password'].value);
-      console.log(this.signUpFormGroup.controls['confirmPassword'].value);
-      console.log("lol");
-
-    }
-  }
-
-  ngOnDestroy() {
-    //unsubscribe so no mem leaks
-    // this.subscription.unsubscribe(); //*
-  }
-
 
 }

@@ -3,7 +3,6 @@
   /* margin-left: 15%;
   margin-right: 15%; */
   max-width: 75%;
-  /* min-width: 45%; */
   min-height: 35%;
   text-align: center;
   /* justify-content: center; */
@@ -14,15 +13,4 @@
 
 .form-fields{
   padding: 20px;
-}
-
-.main-div {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-.wrap-div {
-  min-width: 35%
 }

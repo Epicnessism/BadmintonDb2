@@ -1,81 +1,44 @@
 <div class="main-div">
-  <mat-card class="main-card" *ngIf="isLogin; else signUp">
-    <mat-card-header>
-      <mat-card-title>
-        <div>
-          Please Login
-        </div>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <form class="main-field" [formGroup]="loginFormGroup">
-        <div>
-          <mat-form-field class="form-fields">
-            <mat-label>Username</mat-label>
-            <input matInput type="text" formControlName="username" placeholder="" required>
-          </mat-form-field>
-        </div>
-
-        <div>
-          <mat-form-field class="form-fields">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" formControlName="password" placeholder="" required>
-          </mat-form-field>
-        </div>
-        <div>
-          <button mat-raised-button color="primary" (click)="login()">Login</button>
-        </div>
-        <div>
-          <button mat-raised-button color="warning" (click)="toggleIsLogin()">Sign Up Instead</button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-
-  <ng-template #signUp>
-    <mat-card class="main-card">
+  <div class="wrap-div">
+    <mat-card class="main-card" *ngIf="isLogin; else signUp">
       <mat-card-header>
         <mat-card-title>
           <div>
-            Create an Account
+            Please Login
           </div>
         </mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <form class="main-field" [formGroup]="signUpFormGroup">
+        <form class="main-field" [formGroup]="loginFormGroup">
           <div>
             <mat-form-field class="form-fields">
               <mat-label>Username</mat-label>
               <input matInput type="text" formControlName="username" placeholder="" required>
             </mat-form-field>
           </div>
-
           <div>
             <mat-form-field class="form-fields">
               <mat-label>Password</mat-label>
               <input matInput type="password" formControlName="password" placeholder="" required>
             </mat-form-field>
           </div>
-
-          <div>
-            <mat-form-field class="form-fields">
-              <mat-label>Confirm Password</mat-label>
-              <input matInput type="password" formControlName="confirmPassword" placeholder="" required>
-            </mat-form-field>
-          </div>
-
-          <div>
-            <button mat-raised-button color="primary" (click)="createAccount()">Create Account</button>
-          </div>
-          <div>
-            <button mat-raised-button color="warning" (click)="toggleIsLogin()">Login Instead</button>
-          </div>
         </form>
       </mat-card-content>
+      <div>
+        <button mat-raised-button color="primary" *ngIf="isLogin" (click)="login()">
+          Login
+        </button>
+        <button mat-raised-button color="warning" (click)="toggleIsLogin()">
+          Sign Up Instead
+        </button>
+      </div>
     </mat-card>
+  </div>
+
+
+
+  <ng-template #signUp>
+    <app-sign-up [(isLogin)]="isLogin" class="wrap-div"></app-sign-up>
   </ng-template>
+
 </div>
-
-
-
-<!-- <app-bracket-view></app-bracket-view> -->
