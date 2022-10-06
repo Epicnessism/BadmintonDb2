@@ -33,6 +33,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 
 import { LoginComponent } from './components/login/login.component';
 import { BracketViewComponent, SetDetailsDiaglogComponent } from './components/tournament/bracket-view/bracket-view.component';
@@ -45,6 +48,7 @@ import { EventViewComponent } from './components/tournament/event-view/event-vie
 import { CreateViewComponent } from './components/tournament/create-view/create-view.component';
 import { TournamentViewComponent, TournamentSignUpDialogComponent } from './components/tournament/tournament-view/tournament-view.component';
 import { EventSeedViewComponent } from './components/tournament/event-seed-view/event-seed-view.component';
+import { SignUpComponent } from './components/sign-up/sign-up.component';
 
 
 
@@ -65,7 +69,8 @@ import { EventSeedViewComponent } from './components/tournament/event-seed-view/
     CreateViewComponent,
     TournamentViewComponent,
     TournamentSignUpDialogComponent,
-    EventSeedViewComponent
+    EventSeedViewComponent,
+    SignUpComponent
   ],
   imports: [
     BrowserModule,
@@ -96,7 +101,9 @@ import { EventSeedViewComponent } from './components/tournament/event-seed-view/
     MatDialogModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -17,7 +17,7 @@ auth.post('/login', async (req, res, next) => {
             return result
         }).catch( (err) => {
             console.log(err);
-            handleResponse(res, 500, err);
+            return handleResponse(res, 500, err);
         })
 
     if(foundUser.length != 1) {
@@ -78,7 +78,10 @@ auth.post('/signUp', async (req,res,next) => {
                 user_id: uuidv4(), // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
                 username: req.body.username,
                 password: hashedPassword,
-                email: req.body.username + "@gmail.com"
+                given_name: req.body.givenName,
+                family_name: req.body.familyName,
+                email: req.body.email,
+                birthday: req.body.birthday
             })
             .then(resultUser => {
                 console.log(resultUser);
