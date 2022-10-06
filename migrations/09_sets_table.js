@@ -18,9 +18,11 @@ exports.up = function(knex) {
         table.foreign('team_2_id').references('teams_to_players.team_id');
         // table.foreign('tournament_id').references('tournaments.tournament_id');
         table.foreign('bracket_id').references('brackets.bracket_id');
+
+        table.unique(['bracket_id', 'event_game_number']);
     })
   };
-  
+
   exports.down = function(knex) {
     return knex.schema.dropTable('sets');
   };

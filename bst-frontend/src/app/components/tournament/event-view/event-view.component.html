@@ -12,7 +12,12 @@
       {{isManagingTournament ? "Finish Editing" : "Manage Event"}}
     </button>
 
-    <app-event-seed-view *ngIf="eventNotStarted && isManagingTournament && isTournamentAdmin" [eventId]="eventId"></app-event-seed-view>
+    <app-event-seed-view
+    *ngIf="eventNotStarted && isManagingTournament && isTournamentAdmin"
+    [eventMetaData]="eventMetaData"
+    [eventBracketMetaData]="eventData[0]"
+    >
+    </app-event-seed-view>
 
     <mat-tab-group animationDuration="0ms">
 

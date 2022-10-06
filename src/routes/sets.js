@@ -9,10 +9,10 @@ const Sets = require('../controllers/Sets');
 //get a set from the database
 sets.get('/getSet/:set_id', function(req, res, next) {
     if(validateUUID(req.params.set_id)) {
-        knex.select('s1.*', 
-                    'p1.given_name as p1_given', 'p1.family_name as p1_family', 
-                    'p2.given_name as p2_given', 'p2.family_name as p2_family', 
-                    'p3.given_name as p3_given', 'p3.family_name as p3_family', 
+        knex.select('s1.*',
+                    'p1.given_name as p1_given', 'p1.family_name as p1_family',
+                    'p2.given_name as p2_given', 'p2.family_name as p2_family',
+                    'p3.given_name as p3_given', 'p3.family_name as p3_family',
                     'p4.given_name as p4_given', 'p4.family_name as p4_family')
             .from('sets as s1')
             .leftJoin('users as p1', 's1.player_id_1', 'p1.user_id')
@@ -45,7 +45,7 @@ sets.get('/getSet/:set_id', function(req, res, next) {
 //create set NOT related to any tournament with any games in the body
 sets.post('/createSet', async function(req, res, next) {
     console.log('body of request: ',req.body);
-    
+
     if(req.body.tournament_id != null || req.body.event_id != null) {
         console.log('Tournament related fields should be empty.');
         handleResponse(res, 400, 'Tournament related fields should be empty.')
@@ -71,7 +71,6 @@ sets.post('/createSet', async function(req, res, next) {
         }
     }
 })
-
 
 
 
