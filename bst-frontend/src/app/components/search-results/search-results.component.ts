@@ -11,7 +11,7 @@ import { SearchService } from 'src/app/services/search/search.service';
 })
 export class SearchResultsComponent implements OnInit {
 
-  searchParam: string = '';
+  searchParam: string = ''
   searchResults: any = null; //todo create object interface for this response...
 
   filters = {
@@ -21,6 +21,8 @@ export class SearchResultsComponent implements OnInit {
     events: false,
     games: false
   }
+
+  useFilters: boolean = false
 
   constructor(
     private _activatedRoute: ActivatedRoute,
@@ -32,8 +34,13 @@ export class SearchResultsComponent implements OnInit {
     this._activatedRoute.paramMap.subscribe( params => {
       console.log(params);
       this.searchParam = params.get('searchParam') != null ? params.get('searchParam') as string : ''
-
+      this.search()
     })
+  }
+
+  calculateUseFilters() {
+    console.log("calculateUseFilters");
+    this.useFilters = Object.values(this.filters).includes(true)
   }
 
   search(): void {
