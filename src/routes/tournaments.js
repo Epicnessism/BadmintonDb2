@@ -67,7 +67,8 @@ tournaments.post('/', async function (req, res, next) {
         })
         .catch(err => {
             console.log(err);
-            handleResponse(res, 500, err);
+            // return handleResponse(res, 500, err);
+            next(err)
         });
 
 
@@ -77,15 +78,27 @@ tournaments.post('/', async function (req, res, next) {
     console.log(req.session.userId);
     console.log(req.session.isPopulated);
 
-    await knex('tournament_admins')
-        .returning("*")
-        .insert({
-            tournament_id : tournamentDetails.tournament_id,
-            user_id : req.session.userId
-        })
-        .then( result => {
-            console.log(result);
-        })
+    const response = await knex('tournament_admins')
+    .returning("*")
+    .insert({
+        tournament_id : tournamentDetails.tournament_id,
+        user_id : req.session.userId
+    })
+    .then( result => {
+        console.log(result)
+        return result
+    })
+    .catch(err => {
+        // next(err)
+        return err
+
+    });
+
+    if(response.code != undefined) {
+        next(response)
+        return
+    }
+
 
     //* CREATE EVENTS
     const eventsToInsert = req.body.eventsArray.map(event => {
@@ -104,6 +117,11 @@ tournaments.post('/', async function (req, res, next) {
     .then(result => {
         console.log(result);
     })
+    .catch(err => {
+        console.log(err)
+        // handleResponse(res, 500, err)
+        next(err)
+    });
 
     //* CREATE BRACKETS......... SHIT
     let bracketsToCreate = []
@@ -154,6 +172,11 @@ tournaments.post('/', async function (req, res, next) {
     .then( result => {
         console.log(result);
     })
+    .catch(err => {
+        console.log(err)
+        // handleResponse(res, 500, err)
+        next(err)
+    });
 
     res.status(201).json({tournamentId:tournamentDetails.tournament_id})
 
@@ -704,6 +727,7 @@ tournaments.post('/updateSet', async function (req, res, next) {
 
 
 function handleResponse(res, code, message) {
+    console.log("handleResponse")
     return res.status(code).json({ message });
 }
 

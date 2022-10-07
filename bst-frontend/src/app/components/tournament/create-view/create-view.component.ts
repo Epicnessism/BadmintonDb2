@@ -17,12 +17,12 @@ export class CreateViewComponent implements OnInit {
     eventsArray: this.fb.array([])
   })
 
-  tournamentId: string = ''; //TODO import UUID type later
-  loading: boolean = false;
-
+  tournamentId: string = '' //TODO import UUID type later
+  loading: boolean = false
+  errorMessage: string = ''
 
   get eventsArray(): FormArray {
-    return this.tournamentForm.get('eventsArray') as FormArray;
+    return this.tournamentForm.get('eventsArray') as FormArray
   }
 
   addEvent() {
@@ -35,7 +35,7 @@ export class CreateViewComponent implements OnInit {
   }
 
   removeEvent(eventIndex: number): void {
-    this.eventsArray.removeAt(eventIndex);
+    this.eventsArray.removeAt(eventIndex)
   }
 
   constructor(
@@ -48,7 +48,8 @@ export class CreateViewComponent implements OnInit {
   }
 
   async onSubmit() {
-    this.loading = true;
+    this.loading = true
+    this.errorMessage = ''
 
     let response = await this.createTournamentAndRedirect()
 
@@ -56,16 +57,27 @@ export class CreateViewComponent implements OnInit {
   }
 
   async createTournamentAndRedirect() {
-    console.log(this.tournamentForm.value);
-    this.tournamentDataService.postTournamentMetaData(this.tournamentForm.value).subscribe(result => {
-      console.log(result);
-      this.tournamentId = result.tournamentId;
-      this.loading = false;
-      console.log(`navigating to this tournamentId: ${this.tournamentId}`);
-      this.navigationService.navigateByUrl(`tournaments/${this.tournamentId}`);
-    });
+    console.log(this.tournamentForm.value)
+
+    this.tournamentDataService.postTournamentMetaData(this.tournamentForm.value).subscribe( {
+      next: this.handleTournamentCreationResponse.bind(this),
+      error: this.handleTournamentCreationError.bind(this)
+    })
   }
 
+  handleTournamentCreationResponse(result: any) {
+    console.log(result)
+    this.tournamentId = result.tournamentId
+    this.loading = false
+    console.log(`navigating to this tournamentId: ${this.tournamentId}`)
+    this.navigationService.navigateByUrl(`tournaments/${this.tournamentId}`)
+  }
+
+  handleTournamentCreationError(error: any) {
+    console.log(error)
+    this.loading = false
+    this.errorMessage = 'temp error message, parse error message from backend in the future'
+  }
 
 
 

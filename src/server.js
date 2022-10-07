@@ -171,8 +171,9 @@ api.get('/test', (req, res, next) => {
 
 //catch all error handling level 1
 api.use(function(err, req, res, next) {
-    console.log(err);
-    return res.status(err.status || 500).json({
+    // console.log(err)
+    console.log("inside catch-all error handling")
+    res.status(err.status || 500).json({
         status: err.status,
         message: err.message
     })
