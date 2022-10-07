@@ -12,11 +12,11 @@ import { SearchService } from 'src/app/services/search/search.service';
 export class SearchResultsComponent implements OnInit {
 
   searchParam: string = '';
-  searchResults: any[] = [];
+  searchResults: any = null; //todo create object interface for this response...
 
   filters = {
     sets: false,
-    players: false,
+    users: false,
     tournaments: false,
     events: false,
     games: false

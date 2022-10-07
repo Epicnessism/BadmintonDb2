@@ -13,7 +13,7 @@
     <mat-card-content>
       <section class="example-section">
         <mat-checkbox class="example-margin" [(ngModel)]="filters.sets">Sets</mat-checkbox>
-        <mat-checkbox class="example-margin" [(ngModel)]="filters.players">Players</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.users">Users</mat-checkbox>
         <mat-checkbox class="example-margin" [(ngModel)]="filters.tournaments">Tournaments</mat-checkbox>
         <mat-checkbox class="example-margin" [(ngModel)]="filters.games">Games</mat-checkbox>
         <mat-checkbox class="example-margin" [(ngModel)]="filters.events">Events</mat-checkbox>
@@ -23,11 +23,11 @@
 </div>
 <!-- TODO MAKE THIS A CHILD COMPONENT AND FIX THIS SHIT? -->
 <!-- display results here -->
-<ng-container *ngIf="searchResults.length > 0">
-  <ng-container *ngIf="filters.sets">
-    <p>test if sets</p>
+<ng-container *ngIf="searchResults">
+  <ng-container *ngIf="searchResults.sets.length > 0">
     <div >
-      <ul *ngFor="let result of searchResults">
+      <h3>Sets:</h3>
+      <ul *ngFor="let result of searchResults.sets">
         <li class="clickable" (click)="goToResult('set', result.set_id)">
           {{result.set_id}}
         </li>
@@ -35,21 +35,21 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="filters.players">
-    <p>test if sets</p>
+  <ng-container *ngIf="searchResults.users.length > 0">
     <div >
-      <ul *ngFor="let result of searchResults">
+      <h3>Users:</h3>
+      <ul *ngFor="let user of searchResults.users">
         <li class="clickable">
-          {{result.given_name}} {{result.family_name}}
+          {{user.given_name}} {{user.family_name}}
         </li>
       </ul>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="filters.tournaments">
-    <p>test if sets</p>
+  <ng-container *ngIf="searchResults.tournaments.length > 0">
     <div >
-      <ul *ngFor="let result of searchResults">
+      <h3>Tournaments:</h3>
+      <ul *ngFor="let result of searchResults.tournaments">
         <li class="clickable" (click)="goToResult('tournaments', result.tournament_id)">
           {{result.tournament_name}} -- {{result.tournament_id}}
         </li>
@@ -57,10 +57,10 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="filters.games">
-    <p>test if sets</p>
+  <ng-container *ngIf="searchResults.games.length > 0">
     <div >
-      <ul *ngFor="let result of searchResults">
+      <h3>Games:</h3>
+      <ul *ngFor="let result of searchResults.games">
         <li class="clickable">
           {{result.game_id}}
         </li>
@@ -68,10 +68,10 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="filters.events">
-    <p>test if events</p>
+  <ng-container *ngIf="searchResults.events.length > 0">
     <div>
-      <ul *ngFor="let result of searchResults">
+      <h3>Events:</h3>
+      <ul *ngFor="let result of searchResults.events">
         <li class="clickable" (click)="goToResult('event', result.event_id)">
           {{result.event_name}} -- {{result.event_id}}
         </li>
