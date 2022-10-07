@@ -12,11 +12,11 @@
     </mat-card-header>
     <mat-card-content>
       <section class="example-section">
-        <mat-checkbox class="example-margin" [(ngModel)]="filters.sets">Sets</mat-checkbox>
-        <mat-checkbox class="example-margin" [(ngModel)]="filters.users">Users</mat-checkbox>
-        <mat-checkbox class="example-margin" [(ngModel)]="filters.tournaments">Tournaments</mat-checkbox>
-        <mat-checkbox class="example-margin" [(ngModel)]="filters.games">Games</mat-checkbox>
-        <mat-checkbox class="example-margin" [(ngModel)]="filters.events">Events</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.sets" (change)="calculateUseFilters()">Sets</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.users" (change)="calculateUseFilters()">Users</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.tournaments" (change)="calculateUseFilters()">Tournaments</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.games" (change)="calculateUseFilters()">Games</mat-checkbox>
+        <mat-checkbox class="example-margin" [(ngModel)]="filters.events" (change)="calculateUseFilters()">Events</mat-checkbox>
       </section>
     </mat-card-content>
   </mat-card>
@@ -24,7 +24,7 @@
 <!-- TODO MAKE THIS A CHILD COMPONENT AND FIX THIS SHIT? -->
 <!-- display results here -->
 <ng-container *ngIf="searchResults">
-  <ng-container *ngIf="searchResults.sets.length > 0">
+  <ng-container *ngIf="searchResults.sets.length > 0 && (filters.sets || !useFilters)">
     <div >
       <h3>Sets:</h3>
       <ul *ngFor="let result of searchResults.sets">
@@ -35,7 +35,7 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="searchResults.users.length > 0">
+  <ng-container *ngIf="searchResults.users.length > 0  && (filters.users || !useFilters)">
     <div >
       <h3>Users:</h3>
       <ul *ngFor="let user of searchResults.users">
@@ -46,7 +46,7 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="searchResults.tournaments.length > 0">
+  <ng-container *ngIf="searchResults.tournaments.length > 0 && (filters.tournaments || !useFilters)">
     <div >
       <h3>Tournaments:</h3>
       <ul *ngFor="let result of searchResults.tournaments">
@@ -57,7 +57,7 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="searchResults.games.length > 0">
+  <ng-container *ngIf="searchResults.games.length > 0 && (filters.games || !useFilters)">
     <div >
       <h3>Games:</h3>
       <ul *ngFor="let result of searchResults.games">
@@ -68,7 +68,7 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="searchResults.events.length > 0">
+  <ng-container *ngIf="searchResults.events.length > 0 && (filters.events || !useFilters)">
     <div>
       <h3>Events:</h3>
       <ul *ngFor="let result of searchResults.events">
