@@ -4,7 +4,7 @@
     <mat-card-header>
       <mat-form-field appearance="outline" color="white">
         <mat-label>Search</mat-label>
-        <input matInput type="text" [(ngModel)]="searchParam" placeholder="Search" (keydown.enter)="search()">
+        <input matInput type="text" [(ngModel)]="searchParam" placeholder="Search" (keydown.enter)="navigateToSearch()">
         <button *ngIf="searchParam" matSuffix mat-icon-button aria-label="Clear" (click)="searchParam=''">
           <mat-icon>close</mat-icon>
         </button>

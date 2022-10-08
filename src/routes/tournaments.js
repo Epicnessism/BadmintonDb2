@@ -44,7 +44,16 @@ tournaments.post('/', async function (req, res, next) {
 
 
 
-    //TODO validate input before inserting, espcially tournamentType
+    //TODO validate input before inserting, espcially tournamentType, AND EVENTSIZE
+    for(let event of req.body.eventsArray) {
+        if(Math.log2(event.eventSize) % 1 != 0 ) {
+            console.log('failing inside eventsvalidation');
+            res.status(400)
+            next()
+            return
+        }
+    }
+
 
 
     let tournamentDetails = {};
@@ -67,7 +76,8 @@ tournaments.post('/', async function (req, res, next) {
         })
         .catch(err => {
             console.log(err);
-            handleResponse(res, 500, err);
+            // return handleResponse(res, 500, err);
+            next(err)
         });
 
 
@@ -77,15 +87,27 @@ tournaments.post('/', async function (req, res, next) {
     console.log(req.session.userId);
     console.log(req.session.isPopulated);
 
-    await knex('tournament_admins')
-        .returning("*")
-        .insert({
-            tournament_id : tournamentDetails.tournament_id,
-            user_id : req.session.userId
-        })
-        .then( result => {
-            console.log(result);
-        })
+    const response = await knex('tournament_admins')
+    .returning("*")
+    .insert({
+        tournament_id : tournamentDetails.tournament_id,
+        user_id : req.session.userId
+    })
+    .then( result => {
+        console.log(result)
+        return result
+    })
+    .catch(err => {
+        // next(err)
+        return err
+
+    });
+
+    if(response.code != undefined) {
+        next(response)
+        return
+    }
+
 
     //* CREATE EVENTS
     const eventsToInsert = req.body.eventsArray.map(event => {
@@ -99,11 +121,28 @@ tournaments.post('/', async function (req, res, next) {
             best_of: event.bestOf
         }
     })
-    await knex('events').insert(eventsToInsert)
-    .returning('*')
-    .then(result => {
-        console.log(result);
-    })
+
+    let eventsCreatedResponse = ''
+    if(eventsToInsert.length > 0) {
+        eventsCreatedResponse = await knex('events')
+        .insert(eventsToInsert)
+        .returning('*')
+        .then(result => {
+            console.log(result);
+            return result
+        })
+        .catch(err => {
+            console.log(err)
+            return err
+            // handleResponse(res, 500, err)
+            // next(err)
+        });
+    }
+    if(eventsCreatedResponse.code != undefined) {
+        next(response)
+        return
+    }
+
 
     //* CREATE BRACKETS......... SHIT
     let bracketsToCreate = []
@@ -147,13 +186,28 @@ tournaments.post('/', async function (req, res, next) {
             bracketsToCreate = bracketsToCreate.concat(bracketsForThisEvent) //* sonar fix later?
         }
     }
+
     console.log(bracketsToCreate);
-    await knex('brackets')
-    .returning('*')
-    .insert(bracketsToCreate)
-    .then( result => {
-        console.log(result);
-    })
+    let bracketCreationResponse = ''
+    if(bracketsToCreate.length > 0) {
+        bracketCreationResponse = await knex('brackets')
+        .returning('*')
+        .insert(bracketsToCreate)
+        .then( result => {
+            console.log(result)
+            return result
+        })
+        .catch(err => {
+            console.log(err)
+            return err
+            // handleResponse(res, 500, err)
+        });
+    }
+    if(bracketCreationResponse.code != undefined) {
+        next(response)
+        return
+    }
+
 
     res.status(201).json({tournamentId:tournamentDetails.tournament_id})
 
@@ -222,13 +276,14 @@ tournaments.post('/updateEventToTeam', async (req, res, next) => {
     //* check fully registered by getting player_ids from team_id
     let teamsFound = []
     let partnerId = req.body.partnerId == undefined ? null : req.body.partnerId
-    console.log("partnerId: ", partnerId);
+    console.log("partnerId: ", partnerId)
 
     if(req.body.team_id != undefined) {
         teamsFound = await knex('teams_to_players')
         .where('team_id', req.body.team_id)
         .then( result => {
             return result
+            //TODO WTF DOES THIS DO??????? WHEN DOES THIS HAPPEN?
         })
     } else {
         teamsFound = await knex('teams_to_players')
@@ -237,6 +292,7 @@ tournaments.post('/updateEventToTeam', async (req, res, next) => {
         .then( result => {
             console.log("results of finding teamsToPlayers by players: ---->>>");
             console.log(result);
+            req.body.team_id = result[0].team_id
             return result
         })
     }
@@ -704,7 +760,13 @@ tournaments.post('/updateSet', async function (req, res, next) {
 
 
 function handleResponse(res, code, message) {
+    console.log("handleResponse")
     return res.status(code).json({ message });
 }
+
+tournaments.use(function (req, res, next) {
+    console.log("handleResponse function inside TournamentJs")
+    res.json("seomTest Message here");
+})
 
 module.exports.tournaments = tournaments;

@@ -43,6 +43,10 @@ export class SearchResultsComponent implements OnInit {
     this.useFilters = Object.values(this.filters).includes(true)
   }
 
+  navigateToSearch() {
+    this.navigationService.navigateByUrl(`search/${this.searchParam}`)
+  }
+
   search(): void {
     //* do search to db here...
     console.log(this.filters);
