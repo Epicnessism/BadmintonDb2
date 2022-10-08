@@ -166,9 +166,6 @@ api.get('/test', (req, res, next) => {
 //     });
 // })
 
-
-
-
 //catch all error handling level 1
 api.use(function(err, req, res, next) {
     // console.log(err)

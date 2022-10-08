@@ -44,7 +44,16 @@ tournaments.post('/', async function (req, res, next) {
 
 
 
-    //TODO validate input before inserting, espcially tournamentType
+    //TODO validate input before inserting, espcially tournamentType, AND EVENTSIZE
+    for(let event of req.body.eventsArray) {
+        if(Math.log2(event.eventSize) % 1 != 0 ) {
+            console.log('failing inside eventsvalidation');
+            res.status(400)
+            next()
+            return
+        }
+    }
+
 
 
     let tournamentDetails = {};
@@ -754,5 +763,10 @@ function handleResponse(res, code, message) {
     console.log("handleResponse")
     return res.status(code).json({ message });
 }
+
+tournaments.use(function (req, res, next) {
+    console.log("handleResponse function inside TournamentJs")
+    res.json("seomTest Message here");
+})
 
 module.exports.tournaments = tournaments;
