@@ -7,8 +7,6 @@ exports.seed = function(knex) {
           // {user_id: "12345678-e89b-12d3-a456-426614174000", username: "test", password: "test", given_name: 'testName', family_name: 'testSurname', birthday: '06/20/1997', email: "testemail1@gmail.com"},
           {user_id: "123e4567-e89b-12d3-a456-426614174000", username: "epicnessism", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Tony', family_name: 'Wang', birthday: '06/20/1997', email: "testemail1@gmail.com"},
           {user_id: "101e4567-e89b-12d3-a456-426614174111", username: "test21213", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Gus', family_name: 'Walzer', birthday: '01/01/1987', email: "testemail2@gmail.com"},
-          {user_id: "143e4567-e89b-12d3-a456-426614174033", username: "test33333", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Zoe', family_name: 'Xu', birthday: '06/20/1996', email: "testemail3@gmail.com"},
-          {user_id: "144e4567-e89b-12d3-a456-426614174001", username: "test54322", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Pralfah', family_name: 'Ratchatavitayakul', birthday: '06/20/1996', email: "testemail4@gmail.com"},
           {user_id: "155e4567-e89b-12d3-a456-426614174009", username: "test111", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Kyle', family_name: 'Lin', birthday: '01/20/1994', email: "testemail5@gmail.com"},
           {user_id: "15703364-b3fc-4e82-9752-32c187c2b254", username: "test1234", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Alex', family_name: 'Kang', birthday: '01/20/1994', email: "testemail7@gmail.com"},
           {user_id: "cf9bdd43-baf2-4d63-a5fc-163e01cf429c", username: "test12345", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Alan', family_name: 'Lin', birthday: '01/20/1994', email: "testemail8@gmail.com"},
@@ -24,6 +22,11 @@ exports.seed = function(knex) {
           {user_id: "bbb6e8bf-cb18-49a4-aee4-65ad6950f759", username: "test123456", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Andrew', family_name: 'Wang', birthday: '01/20/1994', email: "testemail17@gmail.com"},
           {user_id: "b4a5e5e7-d955-4200-a41c-d22211827e75", username: "test123457", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Tim', family_name: 'Zhao', birthday: '01/20/1994', email: "testemail18@gmail.com"},
           {user_id: "6f7303e7-fb96-49fa-9fcd-4b1d880e3591", username: "test123458", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Hung', family_name: 'Ng', birthday: '01/20/1994', email: "testemail19@gmail.com"},
+
+          //females
+          {user_id: "143e4567-e89b-12d3-a456-426614174033", username: "test33333", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Zoe', family_name: 'Xu', birthday: '06/20/1996', email: "testemail3@gmail.com"},
+          {user_id: "144e4567-e89b-12d3-a456-426614174001", username: "test54322", password: "$2b$07$ztUZsT555hmHvv.9dgIC/.EC0bxc2x4on0VQXumEbL/39IAl7Tv9W", given_name: 'Pralfah', family_name: 'Ratchatavitayakul', birthday: '06/20/1996', email: "testemail4@gmail.com"},
+
         ]);
       });
   };
