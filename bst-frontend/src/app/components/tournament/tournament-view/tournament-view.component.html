@@ -1,18 +1,18 @@
 <div>
   <mat-card>
 
-    <mat-card-title *ngIf="tournamentData[0] != undefined">{{tournamentData[0].tournamentName}}</mat-card-title>
-    <mat-card *ngFor="let event of tournamentData; let i=index" >
-      <mat-card-title class="clickable" (click)="goToEvent(event.eventId)">{{event.eventName}}</mat-card-title>
-
-      <!-- <span matBadge="Check" matBadgeOverlap="false">You're Signed Up!</span> -->
-      <span *ngIf="playerTournamentSignUpForm.length > 0 && playerTournamentSignUpForm[i].isSignUp">You're signed up!</span>
-
-      <!-- <button mat-button (click)="addToSignUp(event.eventId)">
-        Sign Up
-      </button> -->
-      <!-- <mat-checkbox class="" [(ngModel)]="eventsToRegister[i].isChecked">Sign Up</mat-checkbox> -->
-    </mat-card>
+    <mat-card-title *ngIf="tournamentData != undefined">{{tournamentData.tournamentName}}</mat-card-title>
+    <ng-container *ngIf="tournamentData != undefined">
+      <mat-card *ngFor="let event of tournamentData.detailsOfEvents; let i=index" >
+        <mat-card-title class="clickable" (click)="goToEvent(event.event_id)">{{event.event_name}}</mat-card-title>
+        <!-- <span matBadge="Check" matBadgeOverlap="false">You're Signed Up!</span> -->
+        <span *ngIf="playerTournamentSignUpForm.length > 0 && playerTournamentSignUpForm[i].isSignUp">You're signed up!</span>
+        <!-- <button mat-button (click)="addToSignUp(event.eventId)">
+          Sign Up
+        </button> -->
+        <!-- <mat-checkbox class="" [(ngModel)]="eventsToRegister[i].isChecked">Sign Up</mat-checkbox> -->
+      </mat-card>
+    </ng-container>
 
     <button mat-button *ngIf="activePlayerId" (click)="openSignUpDialog()">
       Sign up for events

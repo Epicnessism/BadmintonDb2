@@ -19,7 +19,7 @@ import { TournamentDataService } from 'src/app/services/tournament-data.service'
 export class TournamentViewComponent implements OnInit {
 
   tournamentId: string = ''
-  tournamentData: TournamentMetaData[] = []
+  tournamentData!: TournamentMetaData;
   eventsToRegister: EventSignUpMetaData[] = []
   isSignUp: boolean = false
   activePlayerId: string | undefined;
@@ -71,19 +71,20 @@ export class TournamentViewComponent implements OnInit {
     if(activePlayerId) {
       this.tournamentDataService.getPlayerSignUpData(tournamentId, activePlayerId).subscribe(results => {
         console.log(results);
+        console.log(this.tournamentData.detailsOfEvents);
 
-        for(let temp of this.tournamentData) {
+        for(let currEvent of this.tournamentData.detailsOfEvents) {
 
           let playerSignUpEvent: PlayerTournamentSignUp = {
-            eventId: temp.eventId,
-            tournamentId: temp.tournamentId,
+            eventId: currEvent.event_id,
+            tournamentId: this.tournamentData.tournamentId,
             playerId: localStorage.getItem('userId') || '',
             isSignUp: false
           }
 
           //if this event is signed up for, populate that data
-          if(results.some((someEvent: { eventId: string; }) => someEvent.eventId == temp.eventId)) {
-            let event = results.find((element: { eventId: string; }) => element.eventId == temp.eventId)
+          if(results.some((someEvent: { eventId: string; }) => someEvent.eventId == currEvent.event_id)) {
+            let event = results.find((element: { eventId: string; }) => element.eventId == currEvent.event_id)
             let partnerName = event.playerId =! event.player_1_id ? `${event.player_1_given_name} ${event.player_1_family_name}` :  `${event.player_2_given_name} ${event.player_2_family_name}`
             // let playerName = event.playerId == event.player_1_id ? `${event.player_1_given_name} ${event.player_1_family_name}` :  `${event.player_2_given_name} ${event.player_2_family_name}`
 
@@ -150,13 +151,10 @@ export class TournamentSignUpDialogComponent {
     this.playerTournamentSignUpForm = wrapData.playerTournamentSignUpForm
     console.log(this.tournamentData);
     console.log(this.playerTournamentSignUpForm);
-
-
-
   }
 
   step = -1;
-  tournamentData: TournamentMetaData[] = []
+  tournamentData: TournamentMetaData
   autoCompleteOptions: PlayerAutocompleteData[] = [];
 
   setStep(index: number) {
@@ -214,7 +212,7 @@ export class TournamentSignUpDialogComponent {
 
     //* this is the ADDPLAYERS (BY PLAYERS) ROUTE
     let payload = {
-      tournamentId: this.tournamentData[0].tournamentId,
+      tournamentId: this.tournamentData.tournamentId,
       players: [
         {
           "playerId": localStorage.getItem('userId'),

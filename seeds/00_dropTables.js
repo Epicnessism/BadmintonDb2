@@ -8,8 +8,9 @@ exports.seed = function (knex, Promise) {
         // .then(() => knex('players').del())
 
         //delete first table last
-        return knex('events_to_teams').del()
-            // .then(() => knex('tournament_admins').del())
+        return knex('tournament_admins').del()
+        // .then(() => knex('events_to_teams').del())
+            .then(() => knex('events_to_teams').del())
             .then(() => knex('events_to_players').del())
             .then(() => knex('games').del())
             .then(() => knex('sets').del())
