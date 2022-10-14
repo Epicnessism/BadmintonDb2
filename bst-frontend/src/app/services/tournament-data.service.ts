@@ -11,9 +11,14 @@ import { ADDPLAYERSTOEVENTS, EVENT, GET_EVENT_METADATA, SEEDING, SIGN_UP_META_DA
 })
 export class TournamentDataService {
 
+  private tournamentId: string = ''
+
   constructor(private http: HttpClient) {
   }
 
+  getTournamentId(): string {
+    return this.tournamentId
+  }
 
   getEventBracketsData(eventId: string): Observable<any> {
     let apiURL = `${environment.backendURL}${TOURNAMENT_EVENT_META_DATA}${eventId}`

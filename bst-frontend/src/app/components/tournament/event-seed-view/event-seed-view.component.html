@@ -14,7 +14,9 @@
     <div class="example-box"
     *ngFor="let entry of seedList"
     cdkDrag>
-      <{{entry.seeding}}> {{entry.player_1_name}} | {{entry.player_2_name}}
+    <{{entry.seeding}}> {{entry.player_1_name}}
+    <label *ngIf="entry.player_2_name != undefined">| {{entry.player_2_name}}</label>
+
     </div>
   </div>
 </div>

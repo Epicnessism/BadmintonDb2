@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
+import { TournamentMetaData } from 'src/app/interfaces/tournament-meta-data.model';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
 import { TournamentDataService } from 'src/app/services/tournament-data.service';
 
@@ -15,10 +16,11 @@ export class EventViewComponent implements OnInit {
   tournamentId: string = ''
   eventData: any[] = []
   eventMetaData : EventMetaData | undefined
+  tournamentData : TournamentMetaData | undefined
 
-  eventNotStarted: boolean = true
-  isManagingTournament: boolean = true
-  isTournamentAdmin: boolean = true
+  eventInProgress: boolean = false
+  isManagingTournament: boolean = false
+  isTournamentAdmin: boolean = false
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -28,34 +30,43 @@ export class EventViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPathParam()
-    this.getData()
+    // this.getData() //! UNTIL I FIGURE OUT HOW TO STRUCTURE MULTIPLE API CALLS IN SYNCHRONOUS ORDER....
   }
 
   getPathParam(): void {
     this._activatedRoute.paramMap.subscribe( params => {
       console.log(params);
       this.eventId = params.get('eventId') != null ? params.get('eventId') as string : ''
-      //TODO get tournamentId somehow....instead of using getData()[0]
+      this.tournamentId = params.get('tournamentId') != null ? params.get('tournamentId') as string : ''
+      this.getData()
     })
   }
 
-  async getData() {
-    await this.getEventMetaData(this.eventId);
-    await this.getEventBracketsData(this.eventId);
+  getData() {
+    this.getEventMetaData(this.eventId)
+    this.getEventBracketsData(this.eventId)
+    this.getTournamentMetaData(this.tournamentId)
   }
 
-  async getEventMetaData(eventId: string) {
-    this.tournamentDataService.getEventMetaData(eventId).subscribe(result => {
+  getTournamentMetaData(tournamentId: string) { //todo enhance this to get tournamentAdmin data as well
+    this.tournamentDataService.getTournamentMetaData(tournamentId).subscribe(result => {
+      console.log(result);
+      this.tournamentData = result[0]
+      this.isTournamentAdmin = true
+    });
+  }
+
+  getEventMetaData(eventId: string) {
+    return this.tournamentDataService.getEventMetaData(eventId).subscribe(result => {
       console.log(result);
       this.eventMetaData = result[0]
     });
   }
 
-  async getEventBracketsData(eventId: string) {
-    this.tournamentDataService.getEventBracketsData(eventId).subscribe(result => {
+  getEventBracketsData(eventId: string) {
+    return this.tournamentDataService.getEventBracketsData(eventId).subscribe(result => {
       console.log(result);
       this.eventData = result
-      this.tournamentId = this.eventData[0].tournament_id
     });
   }
 

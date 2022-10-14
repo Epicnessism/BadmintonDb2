@@ -64,7 +64,7 @@ search.post('/:substring', async function(req, res, next) {
         })
         .catch(err => {
             console.log("do nothing...")
-            console.log(err)
+            // console.log(err)
             coalesceResults[type] = []
         })
     }

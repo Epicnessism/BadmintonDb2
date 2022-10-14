@@ -48,7 +48,7 @@ events.get('/getEventMetadata/:eventId', async (req, res, next) => {
 })
 
 //save seeding
-const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
+events.post('/:eventId/seeding', async (req, res, next) => {
     console.log(req.body);
     let seedings = req.body.seedings;
 
@@ -69,20 +69,22 @@ const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
     let temp = []
     for(let i = 0; i < req.body.event_size / 2; i++) {
 
-        let eventGameNumber = -1
-        let pairedTeam = -1
-        //* if seed is even number, find reverse game number for bottom of bracket
-        if((i + 1) % 2 === 0) {
-            eventGameNumber = (req.body.event_size - i + 1) / 2
-            pairedTeam = req.body.event_size + 1 - i - 1
-            console.log("eventGameNumber evens: " + eventGameNumber)
-            console.log("pairdTeam evens: " + pairedTeam)
-        } else {
-            eventGameNumber = i + 1
-            pairedTeam = req.body.event_size + 1 - eventGameNumber
-            console.log("eventGameNumber odds: " + eventGameNumber)
-            console.log("pairdTeam odds: " + pairedTeam)
-        }
+        let eventGameNumber = i + 1
+        let pairedTeam = req.body.event_size - 1 - i
+        console.log("eventGameNumber evens: " + eventGameNumber)
+        console.log("pairdTeam evens: " + pairedTeam)
+
+        //TODO IMPLEMENT AUTOMATIC SEEDING
+        // //* if seed is even number, find reverse game number for bottom of bracket
+        // if((i + 1) % 2 === 0) {
+        //     eventGameNumber = (req.body.event_size - i + 1) / 2
+        //     console.log("eventGameNumber evens: " + eventGameNumber)
+        //     console.log("pairdTeam evens: " + pairedTeam)
+        // } else {
+        //     eventGameNumber = i + 1
+        //     console.log("eventGameNumber odds: " + eventGameNumber)
+        //     console.log("pairdTeam odds: " + pairedTeam)
+        // }
 
         if(seedings[i] == undefined) {
             break
@@ -121,8 +123,6 @@ const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
 
     const insertion = await populateSeedToSetsTable(temp)
     console.log(insertion);
-
-
     return res.status(201).json(insertion)
 })
 
@@ -132,7 +132,6 @@ const seedResult = events.post('/:eventId/seeding', async (req, res, next) => {
 
 //todo will need to calculate the two fighting teams....lmao
 async function populateSeedToSetsTable(seedData) {
-    console.log(seedData);
 
     const insertion = await knex("sets")
     .insert(seedData)
