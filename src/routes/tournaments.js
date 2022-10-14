@@ -7,30 +7,51 @@ const Sets = require('../controllers/Sets');
 const Games = require('../controllers/Games');
 
 
-
+//todo implement new tournamentMetaData
 tournaments.get('/:tournamentId', async function (req, res, next) {
     console.log(req.params.tournamentId);
-    await knex('tournaments')
+    let response = await knex('tournaments as t')
     .select(
-    'tournament_name as tournamentName',
-    'tournaments.tournament_id as tournamentId',
-    'location as location',
-    'institution_hosting as institutionHosting',
-    'hosting_date as hostingDate',
-    'tournament_type as tournamentType',
-    'state as state',
-    'event_id as eventId',
-    'event_type as eventType',
-    'best_of as bestOf',
-    'is_doubles as eventIsDoubles',
-    'event_size as eventSize',
-    'event_name as eventName')
-    .leftJoin('events', 'tournaments.tournament_id', 'events.tournament_id')
-    .where('tournaments.tournament_id', req.params.tournamentId)
-    .then( result => {
-        console.log(result);
-        return res.status(200).json(result)
+        't.tournament_id as tournamentId',
+        't.tournament_name as tournamentName',
+        't.location as location',
+        't.institution_hosting as institutionHosting',
+        't.hosting_date as hostingDate',
+        't.tournament_type as tournamentType',
+        't.state as state',
+        knex.raw('jsonb_agg(ev.*) as detailsOfEvents'),
+        knex.raw('json_agg(ta.*) as tournamentAdmins')
+    )
+    .leftJoin('events as ev', 't.tournament_id', 'ev.tournament_id')
+    .leftJoin('tournament_admins as ta', 't.tournament_id', 'ta.tournament_id')
+    .where('t.tournament_id', req.params.tournamentId)
+    .groupBy(
+        't.tournament_id', 't.tournament_name','t.location', 't.institution_hosting', 't.hosting_date', 't.tournament_type',' t.state'
+    )
+    .then( results => {
+        //* need this because knex.raw forces lowercase...
+        //* and so we will need this until we move to
+        //* data models/objects with transformation built in
+        results[0].detailsOfEvents = results[0].detailsofevents
+        results[0].tournamentAdmins = results[0].tournamentadmins
+        return results
     })
+    .catch( err => {
+        console.log(err);
+        return err
+    })
+
+    if(response.code != undefined) {
+        next(response)
+        return
+    }
+
+    if(response.length != 1) {
+        next()
+        return
+    }
+
+    res.status(200).json(response[0])
 })
 
 

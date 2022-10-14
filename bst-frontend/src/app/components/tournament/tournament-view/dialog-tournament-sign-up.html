@@ -1,19 +1,19 @@
 <div mat-dialog-content>
   <mat-accordion class="example-headers-align">
     <div>
-      <mat-expansion-panel *ngFor="let eventObj of tournamentData; let i = index" [expanded]="step === i"
+      <mat-expansion-panel *ngFor="let eventObj of tournamentData.detailsOfEvents; let i = index" [expanded]="step === i"
         (opened)="setStep(i)" hideToggle>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{eventObj.eventName}}
+            {{eventObj.event_name}}
           </mat-panel-title>
           <mat-panel-description>
-            Size: {{eventObj.eventSize}} | Type: {{eventObj.eventType}}
+            Size: {{eventObj.event_size}} | Type: {{eventObj.event_type}}
             <!-- <mat-icon>account_circle</mat-icon> -->
           </mat-panel-description>
         </mat-expansion-panel-header>
 
-        <mat-form-field *ngIf="eventObj.eventIsDoubles" appearance="fill">
+        <mat-form-field *ngIf="eventObj.is_doubles" appearance="fill">
           <mat-label>Partner's Name</mat-label>
 
           <input matInput #input [(ngModel)]="playerTournamentSignUpForm[i].partnerName" autoActiveFirstOption
@@ -33,9 +33,9 @@
 
 
         <mat-action-row>
-          <button mat-button color="warn" *ngIf="i > 0 && i < tournamentData.length"
+          <button mat-button color="warn" *ngIf="i > 0 && i < tournamentData.detailsOfEvents.length"
             (click)="prevStep()">Previous</button>
-          <button mat-button color="primary" *ngIf="i != tournamentData.length - 1" (click)="nextStep()">Next</button>
+          <button mat-button color="primary" *ngIf="i != tournamentData.detailsOfEvents.length - 1" (click)="nextStep()">Next</button>
         </mat-action-row>
 
       </mat-expansion-panel>
