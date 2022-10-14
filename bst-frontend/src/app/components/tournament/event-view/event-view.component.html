@@ -1,7 +1,7 @@
 <div>
   <mat-card *ngIf="eventData.length > 0">
 
-    <mat-card-title>[Insert Tournament Name Here] {{eventData[0].event_name}}</mat-card-title>
+    <mat-card-title>{{tournamentData ? tournamentData.tournamentName : ''}} {{eventData[0].event_name}}</mat-card-title>
 
     <button
     mat-raised-button
@@ -13,7 +13,7 @@
     </button>
 
     <app-event-seed-view
-    *ngIf="eventNotStarted && isManagingTournament && isTournamentAdmin"
+    *ngIf="!eventInProgress && isManagingTournament && isTournamentAdmin"
     [eventMetaData]="eventMetaData"
     [eventBracketMetaData]="eventData[0]"
     >
