@@ -1,0 +1,8 @@
+.main-div {
+  display: flex;
+}
+
+.vertical-divider {
+  margin-left: 30px;
+  margin-right: 30px;
+}
