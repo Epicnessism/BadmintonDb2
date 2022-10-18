@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
 import { FormArray, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { TournamentDataService } from 'src/app/services/tournament-data.service';
+import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
 
 @Component({
   selector: 'app-create-view',

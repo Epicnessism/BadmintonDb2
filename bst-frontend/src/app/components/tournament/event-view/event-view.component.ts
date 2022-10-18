@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { EventBracketMetaData } from 'src/app/interfaces/event-brackets-meta-data.model';
 import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
 import { TournamentMetaData } from 'src/app/interfaces/tournament-meta-data.model';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
-import { TournamentDataService } from 'src/app/services/tournament-data.service';
+import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
 
 @Component({
   selector: 'app-event-view',
@@ -14,7 +15,7 @@ export class EventViewComponent implements OnInit {
 
   eventId: string = ''
   tournamentId: string = ''
-  eventData: any[] = []
+  // eventData: EventBracketMetaData[] = []
   eventMetaData : EventMetaData | undefined
   tournamentData : TournamentMetaData | undefined
 
@@ -30,6 +31,15 @@ export class EventViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPathParam()
+    this.tournamentDataService.getEventMetaData().subscribe( result => {
+      console.log(result)
+      const eventResults = result.get(this.eventId)
+      if(eventResults != undefined) {
+        this.eventMetaData = eventResults
+      }
+      console.log(this.eventMetaData != undefined)
+
+    })
     // this.getData() //! UNTIL I FIGURE OUT HOW TO STRUCTURE MULTIPLE API CALLS IN SYNCHRONOUS ORDER....
   }
 
@@ -43,7 +53,7 @@ export class EventViewComponent implements OnInit {
   }
 
   getData() {
-    this.getEventMetaData(this.eventId)
+    this.requestEventMetaData(this.eventId)
     this.getEventBracketsData(this.eventId)
     this.getTournamentMetaData(this.tournamentId)
   }
@@ -56,18 +66,12 @@ export class EventViewComponent implements OnInit {
     });
   }
 
-  getEventMetaData(eventId: string) {
-    return this.tournamentDataService.getEventMetaData(eventId).subscribe(result => {
-      console.log(result);
-      this.eventMetaData = result[0]
-    });
+  requestEventMetaData(eventId: string) {
+    this.tournamentDataService.pullEventMetaData(eventId)
   }
 
   getEventBracketsData(eventId: string) {
-    return this.tournamentDataService.getEventBracketsData(eventId).subscribe(result => {
-      console.log(result);
-      this.eventData = result
-    });
+    this.tournamentDataService.pullBracketsMetaData(eventId)
   }
 
   toggleManageTournament(): void {

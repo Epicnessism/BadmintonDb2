@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, Inject, Input } from '@angular/core';
 import { Set } from 'src/app/interfaces/set.model';
 import { EventBracketMetaData } from 'src/app/interfaces/event-brackets-meta-data.model';
-import { TournamentDataService } from 'src/app/services/tournament-data.service';
-import { BracketData } from 'src/app/interfaces/bracket-data.model';
+import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ValidGameDataService } from 'src/app/services/valid-game-data.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-bracket-view',
@@ -17,7 +13,7 @@ import { Observable } from 'rxjs';
 })
 export class BracketViewComponent implements OnInit {
 
-  @Input() inputEventMetaData: any = '';
+  @Input() inputEventMetaData!: EventBracketMetaData
 
   bracketMetaData: EventBracketMetaData | undefined
   bracket: any[][] = []
@@ -25,8 +21,6 @@ export class BracketViewComponent implements OnInit {
   bracketData: Set[] = []
 
   depth1: any[] = []
-
-  id: string[] = ['one', 'two', 'three', 'four']
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -46,6 +40,10 @@ export class BracketViewComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
+      if(result === "refreshBracket") {
+        this.tournamentDataService.pullEventMetaData(this.inputEventMetaData.event_id)
+        this.tournamentDataService.pullBracketsMetaData(this.inputEventMetaData.event_id)
+      }
     });
   }
 
@@ -56,11 +54,13 @@ export class BracketViewComponent implements OnInit {
   async getBracketData(bracketId: string) {
     this.tournamentDataService.getBracketData(bracketId).subscribe(result => {
       console.log(result);
-      this.bracketData = result;
-      console.log(this.bracketData);
-      this.generateBracketSkeleton();
-      // this.splitBracketData();
-      this.mapBracketDataToSkeleton();
+      this.bracketData = []
+      this.bracket = []
+      this.bracketData = result
+      console.log(this.bracketData)
+      this.generateBracketSkeleton()
+      // this.splitBracketData()
+      this.mapBracketDataToSkeleton()
     });
   }
 
@@ -161,10 +161,9 @@ export class SetDetailsDiaglogComponent {
         .subscribe( result => {
           console.log(result);
           if(result != null) {
-            this.onNoClick()
+            this.closeAndRefresh()
           } else {
             console.log("Error updating set!");
-
           }
         })
     }
@@ -215,8 +214,13 @@ export class SetDetailsDiaglogComponent {
     return true
   }
 
-  onNoClick(): void {
+  closeAndRefresh(): void {
     //TODO VALIDATE INPUT BEFORE CLOSING.
+    this.dialogRef.close("refreshBracket")
+  }
+
+  //* for when you just want to close the dialog and not refresh
+  closeDialog(): void {
     this.dialogRef.close()
   }
 }

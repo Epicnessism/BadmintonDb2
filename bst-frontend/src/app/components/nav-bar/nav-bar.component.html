@@ -16,12 +16,20 @@
       </button>
     </mat-form-field>
 
+    <button mat-icon-button class="" aria-label="notifications icon" >
+      <mat-icon>notifications</mat-icon>
+    </button>
+
     <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon" (click)="goProfile()">
       <mat-icon>person</mat-icon>
+      <span>{{playerInitials}}</span>
     </button>
-    <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
+
+
+    <!-- <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
       <mat-icon>settings</mat-icon>
-    </button>
+    </button> -->
+
   </mat-toolbar>
 
   <mat-sidenav-container class="sidenav-container">
