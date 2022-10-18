@@ -2,7 +2,7 @@ import { CdkDrag, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { EventBracketMetaData } from 'src/app/interfaces/event-brackets-meta-data.model';
 import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
-import { TournamentDataService } from 'src/app/services/tournament-data.service';
+import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
 
 @Component({
   selector: 'app-event-seed-view',

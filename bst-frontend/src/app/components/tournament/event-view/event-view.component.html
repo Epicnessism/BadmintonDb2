@@ -1,7 +1,7 @@
 <div>
-  <mat-card *ngIf="eventData.length > 0">
+  <mat-card *ngIf="eventMetaData != undefined">
 
-    <mat-card-title>{{tournamentData ? tournamentData.tournamentName : ''}} {{eventData[0].event_name}}</mat-card-title>
+    <mat-card-title>{{tournamentData ? tournamentData.tournamentName : ''}} {{eventMetaData.event_name}}</mat-card-title>
 
     <button
     mat-raised-button
@@ -15,15 +15,17 @@
     <app-event-seed-view
     *ngIf="!eventInProgress && isManagingTournament && isTournamentAdmin"
     [eventMetaData]="eventMetaData"
-    [eventBracketMetaData]="eventData[0]"
+    [eventBracketMetaData]="eventMetaData?.eventBracketMetaData![0]"
     >
     </app-event-seed-view>
 
     <mat-tab-group animationDuration="0ms">
 
-      <mat-tab *ngFor="let bracket of eventData" label="{{bracket.bracket_level}}">
+      <mat-tab *ngFor="let bracket of eventMetaData.eventBracketMetaData!" label="{{bracket.bracket_level}}">
         <app-bracket-view [inputEventMetaData]="bracket"></app-bracket-view>
       </mat-tab>
+
+
     </mat-tab-group>
   </mat-card>
 </div>

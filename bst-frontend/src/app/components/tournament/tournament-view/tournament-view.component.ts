@@ -2,14 +2,13 @@ import { Component, Inject, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/internal/Observable';
 import { EventSignUpMetaData } from 'src/app/interfaces/event-sign-up-meta-data.model';
 import { PlayerAutocompleteData } from 'src/app/interfaces/player-autocomplete-data.model';
 import { PlayerTournamentSignUp } from 'src/app/interfaces/player-tournament-sign-up.data.model';
 import { TournamentMetaData } from 'src/app/interfaces/tournament-meta-data.model';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
 import { PlayersDataService } from 'src/app/services/players/players-data.service';
-import { TournamentDataService } from 'src/app/services/tournament-data.service';
+import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
 
 @Component({
   selector: 'app-tournament-view',

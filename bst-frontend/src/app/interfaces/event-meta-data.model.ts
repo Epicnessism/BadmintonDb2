@@ -1,3 +1,5 @@
+import { EventBracketMetaData } from "./event-brackets-meta-data.model";
+
 export interface EventMetaData {
   id: number,
   event_id: string,
@@ -6,5 +8,6 @@ export interface EventMetaData {
   event_size: number,
   event_name: string,
   best_of: number,
-  is_doubles: boolean
+  is_doubles: boolean,
+  eventBracketMetaData?: EventBracketMetaData[]
 }
