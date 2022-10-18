@@ -13,4 +13,5 @@ export const SEEDING = 'seeding'
 export const GET_EVENT_METADATA = 'getEventMetadata/'
 
 export const PLAYERS = 'players'
-export const PLAYERS_AUTOCOMPLETE = 'players/autocomplete'
+export const PROFILEDATA = 'profileData'
+export const PLAYERS_AUTOCOMPLETE = `${PLAYERS}/autocomplete`

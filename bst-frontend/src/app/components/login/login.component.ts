@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
+import { PlayersDataService } from 'src/app/services/players/players-data.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private navigationService: NavigationService,
+    private playersDataService: PlayersDataService,
     // private subscriptionService: SubscriptionService
   ) {
     //*
@@ -48,6 +50,7 @@ export class LoginComponent implements OnInit {
       // console.log(result);
       console.log("successful login");
       localStorage.setItem('userId', result.userId)
+      this.playersDataService.getPlayerProfileData(result.userId)
 
 
       // console.log(this.previousRoute);
@@ -58,7 +61,7 @@ export class LoginComponent implements OnInit {
       // } else {
       //   this.router.navigate(['/']);
       // }
-      this.navigationService.navigateByUrl('/profile');
+      this.navigationService.navigateByUrl(`/profile`);
     });
   }
 

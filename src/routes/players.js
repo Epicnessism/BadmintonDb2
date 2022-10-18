@@ -53,11 +53,12 @@ players.get('/:player_identifier/profileData', async function(req, res, next) {
         'p.location as location',
         'p.institution as institution'
     )
+    //* more aggregate data to come later as i learn hwo to do it
     .leftJoin('players as p', 'p.player_id', 'u.user_id')
     .where('u.user_id', req.params.player_identifier)
     .then( results => {
         console.log(results)
-
+        return results
     })
     .catch( err => {
         console.log(err)
@@ -65,7 +66,7 @@ players.get('/:player_identifier/profileData', async function(req, res, next) {
     })
 
     if(response.code != undefined) {
-        next(err)
+        next(response)
         return
     }
 
