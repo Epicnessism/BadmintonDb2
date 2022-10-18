@@ -2,12 +2,8 @@ import { ChangeDetectionStrategy, Component, OnInit, Inject, Input } from '@angu
 import { Set } from 'src/app/interfaces/set.model';
 import { EventBracketMetaData } from 'src/app/interfaces/event-brackets-meta-data.model';
 import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
-import { BracketData } from 'src/app/interfaces/bracket-data.model';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { ValidGameDataService } from 'src/app/services/valid-game-data.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-bracket-view',
@@ -165,7 +161,7 @@ export class SetDetailsDiaglogComponent {
         .subscribe( result => {
           console.log(result);
           if(result != null) {
-            this.onNoClick()
+            this.closeAndRefresh()
           } else {
             console.log("Error updating set!");
           }
@@ -218,9 +214,14 @@ export class SetDetailsDiaglogComponent {
     return true
   }
 
-  onNoClick(): void {
+  closeAndRefresh(): void {
     //TODO VALIDATE INPUT BEFORE CLOSING.
     this.dialogRef.close("refreshBracket")
+  }
+
+  //* for when you just want to close the dialog and not refresh
+  closeDialog(): void {
+    this.dialogRef.close()
   }
 }
 
