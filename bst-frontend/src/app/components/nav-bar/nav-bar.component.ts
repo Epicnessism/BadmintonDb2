@@ -13,7 +13,10 @@ export class NavBarComponent implements OnInit {
   searchString: string = ''
   playerInitials: string = ''
   // playerInitials: Subscription = new Subscription;
-  sideNavOptions = [{name:"Create a tournament", path: "tournaments/create"}]
+  sideNavOptions = [
+    {name:"Create a tournament", path: "tournaments/create"},
+    {name:"Settings", path: ""},
+  ]
 
   constructor(
     private navigationService: NavigationService,

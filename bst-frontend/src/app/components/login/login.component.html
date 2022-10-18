@@ -19,7 +19,7 @@
           <div>
             <mat-form-field class="form-fields">
               <mat-label>Password</mat-label>
-              <input matInput type="password" formControlName="password" placeholder="" required>
+              <input matInput type="password" formControlName="password" placeholder="" (keydown.enter)="login()" required>
             </mat-form-field>
           </div>
         </form>
