@@ -24,9 +24,19 @@ We leverage [Angular Material](https://material.angular.io/components/categories
 1. Clone down Repo
 2. cd into the root folder and run `npm i`. This should install everything you need for the backend server
 3. cd into bst-frontend and run `npm i`. This should install everything you need for the frontend angular server
-4. cd back into the root folder, and run `npm run frontend` to spin up the angular webserver
-5. run `npm run knexfull` to run the knex mgirations AND seed the db.
-6. run `npm run dev` to spin up the node express backend server.
+4. create a `.env` file at the root level, with this template, fill out values as needed
+   1. PORT=80
+PROD_DATABASE_NAME=''
+PROD_DATABASE_URL=''
+PROD_DATABASE_USER=''
+PROD_DATABASE_PASSWORD=''
+LOCAL_DB_URL='127.0.0.1'
+LOCAL_DB_USER='postgres'
+LOCAL_DB_PWD=''
+LOCAL_DB_NAME='bst_db'
+1. cd back into the root folder, and run `npm run frontend` to spin up the angular webserver
+2. run `npm run knexfull` to run the knex mgirations AND seed the db.
+3. run `npm run dev` to spin up the node express backend server.
 
 
 
