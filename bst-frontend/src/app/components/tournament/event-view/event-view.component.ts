@@ -61,7 +61,9 @@ export class EventViewComponent implements OnInit {
   getTournamentMetaData(tournamentId: string) { //todo enhance this to get tournamentAdmin data as well
     this.tournamentDataService.getTournamentMetaData(tournamentId).subscribe(result => {
       console.log(result);
-      this.tournamentData = result[0]
+      this.tournamentData = result
+      console.log(this.tournamentData);
+
       this.isTournamentAdmin = true
     });
   }
@@ -77,7 +79,12 @@ export class EventViewComponent implements OnInit {
   toggleManageTournament(): void {
     this.isManagingTournament = !this.isManagingTournament
     console.log(this.isManagingTournament)
+    console.log(this.tournamentData);
 
+  }
+
+  toggleIsEventStarted(): void {
+    console.log("testing toggle event start button");
   }
 
 

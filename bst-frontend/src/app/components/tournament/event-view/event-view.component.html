@@ -6,6 +6,15 @@
     <button
     mat-raised-button
     color="primary"
+    *ngIf="tournamentData != undefined && tournamentData.state == 'Not Started'"
+    (click)="toggleIsEventStarted()"
+    >
+      Start Event
+    </button>
+
+    <button
+    mat-raised-button
+    color="primary"
     *ngIf="isTournamentAdmin"
     (click)="toggleManageTournament()"
     >
