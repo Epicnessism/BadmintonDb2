@@ -83,8 +83,9 @@ export class EventViewComponent implements OnInit {
 
   }
 
-  toggleIsEventStarted(): void {
+  startEvent(): void {
     console.log("testing toggle event start button");
+    this.tournamentDataService.sendStartEvent(this.eventId)
   }
 
 

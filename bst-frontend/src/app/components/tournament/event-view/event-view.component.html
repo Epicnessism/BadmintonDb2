@@ -7,7 +7,7 @@
     mat-raised-button
     color="primary"
     *ngIf="tournamentData != undefined && tournamentData.state == 'Not Started'"
-    (click)="toggleIsEventStarted()"
+    (click)="startEvent()"
     >
       Start Event
     </button>
