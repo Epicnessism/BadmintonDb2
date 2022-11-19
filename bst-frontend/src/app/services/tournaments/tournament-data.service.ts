@@ -2,10 +2,11 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, Subject, throwError } from 'rxjs';
 import { EventMetaData } from 'src/app/interfaces/event-meta-data.model';
+import { TournamentMetaData } from 'src/app/interfaces/tournament-meta-data.model';
 import { environment } from 'src/environments/environment';
 import { BracketData } from '../../interfaces/bracket-data.model';
 import { Set } from '../../interfaces/set.model';
-import { ADDPLAYERSTOEVENTS, EVENT, GET_EVENT_METADATA, SEEDING, SIGN_UP_META_DATA, START, TOURNAMENTS, TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA, UPDATEEVENTSTOPLAYERS } from '../../routes.constants';
+import { ADDPLAYERSTOEVENTS, EVENT, GET_EVENT_METADATA, SEEDING, SIGN_UP_META_DATA, TOURNAMENTS, TOURNAMENT_EVENT_BRACKET_DATA, TOURNAMENT_EVENT_COMPLETED_SET, TOURNAMENT_EVENT_META_DATA, TOURNAMENT_EVENT_UPDATE_SET, TOURNAMENT_META_DATA, UPDATEEVENTSTOPLAYERS, UPDATESTATE } from '../../routes.constants';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,8 @@ export class TournamentDataService {
   //* this creates a hashmap by eventId of all that event's Metadata for easy access when multiple events are present
   private eventMetaDataMap: Map<string, EventMetaData> = new Map()
   private eventMetaDataSubject: Subject<Map<string, EventMetaData>> = new Subject()
+  private tournamentMetaData?: TournamentMetaData;
+  private tournamentMetaDataSubject: Subject<TournamentMetaData> = new Subject()
 
 
   // private bracketIds //todo deal with this later...aiya
@@ -32,6 +35,12 @@ export class TournamentDataService {
     return this.eventMetaDataSubject
   }
 
+  //todo implement usage of this method
+  subTournamentMetaData(): Subject<TournamentMetaData> {
+    return this.tournamentMetaDataSubject
+  }
+
+  //* gets actual event metadata from the db
   pullEventMetaData(eventId: string): void {
     let apiURL = `${environment.backendURL}${EVENT}${GET_EVENT_METADATA}${eventId}`
     console.log(apiURL)
@@ -42,6 +51,7 @@ export class TournamentDataService {
     })
   }
 
+  //* gets actual bracket data for an event from the db
   pullBracketsMetaData(eventId: string): void {
     let apiURL = `${environment.backendURL}${TOURNAMENT_EVENT_META_DATA}${eventId}`
     console.log(apiURL)
@@ -51,6 +61,18 @@ export class TournamentDataService {
         this.eventMetaDataMap.get(eventId)!.eventBracketMetaData = result
         this.eventMetaDataSubject.next(this.eventMetaDataMap)
       }
+    })
+  }
+
+  //* gets actual tournament data from the db
+  pullTournamentMetaData(tournamentId: string): void {
+    //TODO implement this and refactor tournamentService
+    let apiURL = `${environment.backendURL}${TOURNAMENT_META_DATA}${tournamentId}`
+    console.log(apiURL);
+    this.http.get<any>(apiURL).subscribe( result => {
+      console.log(result);
+      this.tournamentMetaData = result
+      this.tournamentMetaDataSubject.next(this.tournamentMetaData!)
     })
   }
 
@@ -84,11 +106,11 @@ export class TournamentDataService {
     return throwError(() => new Error(error.message || "server error"))
   }
 
-  getTournamentMetaData(tournamentId: string): Observable<any> {
-    let apiURL = `${environment.backendURL}${TOURNAMENT_META_DATA}${tournamentId}`
-    console.log(apiURL);
-    return this.http.get<any>(apiURL)
-  }
+  // getTournamentMetaData(tournamentId: string): Observable<any> {
+  //   let apiURL = `${environment.backendURL}${TOURNAMENT_META_DATA}${tournamentId}`
+  //   console.log(apiURL);
+  //   return this.http.get<any>(apiURL)
+  // }
 
   postTournamentMetaData(tournamentData: any): Observable<any> {
     let apiURL = `${environment.backendURL}${TOURNAMENTS}`
@@ -112,11 +134,11 @@ export class TournamentDataService {
     return this.http.post<any>(apiURL, seedings, {withCredentials: true})
   }
 
-  sendStartEvent(eventId: string) {
-    let apiURL = `${environment.backendURL}${EVENT}${eventId}/${START}`
+  sendStartEvent(payload: any) { //todo add type for this later
+    let apiURL = `${environment.backendURL}${EVENT}/${UPDATESTATE}`
     console.log(apiURL);
 
-    return this.http.post<any>(apiURL, {withCredentials: true})
+    return this.http.post<any>(apiURL, payload, {withCredentials: true})
   }
 
 

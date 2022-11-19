@@ -33,9 +33,17 @@ export class TournamentViewComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    //sub to data desired
+    this.tournamentDataService.subTournamentMetaData().subscribe( data => {
+      console.log(data);
+      this.tournamentData = data
+    })
+
     this.activePlayerId = localStorage.getItem('userId') || undefined //? should this be empty string or undefined???
     this.getPathParam()
     this.getData()
+
+
   }
 
   openSignUpDialog() {
@@ -59,11 +67,8 @@ export class TournamentViewComponent implements OnInit {
     await this.getPlayerSignUpData(this.tournamentId, this.activePlayerId)
   }
 
-  async getTournamentMetaData(tournamentId: string) {
-    this.tournamentDataService.getTournamentMetaData(tournamentId).subscribe(result => {
-      console.log(result);
-      this.tournamentData = result
-    });
+  async getTournamentMetaData(tournamentId: string) { // todo decided on naming convention between pulling data from db, getting it from service, subbing, etc
+    this.tournamentDataService.pullTournamentMetaData(tournamentId)
   }
 
   async getPlayerSignUpData(tournamentId: string, activePlayerId?: string) {

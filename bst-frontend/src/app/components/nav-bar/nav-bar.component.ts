@@ -28,7 +28,8 @@ export class NavBarComponent implements OnInit {
 
     this.playersDataService.getPlayerInitials().subscribe(result => {
       console.log(result)
-      this.playerInitials = result
+      this.playerInitials = localStorage.getItem('playerInitials') || ''
+      // this.playerInitials = result
       // return result
     })
     // this.playersDataService.getPlayerInitials().subscribe(

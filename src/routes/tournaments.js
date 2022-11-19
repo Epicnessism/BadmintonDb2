@@ -34,6 +34,7 @@ tournaments.get('/:tournamentId', async function (req, res, next) {
         //* data models/objects with transformation built in
         results[0].detailsOfEvents = results[0].detailsofevents
         results[0].tournamentAdmins = results[0].tournamentadmins
+        // results[0].tournamentadmins.
         return results
     })
     .catch( err => {

@@ -1,25 +1,12 @@
 <div>
   <mat-card *ngIf="eventMetaData != undefined">
 
-    <mat-card-title>{{tournamentData ? tournamentData.tournamentName : ''}} {{eventMetaData.event_name}}</mat-card-title>
+    <mat-card-title>{{tournamentMetaData ? tournamentMetaData.tournamentName : ''}} {{eventMetaData.event_name}}</mat-card-title>
 
-    <button
-    mat-raised-button
-    color="primary"
-    *ngIf="tournamentData != undefined && tournamentData.state == 'Not Started'"
-    (click)="startEvent()"
-    >
-      Start Event
-    </button>
-
-    <button
-    mat-raised-button
-    color="primary"
-    *ngIf="isTournamentAdmin"
-    (click)="toggleManageTournament()"
-    >
-      {{isManagingTournament ? "Finish Editing" : "Manage Event"}}
-    </button>
+    <button mat-button [matMenuTriggerFor]="menu" *ngIf="isTournamentAdmin">Manage Event</button>
+    <mat-menu #menu="matMenu">
+      <button *ngFor="let option of manageEventOptions" (click)="sendEventStatus(option.value)" mat-menu-item>{{option.name}}</button>
+    </mat-menu>
 
     <app-event-seed-view
     *ngIf="!eventInProgress && isManagingTournament && isTournamentAdmin"

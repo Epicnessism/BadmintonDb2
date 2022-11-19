@@ -57,11 +57,10 @@ events.post('/updateState', async (req, res, next) => {
                     .where('event_id', req.body.eventId)
                     .transacting(trx)
                     .then( events => {
+                        console.log(events);
                         if (events.length !== 1) {
                             throw new Error('Invalid event')
                         }
-                        // console.log(events[0]);
-                        // console.log(StateEnum.getStateEnumByValue(events[0].state)[desiredState.name.toUpperCase()], ' as the expected logic')
                         console.log(! StateEnum.getStateEnumByValue(events[0].state)[desiredState.name.toUpperCase()] && !req.body.force);
                         if(! StateEnum.getStateEnumByValue(events[0].state)[desiredState.name.toUpperCase()] && !req.body.force ) {
                             throw new Error('Force necessary')
@@ -74,13 +73,9 @@ events.post('/updateState', async (req, res, next) => {
                             })
                             .transacting(trx)
                     })
-
-                // return knex.insert
             })
             .then(trx.commit)
             .catch(trx.rollback)
-
-
     })
     .then( inserts => {
         console.log(inserts, 'in the THEN after transaction')
@@ -88,6 +83,13 @@ events.post('/updateState', async (req, res, next) => {
     })
     .catch( err => {
         console.log(err, "line 64")
+        console.log(err.message);
+        if(err.message === 'Force necessary') {
+            return res.status(403).json(err.message)
+        }
+        if(err.message === 'Invalid event') {
+            return res.status(400).json(err.message)
+        }
         return next(err)
     })
 })

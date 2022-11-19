@@ -10,7 +10,7 @@ export const ADDPLAYERSTOEVENTS = 'addPlayersToEvents'
 export const UPDATEEVENTSTOPLAYERS = 'updateEventToTeam'
 export const EVENT = 'events/'
 export const SEEDING = 'seeding'
-export const START = 'start'
+export const UPDATESTATE = 'updateState'
 export const GET_EVENT_METADATA = 'getEventMetadata/'
 
 export const PLAYERS = 'players'
