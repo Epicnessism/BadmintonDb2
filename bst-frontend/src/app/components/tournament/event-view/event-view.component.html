@@ -8,6 +8,15 @@
       <button *ngFor="let option of manageEventOptions" (click)="sendEventStatus(option.value)" mat-menu-item>{{option.name}}</button>
     </mat-menu>
 
+    <button
+    mat-raised-button
+    color="primary"
+    *ngIf="isTournamentAdmin"
+    (click)="toggleManageTournament()"
+    >
+      {{isManagingTournament ? "Finish Editing" : "Manage Event"}}
+    </button>
+
     <app-event-seed-view
     *ngIf="!eventInProgress && isManagingTournament && isTournamentAdmin"
     [eventMetaData]="eventMetaData"
