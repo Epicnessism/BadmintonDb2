@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Observer, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Observer, Subject } from 'rxjs';
 import { PlayerProfileData } from 'src/app/interfaces/player-profile-metadata.model';
 import { PLAYERS, PLAYERS_AUTOCOMPLETE, PROFILEDATA } from 'src/app/routes.constants';
 import { environment } from 'src/environments/environment';
@@ -12,7 +12,7 @@ export class PlayersDataService {
 
   private playerMetaData!: PlayerProfileData
   private playerInitials?: string
-  private playerInitialsSubject: Subject<string> = new Subject()
+  private playerInitialsSubject: BehaviorSubject <string> = new BehaviorSubject('')
 
   constructor(private http: HttpClient) { }
 
@@ -40,10 +40,11 @@ export class PlayersDataService {
     console.log("inside initials calcualtions")
     this.playerInitials = this.playerMetaData.givenName?.charAt(0).concat((this.playerMetaData.familyName) ? this.playerMetaData.familyName?.charAt(0) : '')
     console.log(this.playerInitials)
+    localStorage.setItem('playerInitials', this.playerInitials || '')
     this.playerInitialsSubject.next(this.playerInitials ? this.playerInitials : '')
   }
 
-  getPlayerInitials(): Subject<string> {
+  getPlayerInitials(): BehaviorSubject <string> {
     return this.playerInitialsSubject
   }
 

@@ -5,7 +5,94 @@ const { v4: uuidv4 } = require('uuid');
 var moment = require('moment');
 const Sets = require('../controllers/Sets');
 const Games = require('../controllers/Games');
+const StateEnum = require('../models/StateEnum')
 
+events.post('/updateState', async (req, res, next) => {
+    /**
+     * expected json body
+     * {
+     *      eventId: 'uuid_here',
+     *      tournamentId: 'uuid_here',
+     *      state: 'not started | in progress | finished',
+     *      force: boolean (optional)
+     * }
+     */
+    //check req.session.userId is in admin table
+    //check tournament is in a valid state
+    //check that event is in a valid state too
+    //write to event record if checks pass
+    //return 201 if successful
+    //return 400 if validation failed
+    //return 500 if db failure
+    console.log(req.session.userId);
+    if (req.session.userId === undefined) {
+        // return next("Not Signed In")
+        return res.status(401).json("Not Signed In")
+    }
+
+    let desiredState  = StateEnum.getStateEnumByValue(req.body.state)
+
+    if(desiredState === undefined) {
+        return res.status(400).json("Bad Request Given")
+    }
+
+    knex.transaction((trx) => {
+
+        knex('tournament_admins as ta')
+            .leftJoin('tournaments as t', 'ta.tournament_id','t.tournament_id')
+            .where('ta.tournament_id', req.body.tournamentId)
+            .andWhere('ta.user_id', req.session.userId)
+            .transacting(trx)
+            .then( tournamentAdminState => {
+                if(tournamentAdminState.length != 1) {
+                    throw new Error('Unauthorized user')
+                }
+                //check tournament state here
+                console.log('tournamentState: ', tournamentAdminState[0].state)
+                if(tournamentAdminState[0].state !== 'In Progress' ) {
+                    throw new Error('Invalid Tournament State')
+                }
+
+                return knex('events')
+                    .where('event_id', req.body.eventId)
+                    .transacting(trx)
+                    .then( events => {
+                        console.log(events);
+                        if (events.length !== 1) {
+                            throw new Error('Invalid event')
+                        }
+                        console.log(! StateEnum.getStateEnumByValue(events[0].state)[desiredState.name.toUpperCase()] && !req.body.force);
+                        if(! StateEnum.getStateEnumByValue(events[0].state)[desiredState.name.toUpperCase()] && !req.body.force ) {
+                            throw new Error('Force necessary')
+                        }
+
+                        return knex('events')
+                            .where('event_id', req.body.eventId)
+                            .update({
+                                state: desiredState.value
+                            })
+                            .transacting(trx)
+                    })
+            })
+            .then(trx.commit)
+            .catch(trx.rollback)
+    })
+    .then( inserts => {
+        console.log(inserts, 'in the THEN after transaction')
+        return res.status(201).json(inserts)
+    })
+    .catch( err => {
+        console.log(err, "line 64")
+        console.log(err.message);
+        if(err.message === 'Force necessary') {
+            return res.status(403).json(err.message)
+        }
+        if(err.message === 'Invalid event') {
+            return res.status(400).json(err.message)
+        }
+        return next(err)
+    })
+})
 
 events.get('/:eventId/seeding', async (req, res, next) => {
     console.log(req.params);

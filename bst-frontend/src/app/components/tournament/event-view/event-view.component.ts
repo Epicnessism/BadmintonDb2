@@ -6,6 +6,11 @@ import { TournamentMetaData } from 'src/app/interfaces/tournament-meta-data.mode
 import { NavigationService } from 'src/app/services/navigation/navigation.service';
 import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
 
+interface EventState {
+  name: string;
+  value: string;
+}
+
 @Component({
   selector: 'app-event-view',
   templateUrl: './event-view.component.html',
@@ -17,7 +22,24 @@ export class EventViewComponent implements OnInit {
   tournamentId: string = ''
   // eventData: EventBracketMetaData[] = []
   eventMetaData : EventMetaData | undefined
-  tournamentData : TournamentMetaData | undefined
+  tournamentMetaData : TournamentMetaData | undefined
+  activePlayerId: string = localStorage.getItem('userId') || '' //? should this be empty string or undefined???
+
+
+  manageEventOptions: EventState[] = [
+    {
+      name: 'Start',
+      value: "In Progress"
+    },
+    {
+      name: 'Restart',
+      value: 'Not Started'
+    },
+    {
+      name: 'Finished',
+      value: 'Finished'
+    }
+  ]
 
   eventInProgress: boolean = false
   isManagingTournament: boolean = false
@@ -38,9 +60,21 @@ export class EventViewComponent implements OnInit {
         this.eventMetaData = eventResults
       }
       console.log(this.eventMetaData != undefined)
-
     })
+
+    this.tournamentDataService.subTournamentMetaData().subscribe( result => {
+      console.log(result);
+      this.tournamentMetaData = result
+
+      this.calculateIsAdmin()
+    })
+
     // this.getData() //! UNTIL I FIGURE OUT HOW TO STRUCTURE MULTIPLE API CALLS IN SYNCHRONOUS ORDER....
+  }
+
+  calculateIsAdmin(): void {
+    // console.log(this.tournamentMetaData?.tournamentAdmins.map( admin => admin.user_id));
+    this.isTournamentAdmin = this.tournamentMetaData?.tournamentAdmins.map( admin => admin.user_id).includes(this.activePlayerId) ? true : false
   }
 
   getPathParam(): void {
@@ -54,30 +88,43 @@ export class EventViewComponent implements OnInit {
 
   getData() {
     this.requestEventMetaData(this.eventId)
-    this.getEventBracketsData(this.eventId)
-    this.getTournamentMetaData(this.tournamentId)
+    this.requestEventBracketsData(this.eventId)
+    this.requestTournamentMetaData(this.tournamentId)
+
   }
 
-  getTournamentMetaData(tournamentId: string) { //todo enhance this to get tournamentAdmin data as well
-    this.tournamentDataService.getTournamentMetaData(tournamentId).subscribe(result => {
-      console.log(result);
-      this.tournamentData = result[0]
-      this.isTournamentAdmin = true
-    });
+  requestTournamentMetaData(tournamentId: string) { //todo enhance this to get tournamentAdmin data as well
+    this.tournamentDataService.pullTournamentMetaData(this.tournamentId)
   }
 
   requestEventMetaData(eventId: string) {
     this.tournamentDataService.pullEventMetaData(eventId)
   }
 
-  getEventBracketsData(eventId: string) {
+  requestEventBracketsData(eventId: string) {
     this.tournamentDataService.pullBracketsMetaData(eventId)
   }
 
   toggleManageTournament(): void {
     this.isManagingTournament = !this.isManagingTournament
     console.log(this.isManagingTournament)
+    console.log(this.tournamentMetaData);
+  }
 
+
+  sendEventStatus(option: string): void {
+    console.log(`testing send event status button: ${option}`);
+    // ? add logic for forcing the status change??
+    let payload : any = {
+      "eventId" : this.eventId,
+      "tournamentId": this.tournamentId,
+      "state" : option
+    }
+    console.log(payload);
+    this.tournamentDataService.sendStartEvent(payload).subscribe(results => {
+      console.log(results);
+
+    })
   }
 
 

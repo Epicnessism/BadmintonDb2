@@ -34,6 +34,7 @@ tournaments.get('/:tournamentId', async function (req, res, next) {
         //* data models/objects with transformation built in
         results[0].detailsOfEvents = results[0].detailsofevents
         results[0].tournamentAdmins = results[0].tournamentadmins
+        // results[0].tournamentadmins.
         return results
     })
     .catch( err => {
@@ -104,7 +105,6 @@ tournaments.post('/', async function (req, res, next) {
 
     //* ADD USER SESSIONID TO TOURNAMENT_ADMINS
     console.log(req.session);
-    console.log(req.session.user_id);
     console.log(req.session.userId);
     console.log(req.session.isPopulated);
 
