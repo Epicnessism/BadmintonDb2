@@ -511,6 +511,41 @@ tournaments.post('/addPlayers', async function (req, res, next) {
     }
 })
 
+
+tournaments.get('/:tournament_id/upcoming', async function (req, res, next) {
+    knex('tournaments as t')
+    .select(
+        "ev.event_id", "s.set_id" , "s.event_game_number" , "s.created_timestamp" , "s.team_1_id" , "s.team_2_id",
+        knex.raw("array_agg(distinct concat(u.given_name, ' ', u.family_name) ) filter (where ttp.team_id = s.team_1_id) as team_1_names"),
+        knex.raw("array_agg(distinct concat(u.given_name, ' ', u.family_name)) filter (where ttp.team_id = s.team_2_id) as team_2_names"),
+        knex.raw("array_agg(distinct concat(ttp.player_id_1 , '|', ttp.player_id_2) ) filter (where ttp.team_id = s.team_1_id) as t1_player_ids"),
+        knex.raw("array_agg(distinct concat(ttp.player_id_1 , '|', ttp.player_id_2)) filter (where ttp.team_id = s.team_2_id) as t2_player_ids"),
+    )
+    .leftJoin('events as ev', 't.tournament_id', 'ev.tournament_id')
+    .leftJoin('brackets as b', 'b.event_id', 'ev.event_id')
+    .leftJoin('sets as s', 's.bracket_id', 'b.bracket_id')
+    .leftJoin('teams_to_players as ttp', function() {
+        this.on('ttp.team_id', '=', 's.team_1_id')
+        .orOn('ttp.team_id', '=', 's.team_2_id')
+    })
+    .leftJoin('users as u', function() {
+        this.on('u.user_id', '=', 'ttp.player_id_1')
+        .orOn('u.user_id', '=', 'ttp.player_id_2')
+    })
+    .where('t.tournament_id', req.params.tournament_id)
+    .andWhere('s.completed', '!=', true)
+    .groupBy('ev.event_id', 's.set_id' , 's.event_game_number' , 's.created_timestamp' , 's.team_1_id' , 's.team_2_id')
+    .then(results => {
+        res.status(200).json(results)
+    })
+    .catch( err => {
+        console.log(err);
+        next(err)
+    })
+    //* ev.event_id, s.set_id , s.event_game_number , s.created_timestamp , s.team_1_id , s.team_2_id
+
+})
+
 /**
  * Gets sign up data for a player for a tournament
  */

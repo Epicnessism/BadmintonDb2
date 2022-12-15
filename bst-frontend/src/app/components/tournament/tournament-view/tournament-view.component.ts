@@ -23,6 +23,7 @@ export class TournamentViewComponent implements OnInit {
   isSignUp: boolean = false
   activePlayerId: string | undefined;
   playerTournamentSignUpForm: PlayerTournamentSignUp[] = []
+  // upcomingSetsData!: any;
 
 
   constructor(
@@ -36,12 +37,17 @@ export class TournamentViewComponent implements OnInit {
     //sub to data desired
     this.tournamentDataService.subTournamentMetaData().subscribe( data => {
       console.log(data);
-      this.tournamentData = data
+      this.tournamentData = data;
     })
 
-    this.activePlayerId = localStorage.getItem('userId') || undefined //? should this be empty string or undefined???
-    this.getPathParam()
-    this.getData()
+    // this.tournamentDataService.subUpcomingSetsData().subscribe( data => {
+    //   console.log(data);
+    //   this.upcomingSetsData = data
+    // })
+
+    this.activePlayerId = localStorage.getItem('userId') || undefined; //? should this be empty string or undefined???
+    this.getPathParam();
+    this.getData();
 
 
   }
@@ -62,9 +68,15 @@ export class TournamentViewComponent implements OnInit {
     })
   }
 
+  //* should get all data related to a tournament in the TournamentDataService (need to double check)
   async getData() {
     await this.getTournamentMetaData(this.tournamentId);
-    await this.getPlayerSignUpData(this.tournamentId, this.activePlayerId)
+    await this.getPlayerSignUpData(this.tournamentId, this.activePlayerId);
+    await this.getUpcomingSetsData(this.tournamentId);
+  }
+
+  async getUpcomingSetsData(tournamentId: string) {
+    this.tournamentDataService.pullUpcomingSets(tournamentId);
   }
 
   async getTournamentMetaData(tournamentId: string) { // todo decided on naming convention between pulling data from db, getting it from service, subbing, etc
