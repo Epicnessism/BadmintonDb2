@@ -38,6 +38,10 @@ export class EventViewComponent implements OnInit {
     {
       name: 'Finished',
       value: 'Finished'
+    },
+    {
+      name: 'Edit Seeding',
+      value: 'editSeeding'
     }
   ]
 
@@ -111,6 +115,13 @@ export class EventViewComponent implements OnInit {
     console.log(this.tournamentMetaData);
   }
 
+  clickedManageEvent(option: string) {
+    if(option === 'editSeeding') {
+      this.toggleManageTournament()
+    } else {
+      this.sendEventStatus(option)
+    }
+  }
 
   sendEventStatus(option: string): void {
     console.log(`testing send event status button: ${option}`);

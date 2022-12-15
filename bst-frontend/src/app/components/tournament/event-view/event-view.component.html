@@ -5,13 +5,13 @@
 
     <button mat-button [matMenuTriggerFor]="menu" *ngIf="isTournamentAdmin">Manage Event</button>
     <mat-menu #menu="matMenu">
-      <button *ngFor="let option of manageEventOptions" (click)="sendEventStatus(option.value)" mat-menu-item>{{option.name}}</button>
+      <button *ngFor="let option of manageEventOptions" (click)="clickedManageEvent(option.value)" mat-menu-item>{{option.name}}</button>
     </mat-menu>
 
     <button
     mat-raised-button
     color="primary"
-    *ngIf="isTournamentAdmin"
+    *ngIf="isTournamentAdmin && isManagingTournament"
     (click)="toggleManageTournament()"
     >
       {{isManagingTournament ? "Finish Editing" : "Manage Event"}}
