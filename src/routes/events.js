@@ -24,7 +24,7 @@ events.post('/updateState', async (req, res, next) => {
     //return 201 if successful
     //return 400 if validation failed
     //return 500 if db failure
-    console.log(req.session.userId);
+    console.log("userId: ", req.session.userId);
     if (req.session.userId === undefined) {
         // return next("Not Signed In")
         return res.status(401).json("Not Signed In")
@@ -125,12 +125,17 @@ events.get('/:eventId/seeding', async (req, res, next) => {
 })
 
 events.get('/getEventMetadata/:eventId', async (req, res, next) => {
+    console.log(req.params.eventId);
     await knex('events')
         .where('event_id', req.params.eventId)
         .then( result => {
             console.log(result);
             res.status(200).json(result)
             //todo implement controls and checks later
+        })
+        .catch( err => {
+            console.log(err)
+            next(err)
         })
 })
 

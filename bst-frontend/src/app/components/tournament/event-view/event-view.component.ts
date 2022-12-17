@@ -24,7 +24,9 @@ export class EventViewComponent implements OnInit {
   eventMetaData : EventMetaData | undefined
   tournamentMetaData : TournamentMetaData | undefined
   activePlayerId: string = localStorage.getItem('userId') || '' //? should this be empty string or undefined???
-
+  eventInProgress: boolean = false
+  isManagingTournament: boolean = false
+  isTournamentAdmin: boolean = false
 
   manageEventOptions: EventState[] = [
     {
@@ -44,10 +46,6 @@ export class EventViewComponent implements OnInit {
       value: 'editSeeding'
     }
   ]
-
-  eventInProgress: boolean = false
-  isManagingTournament: boolean = false
-  isTournamentAdmin: boolean = false
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -78,6 +76,8 @@ export class EventViewComponent implements OnInit {
 
   calculateIsAdmin(): void {
     // console.log(this.tournamentMetaData?.tournamentAdmins.map( admin => admin.user_id));
+    console.log("activePlayerId: ", this.activePlayerId);
+
     this.isTournamentAdmin = this.tournamentMetaData?.tournamentAdmins.map( admin => admin.user_id).includes(this.activePlayerId) ? true : false
   }
 

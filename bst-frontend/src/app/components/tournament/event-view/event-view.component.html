@@ -1,7 +1,9 @@
 <div>
   <mat-card *ngIf="eventMetaData != undefined">
 
-    <mat-card-title>{{tournamentMetaData ? tournamentMetaData.tournamentName : ''}} {{eventMetaData.event_name}}</mat-card-title>
+    <!-- (click)="goToTournament(tournamentMetaData.tournamentId)" -->
+    <mat-card-title >{{tournamentMetaData ? tournamentMetaData.tournamentName : ''}} {{eventMetaData.event_name}}</mat-card-title>
+    <mat-card-subtitle>{{eventMetaData.state}}</mat-card-subtitle>
 
     <button mat-button [matMenuTriggerFor]="menu" *ngIf="isTournamentAdmin">Manage Event</button>
     <mat-menu #menu="matMenu">
@@ -27,9 +29,8 @@
     <mat-tab-group animationDuration="0ms">
 
       <mat-tab *ngFor="let bracket of eventMetaData.eventBracketMetaData!" label="{{bracket.bracket_level}}">
-        <app-bracket-view [inputEventMetaData]="bracket"></app-bracket-view>
+        <app-bracket-view [inputEventMetaData]="bracket" [isTournamentAdmin]="isTournamentAdmin" [eventInProgress]="eventInProgress"></app-bracket-view>
       </mat-tab>
-
 
     </mat-tab-group>
   </mat-card>

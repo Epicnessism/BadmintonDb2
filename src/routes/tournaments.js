@@ -613,6 +613,7 @@ tournaments.get('/getAllPlayers/:tournamentId', async function (req, res, next) 
 });
 
 //TODO FIX THIS, THIS SHOULD BE GETEVENTBRACKETSDATA
+//! NOT USED AT THIS TIME I THINK?????????????
 tournaments.get('/getEventBracketsData/:event_id', async function (req, res, next) {
     console.log(req.params);
     await knex('events as e')
@@ -634,6 +635,11 @@ tournaments.get('/getEventBracketsData/:event_id', async function (req, res, nex
             // }
             console.log('result of getMetaData: %s', result)
             return res.status(200).json(result)
+        })
+        .catch( err => {
+            console.log(err);
+            console.log("fuuuuuuuuuck");
+            next(err)
         })
 })
 
@@ -822,7 +828,7 @@ function handleResponse(res, code, message) {
 
 tournaments.use(function (req, res, next) {
     console.log("handleResponse function inside TournamentJs")
-    res.json("seomTest Message here");
+    res.status(500).json("seomTest Message here");
 })
 
 module.exports.tournaments = tournaments;

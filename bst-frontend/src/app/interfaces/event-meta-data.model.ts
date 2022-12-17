@@ -9,5 +9,6 @@ export interface EventMetaData {
   event_name: string,
   best_of: number,
   is_doubles: boolean,
+  state: string,
   eventBracketMetaData?: EventBracketMetaData[]
 }
