@@ -138,5 +138,7 @@ export class EventViewComponent implements OnInit {
     })
   }
 
-
+  goToTournament() {
+    this.navigationService.navigateByUrl(`tournaments/${this.tournamentId}`)
+  }
 }

@@ -1,8 +1,7 @@
 <div>
   <mat-card *ngIf="eventMetaData != undefined">
 
-    <!-- (click)="goToTournament(tournamentMetaData.tournamentId)" -->
-    <mat-card-title >{{tournamentMetaData ? tournamentMetaData.tournamentName : ''}} {{eventMetaData.event_name}}</mat-card-title>
+    <mat-card-title (click)="goToTournament()" class="clickable">{{tournamentMetaData ? tournamentMetaData.tournamentName : ''}} {{eventMetaData.event_name}}</mat-card-title>
     <mat-card-subtitle>{{eventMetaData.state}}</mat-card-subtitle>
 
     <button mat-button [matMenuTriggerFor]="menu" *ngIf="isTournamentAdmin">Manage Event</button>
