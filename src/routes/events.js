@@ -144,6 +144,7 @@ events.post('/:eventId/seeding', async (req, res, next) => {
     console.log(req.body);
     let seedings = req.body.seedings;
 
+    //*what is this inserting??? just all the seeds as is?
     await knex('events_to_teams')
     .insert(seedings)
     .onConflict(['event_id','team_id'])

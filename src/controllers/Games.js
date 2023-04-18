@@ -3,17 +3,16 @@ const { v4: uuidv4, validate: validateUUID } = require('uuid');
 var moment = require('moment');
 
 /**
- * 
- * @param {current accepts a Set Body with gameScores and all Set metadata} body 
- * @returns 
+ *
+ * @param {current accepts a Set Body with gameScores and all Set metadata} body
+ * @returns
  */
 async function insertGames(setObject) {
     //after inserting the set, attempt to insert the game details now
     //game details should be an array and looped through to support multiple game updations
-    console.log("inside insertGames");
-    
+
     //gameScores = [{gameNumber:1, team_1_points: 21, team_2_points: 18}]
-    console.log(setObject);
+    console.log(`setObject to insert games for: ${JSON.stringify(setObject)}`);
 
     let gameScores = setObject.team_1_points != null && setObject.team_2_points != null
     if(gameScores) {
@@ -46,7 +45,7 @@ async function insertGames(setObject) {
                 return {status: validation.status, message: validation.message}
             }
         }
-        console.log({status: 200, message: "All games inserted"});
+        // console.log({status: 200, message: "All games inserted"});
         return {status: 200, message: "All games inserted"};
     } else {
         return {status: 203, message: "No game scores to input"};
@@ -55,15 +54,15 @@ async function insertGames(setObject) {
 
 /**
  * validates the scores for a game
- * @param {*} game 
+ * @param {*} game
  */
 function validateGameInput(game) {
     let response = {status: 200, message: 'Good input'};
-    if( (!(game.team_1_points >= game.team_2_points + 2) && game.team_1_points > game.team_2_points) 
+    if( (!(game.team_1_points >= game.team_2_points + 2) && game.team_1_points > game.team_2_points)
     || (!(game.team_2_points >= game.team_1_points + 2) && game.team_2_points > game.team_1_points) ) {
         console.log("Score is not win by 2");
         response = {status: 203, message: 'Score is not win by 2'};
-    } else if( (!(game.team_1_points >= 21) && game.team_1_points > game.team_2_points) 
+    } else if( (!(game.team_1_points >= 21) && game.team_1_points > game.team_2_points)
     || (!(game.team_2_points >= 21) && game.team_2_points > game.team_1_points) ) {
         console.log("Score is not at least 21 on one side");
         response = {status: 203, message: 'Score is not at least 21 on one side'};
@@ -72,7 +71,7 @@ function validateGameInput(game) {
     if ( (game.team_1_points > 21 && game.team_2_points + 2 != game.team_1_points) || (game.team_2_points > 21 && game.team_1_points + 2 != game.team_2_points) ) {
         response = {status: 400, message: 'Bogus input, score is greater than 21 and not win by 2'}
     }
-    
+
     return response;
 }
 
@@ -84,13 +83,12 @@ function convertPointStringsToNumbers(teamPoints) {
 function calculateGamesWonForBothTeams(team_1_points, team_2_points) {
     convertPointStringsToNumbers(team_1_points)
     convertPointStringsToNumbers(team_2_points)
-    
+
     let teamOneCount = 0
     let teamTwoCount = 0
 
     for(const [index, game] of Object.entries(team_1_points)) {
-        console.log(game);
-
+        // console.log("the game object when calculating games won in format: [team, points] ", game);
         let winByTwo = (game[1] >=  team_2_points[index][1] + 2 ) || (game[1] + 2 <= team_2_points[index][1] )
         let atLeast21 = game[1] >= 21 || team_2_points[index][1] >= 21
 
@@ -119,13 +117,13 @@ function calculateWinningTeam(team_1_points, team_2_points, eventBestOf) {
 
     let winningTeam = wonGames.teamOne > wonGames.teamTwo ? 1 : 2
     winningTeam = wonGames.teamOne == wonGames.teamTwo ? -1 : winningTeam
-    console.log(`winningTeam calculation??? ${winningTeam}`);
+    console.log(`Calculated winningTeam: ${winningTeam}`);
     return winningTeam
 }
 
 
 module.exports = {
-    insertGames, 
+    insertGames,
     validateGameInput,
-    calculateGamesWonForBothTeams, 
+    calculateGamesWonForBothTeams,
     calculateWinningTeam}
