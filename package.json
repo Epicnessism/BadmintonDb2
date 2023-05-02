@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "dev": "nodemon src/server.js development",
+    "debugDev": "node src.server.js development",
     "frontend": "cd bst-frontend && ng serve",
     "knexdown": "knex migrate:rollback",
     "knexup": "knex migrate:latest",

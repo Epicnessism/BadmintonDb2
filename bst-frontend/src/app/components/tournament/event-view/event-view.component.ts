@@ -24,7 +24,9 @@ export class EventViewComponent implements OnInit {
   eventMetaData : EventMetaData | undefined
   tournamentMetaData : TournamentMetaData | undefined
   activePlayerId: string = localStorage.getItem('userId') || '' //? should this be empty string or undefined???
-
+  eventInProgress: boolean = false
+  isManagingTournament: boolean = false
+  isTournamentAdmin: boolean = false
 
   manageEventOptions: EventState[] = [
     {
@@ -38,12 +40,12 @@ export class EventViewComponent implements OnInit {
     {
       name: 'Finished',
       value: 'Finished'
+    },
+    {
+      name: 'Edit Seeding',
+      value: 'editSeeding'
     }
   ]
-
-  eventInProgress: boolean = false
-  isManagingTournament: boolean = false
-  isTournamentAdmin: boolean = false
 
   constructor(
     private tournamentDataService: TournamentDataService,
@@ -74,6 +76,8 @@ export class EventViewComponent implements OnInit {
 
   calculateIsAdmin(): void {
     // console.log(this.tournamentMetaData?.tournamentAdmins.map( admin => admin.user_id));
+    console.log("activePlayerId: ", this.activePlayerId);
+
     this.isTournamentAdmin = this.tournamentMetaData?.tournamentAdmins.map( admin => admin.user_id).includes(this.activePlayerId) ? true : false
   }
 
@@ -111,6 +115,13 @@ export class EventViewComponent implements OnInit {
     console.log(this.tournamentMetaData);
   }
 
+  clickedManageEvent(option: string) {
+    if(option === 'editSeeding') {
+      this.toggleManageTournament()
+    } else {
+      this.sendEventStatus(option)
+    }
+  }
 
   sendEventStatus(option: string): void {
     console.log(`testing send event status button: ${option}`);
@@ -127,5 +138,7 @@ export class EventViewComponent implements OnInit {
     })
   }
 
-
+  goToTournament() {
+    this.navigationService.navigateByUrl(`tournaments/${this.tournamentId}`)
+  }
 }

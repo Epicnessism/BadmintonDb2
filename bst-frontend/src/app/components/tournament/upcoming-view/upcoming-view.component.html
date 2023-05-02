@@ -1,0 +1,16 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Upcoming Games</mat-card-title>
+    <mat-card-subtitle>Last Updated: Tbd here</mat-card-subtitle>
+    <button mat-stroked-button color="accent">Refresh Upcoming (tbd)</button>
+    <!-- TODO ADD A RATE LIMITER THE REFRESHEDNESS GOOD first STORY -->
+  </mat-card-header>
+  <mat-card-content>
+    <mat-selection-list #shoes [multiple]="false">
+      <mat-list *ngFor="let set of upcomingSetsData">
+        <p>{{set.team_1_names}} | {{set.team_2_names}}</p>
+        <p>Event: tbd | Player Last played: tbd</p>
+      </mat-list>
+    </mat-selection-list>
+  </mat-card-content>
+</mat-card>

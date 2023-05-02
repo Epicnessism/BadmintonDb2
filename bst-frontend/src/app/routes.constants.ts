@@ -13,6 +13,8 @@ export const SEEDING = 'seeding'
 export const UPDATESTATE = 'updateState'
 export const GET_EVENT_METADATA = 'getEventMetadata/'
 
+export const UPCOMING = 'upcoming'
+
 export const PLAYERS = 'players'
 export const PROFILEDATA = 'profileData'
 export const PLAYERS_AUTOCOMPLETE = `${PLAYERS}/autocomplete`

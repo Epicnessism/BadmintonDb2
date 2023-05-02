@@ -511,6 +511,41 @@ tournaments.post('/addPlayers', async function (req, res, next) {
     }
 })
 
+
+tournaments.get('/:tournament_id/upcoming', async function (req, res, next) {
+    knex('tournaments as t')
+    .select(
+        "ev.event_id", "s.set_id" , "s.event_game_number" , "s.created_timestamp" , "s.team_1_id" , "s.team_2_id",
+        knex.raw("array_agg(distinct concat(u.given_name, ' ', u.family_name) ) filter (where ttp.team_id = s.team_1_id) as team_1_names"),
+        knex.raw("array_agg(distinct concat(u.given_name, ' ', u.family_name)) filter (where ttp.team_id = s.team_2_id) as team_2_names"),
+        knex.raw("array_agg(distinct concat(ttp.player_id_1 , '|', ttp.player_id_2) ) filter (where ttp.team_id = s.team_1_id) as t1_player_ids"),
+        knex.raw("array_agg(distinct concat(ttp.player_id_1 , '|', ttp.player_id_2)) filter (where ttp.team_id = s.team_2_id) as t2_player_ids"),
+    )
+    .leftJoin('events as ev', 't.tournament_id', 'ev.tournament_id')
+    .leftJoin('brackets as b', 'b.event_id', 'ev.event_id')
+    .leftJoin('sets as s', 's.bracket_id', 'b.bracket_id')
+    .leftJoin('teams_to_players as ttp', function() {
+        this.on('ttp.team_id', '=', 's.team_1_id')
+        .orOn('ttp.team_id', '=', 's.team_2_id')
+    })
+    .leftJoin('users as u', function() {
+        this.on('u.user_id', '=', 'ttp.player_id_1')
+        .orOn('u.user_id', '=', 'ttp.player_id_2')
+    })
+    .where('t.tournament_id', req.params.tournament_id)
+    .andWhere('s.completed', '!=', true)
+    .groupBy('ev.event_id', 's.set_id' , 's.event_game_number' , 's.created_timestamp' , 's.team_1_id' , 's.team_2_id')
+    .then(results => {
+        res.status(200).json(results)
+    })
+    .catch( err => {
+        console.log(err);
+        next(err)
+    })
+    //* ev.event_id, s.set_id , s.event_game_number , s.created_timestamp , s.team_1_id , s.team_2_id
+
+})
+
 /**
  * Gets sign up data for a player for a tournament
  */
@@ -578,6 +613,7 @@ tournaments.get('/getAllPlayers/:tournamentId', async function (req, res, next) 
 });
 
 //TODO FIX THIS, THIS SHOULD BE GETEVENTBRACKETSDATA
+//! NOT USED AT THIS TIME I THINK?????????????
 tournaments.get('/getEventBracketsData/:event_id', async function (req, res, next) {
     console.log(req.params);
     await knex('events as e')
@@ -599,6 +635,11 @@ tournaments.get('/getEventBracketsData/:event_id', async function (req, res, nex
             // }
             console.log('result of getMetaData: %s', result)
             return res.status(200).json(result)
+        })
+        .catch( err => {
+            console.log(err);
+            console.log("fuuuuuuuuuck");
+            next(err)
         })
 })
 
@@ -632,7 +673,7 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
         )
         .orderBy('sets.event_game_number')
         .then(result => {
-            console.log(result);
+            // console.log(result);
             console.log(result.length);
             // if (result.length >= 1) { //TODO plan and design whether checks are needed here
             //     res.status(200).json(result)
@@ -648,7 +689,7 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
 })
 
 /**
- *
+ * * not used i think??? could probably try deleting this
  */
 tournaments.post('/completedSet', async function (req, res, next) {
     //todo do completed set validation
@@ -658,6 +699,14 @@ tournaments.post('/completedSet', async function (req, res, next) {
     res.body.winning_team = Games.calculateWinningTeam()
     res.body.completed = res.body.winning_team != -1 ? true : false
 })
+
+
+/** attempted rewrite of updateSet api endpoint
+ * * validate set form data
+ * * calculate winning team
+ * * consolidate insertSet and insertGames as transactional functions
+ */
+
 
 /**
  * inputs the results of a set/game for a tournament and calculates the next seeding/set creation
@@ -680,11 +729,11 @@ tournaments.post('/updateSet', async function (req, res, next) {
 
     //* caluclate winning team and completeness automatically
     req.body.winningTeam = Games.calculateWinningTeam(req.body.team_1_points, req.body.team_2_points, 3) //todo ADD BEST OF GRAB LOGIC!
+    req.body.winningTeamId = req.body.winningTeam === 1 ? req.body.team_1_id : req.body.team_2_id
     req.body.completed = req.body.winningTeam != -1 ? true : false
     console.log(`winningTeam and completed: ${req.body.winningTeam}:${req.body.completed}`);
 
-
-    //* attempt to find the setId in the events table to see if it exists. If it doesn't exist, throw 404
+    //* attempt to find the setId in the brackets table to see if it exists. If it doesn't exist, throw 404
     await knex('brackets')
         .select("*")
         .where('bracket_id', req.body.bracketId)
@@ -694,18 +743,21 @@ tournaments.post('/updateSet', async function (req, res, next) {
             if (result.length == 1) { //TODO move this outside of .then and into function root...
                 eventDetails = result[0];
             } else {
-                handleResponse(res, 400, "Event Not Found")
-                return
+                return handleResponse(res, 400, "Bracket Not Found")
             }
         })
         .catch(err => {
             console.log(err.message)
-            handleResponse(res, 500, err)
-            return
+            return handleResponse(res, 500, err)
         });
 
-    console.log("RESULTS OF FINDING EVENT_ID: ")
-    console.log(eventDetails)
+    let nextLoserGameNumber = Sets.calculateNextLoserGameNumber(eventDetails.bracket_size, req.body.eventGameNumber) //*calculate next loser game number after getting event data
+    let nextLoserBracket = await Sets.findNextLoserBracket(eventDetails.event_id, eventDetails.bracket_level, eventDetails.bracket_size, req.body.eventGameNumber)
+    let nextWinnerGameNumber = await Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.eventGameNumber) //* calculate next winner game number
+
+    console.log(`nextLoserBracket found as: ${JSON.stringify(nextLoserBracket)}`);
+    console.log(`RESULTS OF FINDING EVENT_ID: ${JSON.stringify(eventDetails)}`)
+    // console.log(eventDetails)
 
     // how to validate if team_ids exist?
     //todo get setData from db based on setId?
@@ -715,24 +767,19 @@ tournaments.post('/updateSet', async function (req, res, next) {
         .andWhere('team_1_id', req.body.team_1_id)
         .andWhere('team_2_id', req.body.team_2_id)
         .then(result => { //TODO consider creating a function to check that results exists...
-            // console.log("RESULTS OF FINDING SET_ID AND TEAM_IDS: ");
-            // console.log(result);
             if (result.length != 1) {
                 console.log("handleResponse 400 set not found")
-                handleResponse(res, 400, "Set Not Found")
-                return
+                return handleResponse(res, 400, "Set Not Found")
             }
         })
         .catch(err => {
             console.log(err.message)
-            console.log("handleResponse 500")
-            handleResponse(res, 500, err)
-            return
+            return handleResponse(res, 500, err)
         });
 
     //insert set
     const response = await Sets.insertSet(req.body) //TODO this should be just a completed/winning patch...
-    console.log(response)
+    // console.log(response)
 
     if (response.status != 201) {
         console.log("handleResponse failure not 200 insertSet")
@@ -744,50 +791,139 @@ tournaments.post('/updateSet', async function (req, res, next) {
     let insertGameResponse = await Games.insertGames(req.body)
     console.log("Insert Games Response: ", insertGameResponse);
     if (insertGameResponse.status != 200) {
-        console.log("handleResponse failure not 200 inserGames");
+        console.log("handleResponse failure not 200 insertGames");
         handleResponse(res, insertGameResponse.status, insertGameResponse.message);
         return
     }
 
     //* check if the set was completed or just updated.
     if(!req.body.completed && req.body.winningTeam == -1) {
-        return res.status(201).json({message: "success partial"})
+        return res.status(201).json({message: "success partial, game was incomplete"})
     }
 
-    console.log(eventDetails);
+    //* NEED TO VALIDATE IF THERE IS A NEXT GAME OR NOT...NEED TO USE GAMES_PLAYED FIELD TO VALIDATE 3-GAME ELIMINATION, NO SOLUTION FOR FINAL YET...
+    knex.transaction((trx) => {
+
+        //* so the idea here is to get the set + event_team games_played/eliminated values, and then check them with the winning/losing calculations done above
+        //* then if the games >= 3 and tournament Type is ABCD dropdown, then set eliminated to true and persist to db and return a false value to not caluclate
+        //* next game for that team
+        knex('sets as s')
+        .leftJoin('brackets as b', 'b.bracket_id', 's.bracket_id')
+        .leftJoin('events as ev', 'ev.event_id', 'b.event_id')
+        .leftJoin('events_to_teams as ett', function() {
+            this.on('ett.team_id', 's.team_1_id')
+            .orOn('ett.team_id', 's.team_2_id')
+        })
+        .where('s.set_id', req.body.setId)
+        .andWhere('ev.event_id', knex.ref('ett.event_id'))
+        .transacting(trx)
+        .then( async result => {
+            console.log('result of getting event_to_players for elimination validation');
+            console.log(result); //* should really be two results here, one for winning team and one for losing team
+
+            await Promise.all(
+                //* winning team_id needs to have games_played updated
+            //* losing team_id needs to have games_played updated, eliminated changed and current bracket changed.
+            result.map(async team => {
+                let games_played = team.games_played + 1
+                let eliminated = team.eliminated
+
+                if(team.team_id != req.body.winningTeamId) {
+                    if(games_played >= 3 ) { //! in the future add check for byes
+                        eliminated = true
+                        console.log(`games played: ${games_played}, eliminated: ${eliminated}`);
+                        await knex('events_to_teams')
+                        .update({'eliminated': eliminated, 'games_played': games_played})
+                        .where('team_id', team.team_id)
+                        .andWhere('event_id', team.event_id)
+                        .transacting(trx)
+                        .then( result => {
+                            console.log(`result of updating events to teams with eliminated status: ${result}`);
+                        })
+                    } else {
+                        console.log(`games played: ${games_played}, eliminated: ${eliminated}`);
+                        await knex('events_to_teams')
+                            .update({'games_played': games_played})
+                            .where('team_id', team.team_id)
+                            .andWhere('event_id', eventDetails.event_id)
+                            .transacting(trx)
+                            .then( result => {
+                                console.log(`result of updating events to teams with games_played status: ${result}`);
+                                results = result
+                            })
+
+                    }
+                }
+                //todo maybe go back to this some day, TRX being stupid or me???? either way transaction didn't work
+                // await Sets.updateEventsToTeams(trx, eventDetails.event_id, team.team_id, games_played, eliminated);
+            })
+            )
+            .then(response => {
+                console.log(response);
+            })
+            trx.commit();
+            console.log('TRX.isCompleted(): ', trx.isCompleted());
+
+            if (nextLoserBracket != null) { //* if nextLoserBracket is not null
+                let nextLoserSetResponse = Sets.findOrInsertNextSet(nextLoserBracket.bracket_id, req.body, nextLoserGameNumber, Sets.findLosingTeam(req.body))
+            }
+
+            //* this is the winning team
+            console.log("before findInsertNextSet winner");
+            let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails.bracket_id, req.body, nextWinnerGameNumber, Sets.findWinningTeam(req.body))
+            console.log("after findInsertNextSet winner");
+
+            // return "Insertions completed"
+            return res.status(201).json("Insertions completed");
+        })
+    })
+    // .then(trxResults => {
+    //     console.log(trxResults, 'in the THEN after transaction')
+    //     return res.status(201).json(trxResults)
+
+    // })
+    .catch( trxError => {
+        console.log(trxError.message);
+        // if(err.message === 'Force necessary') {
+        //     return res.status(403).json(trxError.message)
+        // }
+        // if(err.message === 'Invalid event') {
+        //     return res.status(400).json(trxError.message)
+        // }
+        return next(trxError)
+    })
     //after creating games, check for nextSet logic
-    let nextWinnerGameNumber = Sets.calculateNextWinnerGameNumber(eventDetails.bracket_size, req.body.eventGameNumber)
-    let nextLoserGameNumber = Sets.calculateNextLoserGameNumber(eventDetails.bracket_size, req.body.eventGameNumber)
-    console.log(nextWinnerGameNumber + " : " + nextLoserGameNumber);
+    // console.log(eventDetails);
 
-    let nextSetResponse = await Sets.findOrInsertNextSet(eventDetails, req.body, nextWinnerGameNumber, Sets.findWinningTeam(req.body))
 
-    console.log(nextSetResponse);
-    console.log("after next set response ---------------------");
-    let nextLoserEvent = await Sets.findNextLoserBracket(eventDetails, req.body)
-    let nextLoserSetResponse = null;
-    console.log("after next loser event");
-    console.log(nextLoserEvent);
-    if (nextLoserEvent != null) {
-        nextLoserSetResponse = await Sets.findOrInsertNextSet(nextLoserEvent, req.body, nextLoserGameNumber, Sets.findLosingTeam(req.body))
-    }
+    // console.log(nextWinnerGameNumber + " : " + nextLoserGameNumber);
 
-    console.log("nextSetResponse Response: ");
-    console.log(nextSetResponse);
+
+
+    // console.log(nextSetResponse);
+    // console.log("after next set response ---------------------");
+    // // let nextLoserEvent = await Sets.findNextLoserBracket(eventDetails.event_id, eventDetails.bracket_level, eventDetails.bracket_size, req.body.eventGameNumber) //! loser logic is here, may need to consolidate logic for elimination
+    // let nextLoserSetResponse = null;
+    // console.log("after next loser event");
+    // console.log(nextLoserEvent);
+
+
+    // console.log("nextSetResponse Response: ");
+    // console.log(nextSetResponse);
     //send response back after everything
     // res.status(nextSetResponse.status).json(nextSetResponse.message) //todo fix this
-    return handleResponse(res, nextSetResponse.status, nextSetResponse.message)
+    // return handleResponse(res, nextSetResponse.status, nextSetResponse.message)
 })
 
 
 function handleResponse(res, code, message) {
-    console.log("handleResponse")
-    return res.status(code).json({ message });
+    console.log(`handleResponse with code: ${code} and message: ${message}`)
+    return res.status(code).json({ message })
 }
 
 tournaments.use(function (req, res, next) {
     console.log("handleResponse function inside TournamentJs")
-    res.json("seomTest Message here");
+    res.status(500).json("seomTest Message here");
 })
 
 module.exports.tournaments = tournaments;

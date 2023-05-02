@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, Inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Inject, Input, SimpleChanges } from '@angular/core';
 import { Set } from 'src/app/interfaces/set.model';
 import { EventBracketMetaData } from 'src/app/interfaces/event-brackets-meta-data.model';
 import { TournamentDataService } from 'src/app/services/tournaments/tournament-data.service';
@@ -14,6 +14,8 @@ import { ValidGameDataService } from 'src/app/services/valid-game-data.service';
 export class BracketViewComponent implements OnInit {
 
   @Input() inputEventMetaData!: EventBracketMetaData
+  @Input() isTournamentAdmin!: boolean
+  @Input() eventInProgress!: boolean
 
   bracketMetaData: EventBracketMetaData | undefined
   bracket: any[][] = []
@@ -33,8 +35,19 @@ export class BracketViewComponent implements OnInit {
     this.getData()
   }
 
-  openDialog(setData: Set) {
+  ngOnChanges(changes: SimpleChanges): void {
+    this.eventInProgress = changes['eventInProgress'].currentValue //* attempting to set the value of eventInProgress if the value changes
+  }
+
+  openDialog(setData: Set): void {
     console.log(setData);
+    console.log(this.eventInProgress, " | and | ", this.isTournamentAdmin);
+
+    if(!this.eventInProgress && !this.isTournamentAdmin) { //* do check to see if tournament is inprogress or an admin before opening set editing dialog
+      console.log("Event not in progress and user is not a tournament admin");
+      return
+    }
+
     let wrapData = {setData, bracketMetaData: this.inputEventMetaData}
     const dialogRef = this.dialog.open(SetDetailsDiaglogComponent, {data: wrapData });
 

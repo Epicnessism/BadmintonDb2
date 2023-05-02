@@ -26,6 +26,8 @@ exports.seed = function(knex) {
           {event_id: '11094d2c-108e-4a58-945c-9f260d5d7cf0', team_id: 'a44268c3-7ae9-4a80-86a3-44480cc89a02', seeding: -1, fully_registered: true},
           {event_id: '11094d2c-108e-4a58-945c-9f260d5d7cf0', team_id: '03b8d7a8-9a50-4df5-82a6-163280aed500', seeding: -1, fully_registered: true},
 
+
+          {event_id: 'beb62dce-caeb-4373-b722-8aaf5dda5fa2', team_id: '03b8d7a8-9a50-4df5-82a6-163280aed500', seeding: -1, fully_registered: true},
         ]);
       });
   };

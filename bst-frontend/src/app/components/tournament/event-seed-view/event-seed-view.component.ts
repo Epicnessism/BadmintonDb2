@@ -72,7 +72,7 @@ export class EventSeedViewComponent implements OnInit {
   constructNewSeedingsPayload(): any[] {
     const seedings: any[] = []
     this.seedList.forEach( entry => {
-      seedings.push({team_id: entry.teamId, seeding: entry.seeding, event_id: this.eventId})
+      seedings.push({team_id: entry.teamId, seeding: entry.seeding, event_id: this.eventId, current_bracket: this.eventBracketMetaData?.bracket_id})
     })
     return seedings
   }

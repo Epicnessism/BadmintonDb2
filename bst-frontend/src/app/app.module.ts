@@ -49,6 +49,7 @@ import { CreateViewComponent } from './components/tournament/create-view/create-
 import { TournamentViewComponent, TournamentSignUpDialogComponent } from './components/tournament/tournament-view/tournament-view.component';
 import { EventSeedViewComponent } from './components/tournament/event-seed-view/event-seed-view.component';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
+import { UpcomingViewComponent } from './components/tournament/upcoming-view/upcoming-view.component';
 
 
 
@@ -70,7 +71,8 @@ import { SignUpComponent } from './components/sign-up/sign-up.component';
     TournamentViewComponent,
     TournamentSignUpDialogComponent,
     EventSeedViewComponent,
-    SignUpComponent
+    SignUpComponent,
+    UpcomingViewComponent
   ],
   imports: [
     BrowserModule,
