@@ -181,10 +181,10 @@ function validateSetFormatData(set) {
     return response
 }
 
-async function updateEventsToTeams(trx, eventId, teamId, gamesPlayed) {
+async function updateEventsToTeams(trx, eventId, teamId, gamesPlayed, eliminated) {
     let results = null;
     await knex('events_to_teams')
-        .update({'games_played': gamesPlayed})
+        .update({'games_played': gamesPlayed, 'eliminated': eliminated})
         .where('team_id', teamId)
         .andWhere('event_id', eventId)
         .transacting(trx)

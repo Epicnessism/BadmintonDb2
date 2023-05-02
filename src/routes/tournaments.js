@@ -673,7 +673,7 @@ tournaments.get('/getBracketSetData/:bracket_id', async function (req, res, next
         )
         .orderBy('sets.event_game_number')
         .then(result => {
-            console.log(result);
+            // console.log(result);
             console.log(result.length);
             // if (result.length >= 1) { //TODO plan and design whether checks are needed here
             //     res.status(200).json(result)
@@ -821,34 +821,17 @@ tournaments.post('/updateSet', async function (req, res, next) {
             console.log('result of getting event_to_players for elimination validation');
             console.log(result); //* should really be two results here, one for winning team and one for losing team
 
-            // let team1 = result[0]
-            // let team2 = result[1]
-
-            // let t1Metadata = {
-            //     games_played: result[0].games_played++,
-            //     eliminated: result[0].eliminated
-            // }
-
-            // let t2Metadata = {
-            //     games_played: result[1].games_played++,
-            //     eliminated: result[1].eliminated
-            // }
-
-            // if(t1Metadata.games_played >= 3) {
-
-            // }
-
             await Promise.all(
                 //* winning team_id needs to have games_played updated
             //* losing team_id needs to have games_played updated, eliminated changed and current bracket changed.
             result.map(async team => {
-                let games_played = team.games_played++
+                let games_played = team.games_played + 1
                 let eliminated = team.eliminated
-                console.log(`games played: ${games_played}, eliminated: ${eliminated}`);
 
                 if(team.team_id != req.body.winningTeamId) {
                     if(games_played >= 3 ) { //! in the future add check for byes
                         eliminated = true
+                        console.log(`games played: ${games_played}, eliminated: ${eliminated}`);
                         await knex('events_to_teams')
                         .update({'eliminated': eliminated, 'games_played': games_played})
                         .where('team_id', team.team_id)
@@ -858,6 +841,7 @@ tournaments.post('/updateSet', async function (req, res, next) {
                             console.log(`result of updating events to teams with eliminated status: ${result}`);
                         })
                     } else {
+                        console.log(`games played: ${games_played}, eliminated: ${eliminated}`);
                         await knex('events_to_teams')
                             .update({'games_played': games_played})
                             .where('team_id', team.team_id)
@@ -867,10 +851,11 @@ tournaments.post('/updateSet', async function (req, res, next) {
                                 console.log(`result of updating events to teams with games_played status: ${result}`);
                                 results = result
                             })
-                        // let incrementGamesPlayed = await Sets.updateEventsToTeams(eventDetails.event_id, team.team_id, games_played);
 
                     }
                 }
+                //todo maybe go back to this some day, TRX being stupid or me???? either way transaction didn't work
+                // await Sets.updateEventsToTeams(trx, eventDetails.event_id, team.team_id, games_played, eliminated);
             })
             )
             .then(response => {
@@ -898,7 +883,6 @@ tournaments.post('/updateSet', async function (req, res, next) {
 
     // })
     .catch( trxError => {
-        console.log(trxError, "line 64")
         console.log(trxError.message);
         // if(err.message === 'Force necessary') {
         //     return res.status(403).json(trxError.message)
